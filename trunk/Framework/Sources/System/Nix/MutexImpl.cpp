@@ -1,4 +1,5 @@
 #include "Mutex.h"
+#include "MutexImpl.h"
 
 namespace System
 {
