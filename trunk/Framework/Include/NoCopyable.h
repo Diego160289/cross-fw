@@ -3,16 +3,16 @@
 
 namespace Common
 {
-	class NoCopyable
-	{
-	protected:
-		NoCopyable()
-		{
-		}
-	private:
-		NoCopyable(const NoCopyable&);
-		NoCopyable& operator = (const NoCopyable&);
-	};
+  class NoCopyable
+  {
+  protected:
+    NoCopyable()
+    {
+    }
+  private:
+    NoCopyable(const NoCopyable&);
+    NoCopyable& operator =(const NoCopyable&);
+  };
 }
 
 #endif	// !__NOCOPYABLE_H__
