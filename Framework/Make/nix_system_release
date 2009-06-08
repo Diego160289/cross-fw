@@ -1,0 +1,32 @@
+CXXFLAGS =	-O2 -g -Wall -fmessage-length=0
+
+CPP =		Mutex.cpp
+
+CPPOS =		MutexImpl.cpp
+
+OBJ =		Mutex.o
+
+OBJOS =		MotexImpl.o
+
+INCLUDE =		./Include
+
+INCLUDEOS =		./Sources/System/Nix
+
+CPPS =		./Sources/System/$(CPP)
+
+CPPSOS =		./Sources/System/Nix/$(CPPOS)
+
+OBJECTS =		./Objects/Release/System/$(OBJ)
+
+OBJECTSOS =		./Objects/Release/System/Platform/$(OBJOS)
+
+TARGET =		libSystem.a
+
+win_system_release: $(OBJECTSOS) $(OBJECTS)
+	ar cr ./Libs/Release/$(TARGET) $(OBJECTSOS) $(OBJECTS)
+
+$(OBJECTSOS): $(CPPSOS)
+	g++ $(CXXFLAGS) -c $(CPPSOS) -I $(INCLUDE) -I $(INCLUDEOS) -o $(OBJECTSOS)
+
+$(OBJECTS): $(CPPS)
+	g++ $(CXXFLAGS) -c $(CPPS) -I $(INCLUDE) -I $(INCLUDEOS) -o $(OBJECTS)
