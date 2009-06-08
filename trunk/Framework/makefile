@@ -1,3 +1,3 @@
 all: 
-	make -f ./Make/all_debug
-	make -f ./Make/all_release
+	make -f ./Make/win_all_debug
+	make -f ./Make/win_all_release
