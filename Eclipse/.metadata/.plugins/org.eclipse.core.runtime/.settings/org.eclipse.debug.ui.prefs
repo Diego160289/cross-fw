@@ -1,0 +1,13 @@
+#Mon Jun 08 15:17:07 MSD 2009
+org.eclipse.debug.ui.consoleBackground=0,0,119
+org.eclipse.debug.ui.PREF_LAUNCH_PERSPECTIVES=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<launchPerspectives/>\r\n
+StringVariablePreferencePage=170,141,141,113,
+org.eclipse.debug.ui.outColor=255,255,17
+Console.highWaterMark=88000
+org.eclipse.debug.ui.MemoryHistoryUnknownColor=255,255,17
+org.eclipse.debug.ui.changedDebugElement=255,121,121
+org.eclipse.debug.ui.MemoryHistoryKnownColor=255,255,17
+org.eclipse.debug.ui.PREF_CHANGED_VALUE_BACKGROUND=0,0,119
+eclipse.preferences.version=1
+org.eclipse.debug.ui.errorColor=255,255,17
+org.eclipse.debug.ui.inColor=255,255,17
