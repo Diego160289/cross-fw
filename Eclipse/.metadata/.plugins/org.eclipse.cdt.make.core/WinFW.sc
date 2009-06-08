@@ -4,6 +4,8 @@
 <scannerInfo id="org.eclipse.cdt.make.core.discoveredScannerInfo">
 <instance id="cdt.managedbuild.toolchain.gnu.mingw.base.418814379;cdt.managedbuild.toolchain.gnu.mingw.base.418814379.787762499;cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.120445802;cdt.managedbuild.tool.gnu.cpp.compiler.input.989046661">
 <collector id="org.eclipse.cdt.make.core.PerProjectSICollector">
+<includePath path="C:/Projects/cross-fw/Framework/Include"/>
+<includePath path="C:/Projects/cross-fw/Framework/Sources/System/Win"/>
 <includePath path="C:/MinGW/bin/../lib/gcc/mingw32/3.4.5/../../../../include/c++/3.4.5"/>
 <includePath path="C:/MinGW/bin/../lib/gcc/mingw32/3.4.5/../../../../include/c++/3.4.5/mingw32"/>
 <includePath path="C:/MinGW/bin/../lib/gcc/mingw32/3.4.5/../../../../include/c++/3.4.5/backward"/>
@@ -103,10 +105,13 @@
 <definedSymbol symbol="__WINNT=1"/>
 <definedSymbol symbol="__WINNT__=1"/>
 <definedSymbol symbol="WINNT=1"/>
+<definedSymbol symbol="__OPTIMIZE__=1"/>
 </collector>
 </instance>
 <instance id="cdt.managedbuild.toolchain.gnu.mingw.base.418814379;cdt.managedbuild.toolchain.gnu.mingw.base.418814379.787762499;cdt.managedbuild.tool.gnu.c.compiler.mingw.base.1114609829;cdt.managedbuild.tool.gnu.c.compiler.input.256703323">
 <collector id="org.eclipse.cdt.make.core.PerProjectSICollector">
+<includePath path="C:/Projects/cross-fw/Framework/Include"/>
+<includePath path="C:/Projects/cross-fw/Framework/Sources/System/Win"/>
 <includePath path="C:/MinGW/bin/../lib/gcc/mingw32/3.4.5/../../../../include"/>
 <includePath path="C:/MinGW/bin/../lib/gcc/mingw32/3.4.5/include"/>
 <includePath path="C:\cygwin\mingw\include" removed="true"/>
@@ -194,6 +199,7 @@
 <definedSymbol symbol="__WINNT=1"/>
 <definedSymbol symbol="__WINNT__=1"/>
 <definedSymbol symbol="WINNT=1"/>
+<definedSymbol symbol="__OPTIMIZE__=1"/>
 </collector>
 </instance>
 </scannerInfo>
