@@ -3,7 +3,6 @@
 
 #include <stdexcept>
 
-
 #define DECLARE_EXCEPTION_EX(prefix_class_name_, base_class_) \
 	class prefix_class_name_##Exception \
 		: public base_class_ \

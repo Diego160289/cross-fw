@@ -3,40 +3,45 @@
 
 namespace Common
 {
-	struct NullType
-	{
-	};
+  struct NullType
+  {
+  };
 
-	template <typename H, typename T>
-	struct TypeList
-	{
-		typedef H Head;
-		typedef T Tail;
-	};
+  template <typename H, typename T>
+  struct TypeList
+  {
+    typedef H Head;
+    typedef T Tail;
+  };
 
-	template <typename TList>
-	struct TypeListLength
-	{
-		enum { Len = TypeListLength<typename TList::Tail>::Len + 1 };
-	};
+  template <typename TList>
+  struct TypeListLength
+  {
+    enum
+    {
+      Len = TypeListLength<typename TList::Tail>::Len + 1
+    };
+  };
 
-	template <>
-	struct TypeListLength<NullType>
-	{
-		enum { Len = 0 };
-	};
+  template <>
+  struct TypeListLength<NullType>
+  {
+    enum
+    {
+      Len = 0
+    };
+  };
 
-	template <typename TList>
-	class InheritedFromList
-		: public TList::Head
-		, public InheritedFromList<typename TList::Tail>
-	{
-	};
+  template <typename TList>
+  class InheritedFromList
+    : public TList::Head, public InheritedFromList<typename TList::Tail>
+  {
+  };
 
-	template <>
-	class InheritedFromList<NullType>
-	{
-	};
+  template <>
+  class InheritedFromList<NullType>
+  {
+  };
 
 }
 
@@ -69,6 +74,5 @@ namespace Common
 
 #define TYPE_LIST_10(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) \
 	Common::TypeList<t1, TYPE_LIST_9(t2, t3, t4, t5, t6, t7, t8, t9, t10)>
-
 
 #endif	// !__TYPELIST_H__
