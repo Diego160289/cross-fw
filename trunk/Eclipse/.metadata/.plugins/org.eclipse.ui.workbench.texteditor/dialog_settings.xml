@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<section name="Workbench">
-	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item value="#ifndef __MUTEX_H__&#x0A;#define __MUTEX_H__&#x0A;&#x0A;#include &quot;NoCopyable.h&quot;&#x0A;#include &quot;Exceptions.h&quot;&#x0A;&#x0A;&#x0A;namespace  System&#x0A;{&#x0A;&#x09;DECLARE_RUNTIME_EXCEPTION(Mutex)&#x0A;&#x0A;&#x09;class Mutex&#x0A;&#x09;&#x09;: private Common::NoCopyable&#x0A;&#x09;{&#x0A;&#x09;public:&#x0A;&#x09;&#x09;Mutex();&#x0A;&#x09;&#x09;~Mutex();&#x0A;&#x09;&#x09;void Lock();&#x0A;&#x09;&#x09;void Unlock();&#x0A;&#x09;private:&#x0A;&#x09;&#x09;class MutexImpl;&#x0A;&#x09;&#x09;MutexImpl *Impl;&#x0A;&#x09;};&#x0A;}&#x0A;&#x0A;#endif&#x09;// !__MUTEX_H__&#x0A;" key="selection"/>
-		<list key="findhistory">
-			<item value="#ifndef __MUTEX_H__"/>
-		</list>
-	</section>
-</section>
