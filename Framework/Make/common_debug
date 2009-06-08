@@ -1,0 +1,19 @@
+CXXFLAGS =	-O2 -g -Wall -fmessage-length=0
+
+CPP =		ModuleCounter.cpp
+
+OBJS =		ModuleCounter.o
+
+INCLUDE =		./Include
+
+CPPS =		./Sources/Common/$(CPP)
+
+OBJECTS =		./Objects/Debug/Common/$(OBJS)
+
+TARGET =		libCommon.a
+
+common_debug: $(OBJECTS)
+	ar cr ./Libs/Debug/$(TARGET) $(OBJECTS)
+
+$(OBJECTS): $(CPPS)
+	g++ $(CXXFLAGS) -c $(CPPS) -I $(INCLUDE) -o $(OBJECTS)
