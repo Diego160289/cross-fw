@@ -1,0 +1,23 @@
+CXXFLAGS =	-O2 -Wall -fmessage-length=0
+
+CPP =		FWLoader.cpp
+
+OBJS =		FWLoader.o
+
+INCLUDE =		./Include
+
+CPPS =		./Sources/FWLoader/$(CPP)
+
+OBJECTS =		./Objects/Release/FWLoader/$(OBJS)
+
+LIBPATH =		./Libs/Release
+
+LIBS =		-lSystem -lCommon
+
+TARGET =		FWLoader.exe
+
+fwloader_release: $(OBJECTS)
+	g++ $(CXXFLAGS) $(OBJECTS) -o ./Bin/Release/$(TARGET) -L $(LIBPATH) $(LIBS)
+
+$(OBJECTS): $(CPPS)
+	g++ $(CXXFLAGS) -c $(CPPS) -I $(INCLUDE) -o $(OBJECTS)
