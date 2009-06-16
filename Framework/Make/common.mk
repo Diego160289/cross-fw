@@ -23,5 +23,5 @@ OBJ = $(CPP:.cpp=.o)
 
 all: $(OBJ)
 	ar cr \
-	$(TARGETDIR)/$(TARGET) $\
-	(addprefix $(OBJDIR)/,$(notdir $(OBJ)))
+	$(TARGETDIR)/$(TARGET) \
+	$(addprefix $(OBJDIR)/,$(notdir $(OBJ)))
