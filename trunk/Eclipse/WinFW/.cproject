@@ -295,50 +295,26 @@
 <storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 <storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
 <buildTargets>
-<target name="common_debug" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+<target name="common" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
-<buildArguments>-f ./Make/common_debug</buildArguments>
-<buildTarget>common_debug</buildTarget>
+<buildArguments>-f ./Make/common.mk</buildArguments>
+<buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 <runAllBuilders>true</runAllBuilders>
 </target>
-<target name="common_release" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+<target name="system" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
-<buildArguments>-f ./Make/common_release</buildArguments>
-<buildTarget>common_release</buildTarget>
+<buildArguments>-f ./Make/system.mk</buildArguments>
+<buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 <runAllBuilders>true</runAllBuilders>
 </target>
-<target name="win_system_debug" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+<target name="fwloader" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
-<buildArguments>-f ./Make/win_system_debug</buildArguments>
-<buildTarget>win_system_debug</buildTarget>
-<stopOnError>true</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
-<runAllBuilders>true</runAllBuilders>
-</target>
-<target name="win_system_release" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
-<buildCommand>make</buildCommand>
-<buildArguments>-f ./Make/win_system_release</buildArguments>
-<buildTarget>win_system_release</buildTarget>
-<stopOnError>true</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
-<runAllBuilders>true</runAllBuilders>
-</target>
-<target name="fwloader_debug" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
-<buildCommand>make</buildCommand>
-<buildArguments>-f ./Make/fwloader_debug</buildArguments>
-<buildTarget>fwloader_debug</buildTarget>
-<stopOnError>true</stopOnError>
-<useDefaultCommand>false</useDefaultCommand>
-<runAllBuilders>true</runAllBuilders>
-</target>
-<target name="fwloader_release" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
-<buildCommand>make</buildCommand>
-<buildArguments>-f ./Make/fwloader_release</buildArguments>
-<buildTarget>fwloader_release</buildTarget>
+<buildArguments>-f ./Make/fwloader.mk</buildArguments>
+<buildTarget>all</buildTarget>
 <stopOnError>true</stopOnError>
 <useDefaultCommand>false</useDefaultCommand>
 <runAllBuilders>true</runAllBuilders>
