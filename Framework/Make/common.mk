@@ -1,12 +1,10 @@
-CXX = g++
-
-CXXFLAGS = -O0 -g3 -Wall -fmessage-length=0
+include ./Make/make_common
 
 SRCDIR = ./Sources/Common
 
-OBJDIR = ./Objects/Debug/Common
+OBJDIR = ./Objects/$(MAKETYPEDIR)/Common
 
-TARGETDIR = ./Libs/Debug
+TARGETDIR = ./Libs/$(MAKETYPEDIR)
 
 INCLUDE = ./Include
 
