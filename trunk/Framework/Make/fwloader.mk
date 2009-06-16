@@ -2,13 +2,13 @@ include ./Make/make_common
 
 SRCDIR = ./Sources/FWLoader
 
-OBJDIR = ./Objects/$(MAKETYPEDIR)/FWLoader
+OBJDIR = ./Objects/$(MAKETYPE)/FWLoader
 
-TARGETDIR = ./Bin/$(MAKETYPEDIR)
+TARGETDIR = ./Bin/$(MAKETYPE)
 
 INCLUDE = ./Include
 
-LIBSIR = ./Libs/$(MAKETYPEDIR)
+LIBSIR = ./Libs/$(MAKETYPE)
 
 LIBS = Common System
 
