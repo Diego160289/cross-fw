@@ -1,19 +1,23 @@
-CXXFLAGS =	-O0 -g3 -Wall -fmessage-length=0
+CXX = g++
 
-CPP =		ModuleCounter.cpp
+CXXFLAGS = -O0 -g3 -Wall -fmessage-length=0
 
-OBJS =		ModuleCounter.o
+SRCDIR = ./Sources/Common
 
-INCLUDE =		./Include
+OBJDIR = ./Objects/Debug/Common
 
-CPPS =		./Sources/Common/$(CPP)
+TARGETDIR = ./Libs/Debug
 
-OBJECTS =		./Objects/Debug/Common/$(OBJS)
+INCLUDE = ./Include
 
-TARGET =		libCommon.a
+TARGET = libCommon.a
 
-common_debug: $(OBJECTS)
-	ar cr ./Libs/Debug/$(TARGET) $(OBJECTS)
+CPP = $(wildcard $(SRCDIR)/*.cpp)
 
-$(OBJECTS): $(CPPS)
-	g++ $(CXXFLAGS) -c $(CPPS) -I $(INCLUDE) -o $(OBJECTS)
+OBJ = $(CPP:.cpp=.o)
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(addprefix -I ,$(INCLUDE)) -c $^ -o $(OBJDIR)/$(notdir $@)
+
+common_debug: $(OBJ)
+	ar cr $(TARGETDIR)/$(TARGET) $(addprefix $(OBJDIR)/,$(notdir $(OBJ)))
