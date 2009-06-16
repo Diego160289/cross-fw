@@ -1,25 +1,39 @@
 include ./Make/make_common
 
-SRCDIR = ./Sources/FWLoader
+PROJECT := FWLoader
 
-OBJDIR = ./Objects/$(MAKETYPE)/FWLoader
+SRCDIR = ./Sources/$(PROJECT)
+
+OBJDIR = ./Objects/$(MAKETYPE)/$(PROJECT)
 
 TARGETDIR = ./Bin/$(MAKETYPE)
 
 INCLUDE = ./Include
 
-LIBSIR = ./Libs/$(MAKETYPE)
+LIBSDIR = ./Libs/$(MAKETYPE)
 
 LIBS = Common System
 
-TARGET = FWLoader.exe
+TARGET = $(PROJECT)$(EXEFILEEXT)
 
 CPP = $(wildcard $(SRCDIR)/*.cpp)
 
 OBJ = $(CPP:.cpp=.o)
 
+CURCFG := Build: '$(PROJECT)' $(OS) $(MAKETYPE)
+
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(addprefix -I ,$(INCLUDE)) -c $^ -o $(OBJDIR)/$(notdir $@)
+	$(CXX) \
+	$(CXXFLAGS) \
+	$(addprefix -I ,$(INCLUDE)) \
+	-c $^ \
+	-o $(OBJDIR)/$(notdir $@)
 
 all: $(OBJ)
-	$(CXX) $(addprefix $(OBJDIR)/,$(notdir $(OBJ))) -L $(LIBSIR) $(addprefix -l ,$(LIBS)) -o $(TARGETDIR)/$(TARGET)
+	@echo $(CURCFG)
+	$(CXX) \
+	$(addprefix $(OBJDIR)/,$(notdir $(OBJ))) \
+	$(addprefix -L ,$(LIBSDIR)) \
+	$(addprefix -l ,$(LIBS)) \
+	-o $(TARGETDIR)/$(TARGET)
+	@echo Success $(CURCFG)

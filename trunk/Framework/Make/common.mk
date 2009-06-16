@@ -1,18 +1,22 @@
 include ./Make/make_common
 
-SRCDIR = ./Sources/Common
+PROJECT := Common
 
-OBJDIR = ./Objects/$(MAKETYPE)/Common
+SRCDIR = ./Sources/$(PROJECT)
+
+OBJDIR = ./Objects/$(MAKETYPE)/$(PROJECT)
 
 TARGETDIR = ./Libs/$(MAKETYPE)
 
 INCLUDE = ./Include
 
-TARGET = libCommon.a
+TARGET = lib$(PROJECT).a
 
 CPP = $(wildcard $(SRCDIR)/*.cpp)
 
 OBJ = $(CPP:.cpp=.o)
+
+CURCFG := Build: '$(PROJECT)' $(OS) $(MAKETYPE)
 
 %.o: %.cpp
 	$(CXX) \
@@ -22,6 +26,8 @@ OBJ = $(CPP:.cpp=.o)
 	-o $(OBJDIR)/$(notdir $@)
 
 all: $(OBJ)
+	@echo $(CURCFG)
 	ar cr \
 	$(TARGETDIR)/$(TARGET) \
 	$(addprefix $(OBJDIR)/,$(notdir $(OBJ)))
+	@echo Success $(CURCFG)

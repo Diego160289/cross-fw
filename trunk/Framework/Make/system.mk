@@ -1,22 +1,26 @@
 include ./Make/make_common
 
-SRCDIR = ./Sources/System
+PROJECT := System
 
-OSSRCDIR = ./Sources/System/$(OS)
+SRCDIR = ./Sources/$(PROJECT)
 
-OBJDIR = ./Objects/$(MAKETYPE)/System
+OSSRCDIR = ./Sources/$(PROJECT)/$(OS)
+
+OBJDIR = ./Objects/$(MAKETYPE)/$(PROJECT)
 
 TARGETDIR = ./Libs/$(MAKETYPE)
 
 INCLUDE = ./Include $(SRCDIR)/$(OS)
 
-TARGET = libSystem.a
+TARGET = lib$(PROJECT).a
 
 CPP = $(wildcard $(SRCDIR)/*.cpp)
 
 CPP += $(wildcard $(OSSRCDIR)/*.cpp)
 
 OBJ = $(CPP:.cpp=.o)
+
+CURCFG := Build: '$(PROJECT)' $(OS) $(MAKETYPE)
 
 %.o: %.cpp
 	$(CXX) \
@@ -26,7 +30,9 @@ OBJ = $(CPP:.cpp=.o)
 	-o $(OBJDIR)/$(subst /$(OS)/,Platform/,$(findstring /$(OS)/,$^))$(notdir $@)
 
 all: $(OBJ)
+	@echo $(CURCFG)
 	ar cr \
 	$(TARGETDIR)/$(TARGET) \
 	$(wildcard $(OBJDIR)/Platform/*.o) \
 	$(wildcard $(OBJDIR)/*.o)
+	@echo Success $(CURCFG)
