@@ -1,19 +1,23 @@
-CXXFLAGS =	-O2 -Wall -fmessage-length=0
+CXX = g++
 
-CPP =		ModuleCounter.cpp
+CXXFLAGS = -O3 -Wall -fmessage-length=0
 
-OBJS =		ModuleCounter.o
+SRCDIR = ./Sources/Common
 
-INCLUDE =		./Include
+OBJDIR = ./Objects/Release/Common
 
-CPPS =		./Sources/Common/$(CPP)
+TARGETDIR = ./Libs/Release
 
-OBJECTS =		./Objects/Release/Common/$(OBJS)
+INCLUDE = ./Include
 
-TARGET =		libCommon.a
+TARGET = libCommon.a
 
-common_release: $(OBJECTS)
-	ar cr ./Libs/Release/$(TARGET) $(OBJECTS)
+CPP = $(wildcard $(SRCDIR)/*.cpp)
 
-$(OBJECTS): $(CPPS)
-	g++ $(CXXFLAGS) -c $(CPPS) -I $(INCLUDE) -o $(OBJECTS)
+OBJ = $(CPP:.cpp=.o)
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(addprefix -I ,$(INCLUDE)) -c $^ -o $(OBJDIR)/$(notdir $@)
+
+common_release: $(OBJ)
+	ar cr $(TARGETDIR)/$(TARGET) $(addprefix $(OBJDIR)/,$(notdir $(OBJ)))
