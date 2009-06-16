@@ -23,5 +23,5 @@ OBJ = $(CPP:.cpp=.o)
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(addprefix -I ,$(INCLUDE)) -c $^ -o $(OBJDIR)/$(notdir $@)
 
-fwloader_debug: $(OBJ)
+fwloader_release: $(OBJ)
 	$(CXX) $(addprefix $(OBJDIR)/,$(notdir $(OBJ))) -L $(LIBSIR) $(addprefix -l ,$(LIBS)) -o $(TARGETDIR)/$(TARGET)
