@@ -1,16 +1,14 @@
-CXX = g++
-
-CXXFLAGS = -O0 -g3 -Wall -fmessage-length=0
+include ./Make/make_common
 
 SRCDIR = ./Sources/FWLoader
 
-OBJDIR = ./Objects/Debug/FWLoader
+OBJDIR = ./Objects/$(MAKETYPEDIR)/FWLoader
 
-TARGETDIR = ./Bin/Debug
+TARGETDIR = ./Bin/$(MAKETYPEDIR)
 
 INCLUDE = ./Include
 
-LIBSIR = ./Libs/Debug
+LIBSIR = ./Libs/$(MAKETYPEDIR)
 
 LIBS = Common System
 
@@ -23,5 +21,5 @@ OBJ = $(CPP:.cpp=.o)
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(addprefix -I ,$(INCLUDE)) -c $^ -o $(OBJDIR)/$(notdir $@)
 
-fwloader_debug: $(OBJ)
+all: $(OBJ)
 	$(CXX) $(addprefix $(OBJDIR)/,$(notdir $(OBJ))) -L $(LIBSIR) $(addprefix -l ,$(LIBS)) -o $(TARGETDIR)/$(TARGET)
