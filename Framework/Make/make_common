@@ -1,5 +1,5 @@
 
-PLATFORM := Win
+OS := Win
 
 MAKETYPE := Debug
 
@@ -7,8 +7,6 @@ CXX = g++
 
 ifeq ($(MAKETYPE), Debug)
 	CXXFLAGS = -O0 -g3 -Wall -D_DEBUG -fmessage-length=0
-	MAKETYPEDIR = Debug
 else
 	CXXFLAGS = -O3 -Wall -fmessage-length=0
-	MAKETYPEDIR = Release
 endif

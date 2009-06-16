@@ -1,8 +1,10 @@
+$(MAKETYPE) := Release
+
 all_release: make_libs make_bin
 
 make_libs:
-	make -f ./Make/common_release
+	make -f ./Make/common.mk
 	make -f ./Make/win_system_release
 
 make_bin:
-	make -f ./Make/fwloader_release
+	make -f ./Make/fwloader.mk

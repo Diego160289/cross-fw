@@ -2,9 +2,9 @@ include ./Make/make_common
 
 SRCDIR = ./Sources/Common
 
-OBJDIR = ./Objects/$(MAKETYPEDIR)/Common
+OBJDIR = ./Objects/$(MAKETYPE)/Common
 
-TARGETDIR = ./Libs/$(MAKETYPEDIR)
+TARGETDIR = ./Libs/$(MAKETYPE)
 
 INCLUDE = ./Include
 
@@ -15,7 +15,13 @@ CPP = $(wildcard $(SRCDIR)/*.cpp)
 OBJ = $(CPP:.cpp=.o)
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(addprefix -I ,$(INCLUDE)) -c $^ -o $(OBJDIR)/$(notdir $@)
+	$(CXX) \
+	$(CXXFLAGS) \
+	$(addprefix -I ,$(INCLUDE)) \
+	-c $^ \
+	-o $(OBJDIR)/$(notdir $@)
 
 all: $(OBJ)
-	ar cr $(TARGETDIR)/$(TARGET) $(addprefix $(OBJDIR)/,$(notdir $(OBJ)))
+	ar cr \
+	$(TARGETDIR)/$(TARGET) $\
+	(addprefix $(OBJDIR)/,$(notdir $(OBJ)))
