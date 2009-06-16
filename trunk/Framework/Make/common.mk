@@ -17,5 +17,5 @@ OBJ = $(CPP:.cpp=.o)
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(addprefix -I ,$(INCLUDE)) -c $^ -o $(OBJDIR)/$(notdir $@)
 
-common_debug: $(OBJ)
+all: $(OBJ)
 	ar cr $(TARGETDIR)/$(TARGET) $(addprefix $(OBJDIR)/,$(notdir $(OBJ)))
