@@ -1,7 +1,7 @@
 
-OS := Win
+# OS := Win
 
-MAKETYPE := Debug
+# MAKETYPE := Debug
 
 CXX = g++
 
