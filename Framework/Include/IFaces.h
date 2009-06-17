@@ -7,6 +7,12 @@
 		return #id_ ; \
 	}
 
+#define COCLASS_UUID(id_) \
+  static const char* GetCoClassId() \
+  { \
+    return #id_ ; \
+  }
+
 namespace IFaces
 {
   struct IErrorInfo;

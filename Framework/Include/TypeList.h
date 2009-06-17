@@ -14,6 +14,18 @@ namespace Common
     typedef T Tail;
   };
 
+  template <typename TList, unsigned index>
+  struct TypeListItem
+  {
+    typedef typename TypeListItem<typename TList::Tail, index - 1>::Item Item;
+  };
+
+  template <typename TList>
+  struct TypeListItem<TList, 0>
+  {
+    typedef typename TList::Head Item;
+  };
+
   template <typename TList>
   struct TypeListLength
   {
