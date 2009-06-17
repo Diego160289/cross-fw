@@ -10,6 +10,7 @@ namespace IFacesImpl
     : public IFacesTools::CoClassBase<IErrorInfoImpl<TCreateStrategy, TSynObj> , TYPE_LIST_1(IFaces::IErrorInfo), TCreateStrategy, TSynObj>
   {
   public:
+    COCLASS_UUID(1234567890)
     virtual void AddError(unsigned long code, const char *message)
     {
     }

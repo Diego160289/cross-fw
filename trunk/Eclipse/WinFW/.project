@@ -23,7 +23,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildArguments</key>
-					<value>OS=Win MAKETYPE=Release -f./Make/all.mk</value>
+					<value>OS=Win MAKETYPE=Debug -f./Make/all.mk</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildCommand</key>
