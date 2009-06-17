@@ -19,7 +19,7 @@
 <folderInfo id="cdt.managedbuild.toolchain.gnu.base.1465906908.1389349920" name="/" resourcePath="">
 <toolChain id="cdt.managedbuild.toolchain.gnu.base.1523292602" name="cdt.managedbuild.toolchain.gnu.base" superClass="cdt.managedbuild.toolchain.gnu.base">
 <targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.base.785339037" name="Debug Platform" osList="linux,hpux,aix,qnx" superClass="cdt.managedbuild.target.gnu.platform.base"/>
-<builder buildPath="${workspace_loc:/NixFW}/../../Framework" id="cdt.managedbuild.target.gnu.builder.base.459396066" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.base"/>
+<builder arguments="OS=Nix MAKETYPE=Debug -f ./Make/all.mk" buildPath="${workspace_loc:/NixFW}/../../Framework" command="make" id="cdt.managedbuild.target.gnu.builder.base.459396066" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.base"/>
 <tool id="cdt.managedbuild.tool.gnu.archiver.base.1387093130" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 <tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.68374158" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
 <inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1753823740" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -178,6 +178,7 @@
 </target>
 </buildTargets>
 </storageModule>
+<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cconfiguration>
 </storageModule>
 <storageModule moduleId="cdtBuildSystem" version="4.0.0">
