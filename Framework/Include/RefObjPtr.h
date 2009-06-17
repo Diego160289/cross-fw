@@ -33,27 +33,27 @@ namespace IFacesTools
       if (ptr.Ptr)
         ptr->QueryInterface(T::GetIFaceId(), reinterpret_cast<void**> (&Ptr));
     }
-    RefObjPtr& operator =(T *ptr)
+    RefObjPtr& operator = (T *ptr)
     {
       RefObjPtr Tmp(ptr);
       Swap(Tmp);
       return *this;
     }
     template <typename TOther>
-    RefObjPtr& operator =(TOther *ptr)
+    RefObjPtr& operator = (TOther *ptr)
     {
       RefObjPtr Tmp(ptr);
       Swap(Tmp);
       return *this;
     }
-    RefObjPtr& operator =(const RefObjPtr &ptr)
+    RefObjPtr& operator = (const RefObjPtr &ptr)
     {
       RefObjPtr Tmp(ptr);
       Swap(Tmp);
       return *this;
     }
     template <typename TOther>
-    RefObjPtr& operator =(const RefObjPtr<TOther> &ptr)
+    RefObjPtr& operator = (const RefObjPtr<TOther> &ptr)
     {
       RefObjPtr Tmp(ptr);
       Swap(Tmp);
@@ -81,11 +81,11 @@ namespace IFacesTools
       Ptr = 0;
       return Ret;
     }
-    T* operator ->() const
+    T* operator -> () const
     {
       return Ptr;
     }
-    T** operator &() const
+    T** operator & () const
     {
       return &Ptr;
     }

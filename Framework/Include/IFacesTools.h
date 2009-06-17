@@ -50,7 +50,7 @@ namespace IFacesTools
       Common::SyncObject<TSynObj> Locker(Syn);
       static RefObjPtr<T> Ret;
       if (Ret.IsEmpty())
-      Ret = new T;
+        Ret = new T;
       return Ret;
     }
   };
@@ -104,7 +104,7 @@ namespace IFacesTools
       ModuleCounter::Instance.Dec();
       unsigned long NewCounter = --Counter;
       if (!NewCounter)
-      delete this;
+        delete this;
       return NewCounter;
     }
     virtual bool QueryInterface(const char *ifaceId, void **iface, IFaces::IErrorInfo *errInfo = 0)
