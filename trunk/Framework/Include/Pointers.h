@@ -33,14 +33,14 @@ namespace Common
       if (Counter)
         (*Counter)++;
     }
-    SharedPtr& operator =(const SharedPtr &ptr)
+    SharedPtr& operator = (const SharedPtr &ptr)
     {
       SharedPtr Tmp(ptr);
       Swap(Tmp);
       return *this;
     }
     template <typename TOther>
-    SharedPtr& operator =(const SharedPtr<TOther> &ptr)
+    SharedPtr& operator = (const SharedPtr<TOther> &ptr)
     {
       SharedPtr Tmp(ptr);
       Swap(Tmp);
@@ -60,7 +60,7 @@ namespace Common
       Counter = 0;
       Ptr = 0;
     }
-    T* operator ->() const
+    T* operator -> () const
     {
       return Ptr;
     }
@@ -86,7 +86,7 @@ namespace Common
   private:
     T *Ptr;
     unsigned long *Counter;
-    template <typename > friend class SharedPtr;
+    template <typename> friend class SharedPtr;
   };
 
   template <typename T>
@@ -113,17 +113,17 @@ namespace Common
     {
       ptr.Ptr = 0;
     }
-    AutoPtr& operator =(AutoPtr &ptr)
+    AutoPtr& operator = (AutoPtr &ptr)
     {
       Release();
       Ptr = ptr.Detach();
       return *this;
     }
     template <typename TOther>
-    AutoPtr& operator =(AutoPtr<TOther> &ptr)
+    AutoPtr& operator = (AutoPtr<TOther> &ptr)
     {
       Release();
-      Ptr = static_cast<T*> (ptr.Detach());
+      Ptr = static_cast<T*>(ptr.Detach());
       return *this;
     }
     ~AutoPtr()
@@ -141,7 +141,7 @@ namespace Common
       Ptr = 0;
       return Ret;
     }
-    T* operator ->() const
+    T* operator -> () const
     {
       return Ptr;
     }
@@ -157,7 +157,7 @@ namespace Common
     }
   private:
     T *Ptr;
-    template <typename > friend class AutoPtr;
+    template <typename> friend class AutoPtr;
   };
 
   template <typename T>
@@ -182,14 +182,14 @@ namespace Common
       : Holder(ptr.Holder ? new IHolderImpl<T> (ptr.Holder->CloneValue()) : 0)
     {
     }
-    ValuePtr& operator =(const ValuePtr &ptr)
+    ValuePtr& operator = (const ValuePtr &ptr)
     {
       ValuePtr Tmp(ptr);
       Swap(Tmp);
       return *this;
     }
     template <typename TOther>
-    ValuePtr& operator =(const ValuePtr<TOther> &ptr)
+    ValuePtr& operator = (const ValuePtr<TOther> &ptr)
     {
       ValuePtr Tmp(ptr);
       Swap(Tmp);
@@ -221,12 +221,12 @@ namespace Common
       IHolderImpl<T> *CurHolder = static_cast<IHolderImpl<T>*> (Holder);
       return !CurHolder ? 0 : CurHolder->Get();
     }
-    T* operator ->() const
+    T* operator -> () const
     {
       return Get();
     }
   private:
-    template <typename > friend class ValuePtr;
+    template <typename> friend class ValuePtr;
     struct IHolder
     {
       virtual ~IHolder()
