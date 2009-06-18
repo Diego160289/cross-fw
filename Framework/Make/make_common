@@ -13,6 +13,8 @@ endif
 
 ifeq ($(OS), Win)
 	EXEFILEEXT := .exe
+	DLLFILEEXT := .dll
 else
 	EXEFILEEXT :=
+	DLLFILEEXT := .so
 endif
