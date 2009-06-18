@@ -9,7 +9,7 @@ using IFaces::retFail;
 using IFaces::retOk;
 
 class IRegistryImpl
-  : public IFacesTools::CoClassBase<IRegistryImpl, TYPE_LIST_1(IFaces::IRegistry), IFacesTools::MultiObject, System::Mutex>
+  : public Common::CoClassBase<IRegistryImpl, TYPE_LIST_1(IFaces::IRegistry), Common::MultiObject, System::Mutex>
 {
 public:
   COCLASS_UUID(cf7456c3-70c7-4a97-b8e4-f910cd2f823b)

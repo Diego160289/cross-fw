@@ -2,7 +2,7 @@
 #include "Mutex.h"
 
 
-namespace IFacesTools
+namespace Common
 {
   class ModuleCounter::CounterImpl
     : private Common::NoCopyable

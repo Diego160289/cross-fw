@@ -1,7 +1,7 @@
 #ifndef __REFOBJPTR_H__
 #define __REFOBJPTR_H__
 
-namespace IFacesTools
+namespace Common
 {
   template <typename T>
   class RefObjPtr
