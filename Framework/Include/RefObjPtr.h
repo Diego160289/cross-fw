@@ -72,8 +72,7 @@ namespace Common
     void Attach(T *ptr)
     {
       Release();
-      RefObjPtr Tmp(ptr);
-      Swap(Tmp);
+      Ptr = ptr;
     }
     T* Detach()
     {

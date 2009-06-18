@@ -1,23 +1,26 @@
 #include <iostream>
 
-#include "Module.h"
-
-#include "Mutex.h"
-
-
-typedef IFacesImpl::IErrorInfoImpl<Common::MultiObject, System::Mutex> ErType;
-
-DECLARE_MODULE_ENTRY_POINT("My Module", 1234567890, TYPE_LIST_1(ErType))
+#include "ModuleHolder.h"
+#include "IFaces.h"
 
 int main()
 {
-  std::cout
-    << ModuleType::GetCoClassId(0) << " "
-    << std::endl;
+  try
   {
-    Common::RefObjPtr<IFaces::IErrorInfo> Err(ModuleType::CreateObject(ErType::GetCoClassId()));
-    std::cout << (int) Common::ModuleCounter::GetModuleCounter() << std::endl;
+    Common::SharedPtr<System::DllHolder>
+      Dll(new System::DllHolder("C:\\Projects\\cross-fw\\Framework\\Bin\\Debug\\Registry.dll"));
+    Common::ModuleHolder Module(Dll);
+    {
+      Common::RefObjPtr<IFaces::IRegistry> Reg(Module.CreateObject("cf7456c3-70c7-4a97-b8e4-f910cd2f823b"));
+      if (Reg.Get())
+        Reg->Open("Hello");
+      std::cout << Module.GetModuleCounter() << std::endl;
+    }
+    std::cout << Module.GetModuleCounter() << std::endl;
   }
-  std::cout << (int) Common::ModuleCounter::GetModuleCounter() << std::endl;
+  catch (std::exception &e)
+  {
+    std::cerr << e.what() << std::endl;
+  }
   return 0;
 }

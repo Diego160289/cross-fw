@@ -45,7 +45,9 @@ namespace Common
   ModuleHolder::IBasePtr ModuleHolder::CreateObject(const char *classId)
   {
     typedef void* (*PFNCreateObject)(const char *);
-    return IBasePtr(reinterpret_cast<IFaces::IBase*>(Dll->GetProc<PFNCreateObject>("CreateObject")(classId)));
+    IBasePtr Ret;
+    Ret.Attach(reinterpret_cast<IFaces::IBase*>(Dll->GetProc<PFNCreateObject>("CreateObject")(classId)));
+    return Ret;
   }
 
   unsigned long ModuleHolder::GetModuleCounter() const
