@@ -8,7 +8,7 @@ int main()
   try
   {
     Common::SharedPtr<System::DllHolder>
-      Dll(new System::DllHolder("C:\\Projects\\cross-fw\\Framework\\Bin\\Debug\\Registry.dll"));
+      Dll(new System::DllHolder("./Registry.so"));
     Common::ModuleHolder Module(Dll);
     {
       Common::RefObjPtr<IFaces::IRegistry> Reg(Module.CreateObject("cf7456c3-70c7-4a97-b8e4-f910cd2f823b"));
