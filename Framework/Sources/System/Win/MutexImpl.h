@@ -5,7 +5,6 @@
 
 #include "Mutex.h"
 
-
 namespace System
 {
   class Mutex::MutexImpl
