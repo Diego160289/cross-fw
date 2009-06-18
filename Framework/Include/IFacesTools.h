@@ -13,7 +13,7 @@
     return #id_ ; \
   }
 
-namespace IFacesTools
+namespace Common
 {
   template <typename TList>
   inline bool ExistsIFace(const char *ifaceId)
@@ -30,7 +30,7 @@ namespace IFacesTools
   }
 
   template <>
-  inline bool ExistsIFace<Common::NullType>(const char *)
+  inline bool ExistsIFace<NullType>(const char *)
   {
     return false;
   }
@@ -53,7 +53,7 @@ namespace IFacesTools
     static RefObjPtr<T> CreateObject()
     {
       static TSynObj Syn;
-      Common::SyncObject<TSynObj> Locker(Syn);
+      SyncObject<TSynObj> Locker(Syn);
       static RefObjPtr<T> Ret;
       if (Ret.IsEmpty())
         Ret = new T;
@@ -88,25 +88,25 @@ namespace IFacesTools
     typename TSynObj = System::MutexStub
   >
   class CoClassBase
-    : virtual public Common::InheritedFromList<TIFacesList>
+    : virtual public InheritedFromList<TIFacesList>
     , virtual public TCreateStrategy<TCoClass, TSynObj>
-    , private Common::NoCopyable
+    , private NoCopyable
   {
   public:
-    typedef Common::TypeList<IFaces::IBase, TIFacesList> ExportIFacesList;
+    typedef TypeList<IFaces::IBase, TIFacesList> ExportIFacesList;
     CoClassBase()
       : Counter(0)
     {
     }
     virtual unsigned long AddRef()
     {
-      Common::SyncObject<TSynObj> Locker(GetSynObj());
+      SyncObject<TSynObj> Locker(GetSynObj());
       ModuleCounter::Instance.Inc();
       return ++Counter;
     }
     virtual unsigned long Release()
     {
-      Common::SyncObject<TSynObj> Locker(GetSynObj());
+      SyncObject<TSynObj> Locker(GetSynObj());
       ModuleCounter::Instance.Dec();
       unsigned long NewCounter = --Counter;
       if (!NewCounter)
@@ -115,7 +115,7 @@ namespace IFacesTools
     }
     virtual bool QueryInterface(const char *ifaceId, void **iface, IFaces::IErrorInfo *errInfo = 0)
     {
-      Common::SyncObject<TSynObj> Locker(GetSynObj());
+      SyncObject<TSynObj> Locker(GetSynObj());
       if (ExistsIFace<ExportIFacesList>(ifaceId))
       {
         AddRef();
@@ -140,7 +140,7 @@ namespace IFacesTools
     static RefObjPtr<IFaces::IBase>
     CreateObject(const char *classId)
     {
-      if (!Common::TypeListLength<TCoClassList>::Len)
+      if (!TypeListLength<TCoClassList>::Len)
         return RefObjPtr<IFaces::IBase>(0);
       const char *ClassId = classId;
       typedef typename TCoClassList::Head CurCoClass;
@@ -153,7 +153,7 @@ namespace IFacesTools
   };
 
   template <>
-  struct ObjectCreator<Common::NullType>
+  struct ObjectCreator<NullType>
   {
     static RefObjPtr<IFaces::IBase>
     CreateObject(const char *)

@@ -3,7 +3,7 @@
 
 #include "IErrorInfoImpl.h"
 
-namespace IFacesTools
+namespace Common
 {
   template <typename TCoClassList>
   class Module
@@ -11,7 +11,7 @@ namespace IFacesTools
   public:
     static unsigned GetCoClassCount()
     {
-      return Common::TypeListLength<TCoClassList>::Len;
+      return TypeListLength<TCoClassList>::Len;
     }
     static const char* GetCoClassId(unsigned index)
     {
@@ -29,7 +29,7 @@ namespace IFacesTools
     {
       static const char* Extract(unsigned index)
       {
-        if (!Common::TypeListLength<TList>::Len)
+        if (!TypeListLength<TList>::Len)
           return 0;
         if (Index == index)
         {
@@ -40,7 +40,7 @@ namespace IFacesTools
       }
     };
     template <unsigned Index>
-    struct ExtractorCoClassId<Index, Common::NullType>
+    struct ExtractorCoClassId<Index, NullType>
     {
       static const char* Extract(unsigned)
       {
@@ -52,7 +52,7 @@ namespace IFacesTools
 }
 
 #define DECLARE_MODULE_ENTRY_POINT(module_name_, module_guid_, module_coclasslist_) \
-  typedef IFacesTools::Module<module_coclasslist_> ModuleType; \
+  typedef Common::Module<module_coclasslist_> ModuleType; \
   extern "C" const char* GetModuleName() \
   { \
     return module_name_; \
@@ -75,7 +75,7 @@ namespace IFacesTools
   } \
   extern "C" unsigned long GetModuleCounter() \
   { \
-    return IFacesTools::ModuleCounter::GetModuleCounter(); \
+    return Common::ModuleCounter::GetModuleCounter(); \
   }
 
 #endif  // !__MODULE_H__
