@@ -17,7 +17,7 @@ namespace System
     template <typename T>
     T GetProc(const char *procNmae)
     {
-      return reinterpret_cast<T>(InternalGetProc(procNmae));
+      return (T)(InternalGetProc(procNmae));
     }
   private:
     class DllHolderImpl;
