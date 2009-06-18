@@ -5,6 +5,10 @@
 
 namespace IFacesImpl
 {
+  using IFaces::RetCode;
+  using IFaces::retOk;
+  using IFaces::retFail;
+
   template
   <
     template <typename, typename > class TCreateStrategy = IFacesTools::MultiObject,
@@ -15,11 +19,13 @@ namespace IFacesImpl
   {
   public:
     COCLASS_UUID(631e8a5c-9e5f-4ea3-b115-f88d84119923)
-    virtual void AddError(unsigned long code, const char *message)
+    virtual RetCode AddError(unsigned long code, const char *message)
     {
+      return retOk;
     }
-    virtual void AddError(unsigned long code, const char *message, const char *file, unsigned long line)
+    virtual RetCode AddError(unsigned long code, const char *message, const char *file, unsigned long line)
     {
+      return retOk;
     }
   };
 }

@@ -10,6 +10,10 @@ TARGETDIR = ./Bin/$(MAKETYPE)
 
 INCLUDE = ./Include
 
+LIBSDIR = ./Libs/$(MAKETYPE)
+
+LIBS = Common System
+
 TARGET = $(PROJECT)$(DLLFILEEXT)
 
 CPP = $(wildcard $(SRCDIR)/*.cpp)
@@ -28,6 +32,8 @@ CURCFG := Build: '$(PROJECT)' $(OS) $(MAKETYPE)
 all: $(OBJ)
 	$(CXX) \
 	$(CXXFLAGS) -shared \
-	-o $(TARGETDIR)/$(TARGET) \
-	$(addprefix $(OBJDIR)/,$(notdir $(OBJ)))
+	$(addprefix $(OBJDIR)/,$(notdir $(OBJ))) \
+	$(addprefix -L ,$(LIBSDIR)) \
+	$(addprefix -l ,$(LIBS)) \
+	-o $(TARGETDIR)/$(TARGET)
 	@echo Success $(CURCFG)
