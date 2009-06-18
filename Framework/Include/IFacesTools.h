@@ -7,6 +7,12 @@
 #include "SyncObj.h"
 #include "MutexStub.h"
 
+#define COCLASS_UUID(id_) \
+  static const char* GetCoClassId() \
+  { \
+    return #id_ ; \
+  }
+
 namespace IFacesTools
 {
   template <typename TList>

@@ -7,15 +7,14 @@
 		return #id_ ; \
 	}
 
-#define COCLASS_UUID(id_) \
-  static const char* GetCoClassId() \
-  { \
-    return #id_ ; \
-  }
-
 namespace IFaces
 {
   struct IErrorInfo;
+
+  enum RetCode
+  {
+    retOk, retFail
+  };
 
   struct IBase
   {
@@ -32,9 +31,19 @@ namespace IFaces
     : public IBase
   {
     INTERFACE_UUID(0f3cec41-f5d0-4ec0-abf2-061d1e61c950)
-    virtual void AddError(unsigned long code, const char *message) = 0;
-    virtual void AddError(unsigned long code, const char *message, const char *file, unsigned long line) = 0;
+    virtual RetCode AddError(unsigned long code, const char *message) = 0;
+    virtual RetCode AddError(unsigned long code, const char *message, const char *file, unsigned long line) = 0;
   };
+
+  struct IRegistry
+    : public IBase
+  {
+    INTERFACE_UUID(c5d042c6-e6ec-4361-99b8-78026611b87b)
+    virtual RetCode Open(const char *registryPath) = 0;
+    virtual RetCode Close() = 0;
+    virtual RetCode IsOpen() = 0;
+  };
+
 }
 
 #endif	// !__IFACES_H__
