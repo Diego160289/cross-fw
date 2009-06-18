@@ -127,6 +127,35 @@ namespace IFacesTools
       return SynObj;
     }
   };
+
+  template <typename TCoClassList>
+  struct ObjectCreator
+  {
+    static RefObjPtr<IFaces::IBase>
+    CreateObject(const char *classId)
+    {
+      if (!Common::TypeListLength<TCoClassList>::Len)
+        return RefObjPtr<IFaces::IBase>(0);
+      const char *ClassId = classId;
+      typedef typename TCoClassList::Head CurCoClass;
+      const char *CurClassId = CurCoClass::GetCoClassId();
+      while (*ClassId && *CurClassId && *ClassId++ == *CurClassId++);
+      return *ClassId || *CurClassId ?
+        ObjectCreator<typename TCoClassList::Tail>::CreateObject(classId) :
+        RefObjPtr<IFaces::IBase>(CurCoClass::CreateObject());
+    }
+  };
+
+  template <>
+  struct ObjectCreator<Common::NullType>
+  {
+    static RefObjPtr<IFaces::IBase>
+    CreateObject(const char *)
+    {
+      return RefObjPtr<IFaces::IBase>(0);
+    }
+  };
+
 }
 
 #endif	// !__IFACESTOOLS_H__

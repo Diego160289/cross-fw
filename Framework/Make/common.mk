@@ -26,7 +26,6 @@ CURCFG := Build: '$(PROJECT)' $(OS) $(MAKETYPE)
 	-o $(OBJDIR)/$(notdir $@)
 
 all: $(OBJ)
-	@echo $(CURCFG)
 	ar cr \
 	$(TARGETDIR)/$(TARGET) \
 	$(addprefix $(OBJDIR)/,$(notdir $(OBJ)))
