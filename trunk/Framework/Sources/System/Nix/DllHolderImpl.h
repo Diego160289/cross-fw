@@ -2,6 +2,7 @@
 #define __DLLHOLDERIMPL_H__
 
 #include <pthread.h>
+#include <dlfcn.h>
 
 #include "DllHolder.h"
 
@@ -16,7 +17,7 @@ namespace System
     ~DllHolderImpl();
     void* GetProc(const char *procNmae);
   private:
-    void *DlInstance;
+    void *Dll;
   };
 }
 
