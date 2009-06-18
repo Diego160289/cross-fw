@@ -33,6 +33,7 @@ namespace IFaces
   {
     INTERFACE_UUID(0f3cec41-f5d0-4ec0-abf2-061d1e61c950)
     virtual void AddError(unsigned long code, const char *message) = 0;
+    virtual void AddError(unsigned long code, const char *message, const char *file, unsigned long line) = 0;
   };
 }
 

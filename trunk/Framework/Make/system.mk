@@ -30,7 +30,6 @@ CURCFG := Build: '$(PROJECT)' $(OS) $(MAKETYPE)
 	-o $(OBJDIR)/$(subst /$(OS)/,Platform/,$(findstring /$(OS)/,$^))$(notdir $@)
 
 all: $(OBJ)
-	@echo $(CURCFG)
 	ar cr \
 	$(TARGETDIR)/$(TARGET) \
 	$(wildcard $(OBJDIR)/Platform/*.o) \
