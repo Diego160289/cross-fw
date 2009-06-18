@@ -34,5 +34,6 @@ all: $(OBJ)
 	$(addprefix $(OBJDIR)/,$(notdir $(OBJ))) \
 	$(addprefix -L ,$(LIBSDIR)) \
 	$(addprefix -l ,$(LIBS)) \
+	-ldl \
 	-o $(TARGETDIR)/$(TARGET)
 	@echo Success $(CURCFG)
