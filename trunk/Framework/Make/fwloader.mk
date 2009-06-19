@@ -22,6 +22,12 @@ OBJ = $(CPP:.cpp=.o)
 
 CURCFG := Build: '$(PROJECT)' $(OS) $(MAKETYPE)
 
+ifeq ($(OS),Nix)
+	SYSLIBS = dl
+else
+	SYSLIBS =
+endif
+
 %.o: %.cpp
 	$(CXX) \
 	$(CXXFLAGS) \
@@ -34,6 +40,6 @@ all: $(OBJ)
 	$(addprefix $(OBJDIR)/,$(notdir $(OBJ))) \
 	$(addprefix -L ,$(LIBSDIR)) \
 	$(addprefix -l ,$(LIBS)) \
-	-ldl \
+	$(addprefix -l ,$(SYSLIBS)) \
 	-o $(TARGETDIR)/$(TARGET)
 	@echo Success $(CURCFG)
