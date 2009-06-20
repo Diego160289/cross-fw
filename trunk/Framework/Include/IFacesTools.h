@@ -7,19 +7,13 @@
 #include "SyncObj.h"
 #include "MutexStub.h"
 
-#define COCLASS_UUID(id_) \
-  static const char* GetCoClassId() \
-  { \
-    return #id_ ; \
-  }
-
 namespace Common
 {
   template <typename TList>
   inline bool ExistsIFace(const char *ifaceId)
   {
     typedef    typename TList::Head CurType;
-    const char *CurIFaceId = CurType::GetIFaceId();
+    const char *CurIFaceId = CurType::GetUUID();
     const char *IFaceId = ifaceId;
     for ( ; *CurIFaceId && *IFaceId ; ++CurIFaceId, ++IFaceId)
     {
@@ -144,11 +138,13 @@ namespace Common
         return RefObjPtr<IFaces::IBase>(0);
       const char *ClassId = classId;
       typedef typename TCoClassList::Head CurCoClass;
-      const char *CurClassId = CurCoClass::GetCoClassId();
+      const char *CurClassId = CurCoClass::GetUUID();
       while (*ClassId && *CurClassId && *ClassId++ == *CurClassId++);
-      return *ClassId || *CurClassId ?
-        ObjectCreator<typename TCoClassList::Tail>::CreateObject(classId) :
-        RefObjPtr<IFaces::IBase>(CurCoClass::CreateObject());
+      if (*ClassId || *CurClassId)
+        return ObjectCreator<typename TCoClassList::Tail>::CreateObject(classId);
+      RefObjPtr<IFaces::IBase> Ret;
+      CurCoClass::CreateObject()->CurCoClass::QueryInterface(IFaces::IBase::GetUUID(), reinterpret_cast<void**>(&Ret));
+      return Ret;
     }
   };
 
