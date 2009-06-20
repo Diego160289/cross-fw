@@ -17,7 +17,7 @@ int main()
       if (Reg.Get())
         Reg->Load("Hello");
       Common::RefObjPtr<IFaces::IRegistry> Reg1;
-      Reg->QueryInterface(IFaces::IRegistry::GetUUID(), (void**)&Reg1);
+      Obj->QueryInterface(IFaces::IRegistry::GetUUID(), (void**)&Reg1);
       if (Reg1.Get())
         Reg1->CreatePathKey("111");
       std::cout << Module.GetModuleCounter() << std::endl;
