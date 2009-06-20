@@ -74,7 +74,10 @@ namespace Common
   { \
     try \
     { \
-      return (ModuleType::CreateObject(classId)).QueryInterface<IFaces::IBase>(reinterpret_cast<IFaces::IBase**>(iface)); \
+      Common::RefObjPtr<IFaces::IBase> Obj(ModuleType::CreateObject(classId)); \
+      if (!Obj.Get()) \
+        return false; \
+      return Obj->QueryInterface(IFaces::IBase::GetUUID(), iface); \
     } \
     catch (std::exception &) \
     { \

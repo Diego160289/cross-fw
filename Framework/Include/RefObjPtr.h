@@ -69,11 +69,6 @@ namespace Common
         Ptr->Release();
       Ptr = 0;
     }
-    template <typename Q>
-    bool QueryInterface(Q **ptr)
-    {
-      return !Ptr ? false : Ptr->QueryInterface(Q::GetUUID(), reinterpret_cast<void**>(ptr));
-    }
     T* Detach()
     {
       T *Ret = Ptr;
