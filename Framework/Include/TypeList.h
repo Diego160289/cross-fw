@@ -46,7 +46,8 @@ namespace Common
 
   template <typename TList>
   class InheritedFromList
-    : public TList::Head, public InheritedFromList<typename TList::Tail>
+    : public TList::Head
+    , public InheritedFromList<typename TList::Tail>
   {
   };
 
