@@ -7,6 +7,8 @@
 		return #id_ ; \
 	}
 
+#include <iostream>
+
 namespace IFaces
 {
   struct IErrorInfo;
@@ -50,6 +52,10 @@ namespace IFaces
   struct IRegistryCtrl
     : public IBase
   {
+      IRegistryCtrl()
+      {
+        std::cout <<"IRegistryCtrl" << std::endl;
+      }
     DECLARE_UUID(2bc18fdd-9f72-482b-887d-f6e02e930b86)
     virtual RetCode Create(const char *registryPath) = 0;
     virtual RetCode Load(const char *registryPath) = 0;
@@ -61,6 +67,10 @@ namespace IFaces
   struct IRegistry
     : public IBase
   {
+      IRegistry()
+      {
+        std::cout <<"IRegistry" << std::endl;
+      }
     DECLARE_UUID(c5d042c6-e6ec-4361-99b8-78026611b87b)
     virtual RetCode CreatePathKey(const char *pathKey) = 0;
     virtual RetCode GetValue(const char *pathKey, IVariant **value) = 0;

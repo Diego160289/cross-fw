@@ -75,6 +75,30 @@ namespace Common
     CounterImpl *Counter;
   };
 
+  template <typename T, typename TList>
+  struct InterfaceCast
+  {
+    static bool Cast(T *srcIFace, const char *destIFaceId, void **destIFace)
+    {
+      const char *DestId = destIFaceId;
+      typedef typename TList::Head CurIFace;
+      const char *CurId = CurIFace::GetUUID();
+      while (*DestId && *CurId && *DestId++ == *CurId++);
+      if (*DestId || *CurId)
+        return InterfaceCast<T, typename TList::Tail>::Cast(srcIFace, destIFaceId, destIFace);
+      return !!(*destIFace = dynamic_cast<CurIFace*>(srcIFace));
+    }
+  };
+
+  template <typename T>
+  struct InterfaceCast<T, NullType>
+  {
+    static bool Cast(IFaces::IBase *, const char *, void **)
+    {
+      return false;
+    }
+  };
+
   template
   <
     typename TCoClass,
@@ -83,7 +107,8 @@ namespace Common
     typename TSynObj = System::MutexStub
   >
   class CoClassBase
-    : public InheritedFromList<TYPE_LIST_2(IFaces::IBase, TIFacesList)>
+    : public InheritedFromList<TIFacesList>
+    , public InheritedFromList<TYPE_LIST_1(IFaces::IBase)>
     , virtual public TCreateStrategy<TCoClass, TSynObj>
     , private NoCopyable
   {
@@ -113,10 +138,19 @@ namespace Common
       SyncObject<TSynObj> Locker(GetSynObj());
       if (ExistsIFace<ExportIFacesList>(ifaceId))
       {
-        AddRef();
-        IFaces::IBase *Ptr = dynamic_cast<IFaces::IBase*>(this);
-        if (!(*iface = Ptr))
+        TCoClass *CoClassPtr = dynamic_cast<TCoClass *>(this);
+        if (!CoClassPtr)
           return false;
+        /*IFaces::IBase *BasePtr = dynamic_cast<IFaces::IBase*>(CoClassPtr);
+        if (!BasePtr)
+          return false;
+        if (!InterfaceCast<TCoClass, ExportIFacesList>::Cast(CoClassPtr, ifaceId, iface))
+        {
+          *iface = 0;
+          return false;
+        }*/
+        *iface = CoClassPtr;
+        AddRef();
         return true;
       }
       return false;
