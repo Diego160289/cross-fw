@@ -49,11 +49,30 @@ namespace Common
     : public TList::Head
     , public InheritedFromList<typename TList::Tail>
   {
+  public:
+    void CastTo(const char *ifaceId, void **iface)
+    {
+      typedef typename TList::Head CurBase;
+      const char *CurId = CurBase::GetUUID();
+      const char *DestId = ifaceId;
+      while (*DestId && *CurId && *DestId++ == *CurId++);
+      if (*DestId || *CurId)
+      {
+        InheritedFromList<typename TList::Tail>::CastTo(ifaceId, iface);
+        return;
+      }
+      *iface = static_cast<CurBase*>(this);
+    }
   };
 
   template <>
   class InheritedFromList<NullType>
   {
+  public:
+    void CastTo(const char *, void **iface)
+    {
+      *iface = 0;
+    }
   };
 
 }
