@@ -1,6 +1,6 @@
 #include "IFacesTools.h"
 #include "Mutex.h"
-#include "Pointers.h""
+#include "Pointers.h"
 
 
 namespace Common

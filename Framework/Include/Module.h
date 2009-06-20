@@ -3,6 +3,7 @@
 
 #include "IErrorInfoImpl.h"
 
+
 namespace Common
 {
   template <typename TCoClassList>
@@ -34,7 +35,7 @@ namespace Common
         if (Index == index)
         {
           typedef typename TList::Head TItem;
-          return TItem::GetCoClassId();
+          return TItem::GetUUID();
         }
         return ExtractorCoClassId<Index + 1, typename TList::Tail>::Extract(index);
       }
@@ -73,8 +74,7 @@ namespace Common
   { \
     try \
     { \
-      Common::RefObjPtr<IFaces::IBase> Ret(ModuleType::CreateObject(classId)); \
-      return !Ret.Get() ? false : Ret->QueryInterface(IFaces::IBase::GetIFaceId(), iface); \
+      return (ModuleType::CreateObject(classId)).QueryInterface<IFaces::IBase>(reinterpret_cast<IFaces::IBase**>(iface)); \
     } \
     catch (std::exception &) \
     { \
@@ -89,7 +89,7 @@ namespace Common
     } \
     catch (std::exception &) \
     { \
-      return -1; \
+      return static_cast<unsigned long>(-1); \
     } \
   }
 

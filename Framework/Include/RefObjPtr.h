@@ -15,23 +15,23 @@ namespace Common
     }
     template <typename TOther>
     explicit RefObjPtr(TOther *ptr)
-      : Ptr(0)
+      : Ptr(ptr)
     {
       if (Ptr)
-        Ptr->QueryInterface(T::GetIFaceId(), reinterpret_cast<void**> (&ptr));
+        Ptr->AddRef();
     }
     RefObjPtr(const RefObjPtr &ptr)
-    : Ptr(0)
+      : Ptr(ptr.Ptr)
     {
-      if (ptr.Ptr)
-        ptr->QueryInterface(T::GetIFaceId(), reinterpret_cast<void**> (&Ptr));
+      if (Ptr)
+        Ptr->AddRef();
     }
     template <typename TOther>
     RefObjPtr(const RefObjPtr<TOther> &ptr)
-      : Ptr(0)
+      : Ptr(ptr.Ptr)
     {
-      if (ptr.Ptr)
-        ptr->QueryInterface(T::GetIFaceId(), reinterpret_cast<void**> (&Ptr));
+      if (Ptr)
+        Ptr->AddRef();
     }
     RefObjPtr& operator = (T *ptr)
     {
@@ -69,10 +69,10 @@ namespace Common
         Ptr->Release();
       Ptr = 0;
     }
-    void Attach(T *ptr)
+    template <typename Q>
+    bool QueryInterface(Q **ptr)
     {
-      Release();
-      Ptr = ptr;
+      return !Ptr ? false : Ptr->QueryInterface(Q::GetUUID(), reinterpret_cast<void**>(ptr));
     }
     T* Detach()
     {
