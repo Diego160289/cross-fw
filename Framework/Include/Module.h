@@ -3,7 +3,6 @@
 
 #include "IErrorInfoImpl.h"
 
-
 namespace Common
 {
   template <typename TCoClassList>
