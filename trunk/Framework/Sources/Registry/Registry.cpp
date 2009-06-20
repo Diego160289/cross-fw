@@ -14,12 +14,13 @@ IRegistryImpl::~IRegistryImpl()
 RetCode IRegistryImpl::Create(const char *registryPath)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
-  std::cout << registryPath << std::endl;
   return retOk;
 }
 
 RetCode IRegistryImpl::Load(const char *registryPath)
 {
+  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  std::cout << registryPath << std::endl;
   return retOk;
 }
 
@@ -41,7 +42,7 @@ RetCode IRegistryImpl::Close()
 RetCode IRegistryImpl::CreatePathKey(const char *pathKey)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
-  std::cout << pathKey << std::endl;
+  std::cout << "blya" << std::endl;
   return retOk;
 }
 

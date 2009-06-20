@@ -83,7 +83,7 @@ namespace Common
     typename TSynObj = System::MutexStub
   >
   class CoClassBase
-    : virtual public InheritedFromList<TIFacesList>
+    : public InheritedFromList<TYPE_LIST_2(IFaces::IBase, TIFacesList)>
     , virtual public TCreateStrategy<TCoClass, TSynObj>
     , private NoCopyable
   {
@@ -114,7 +114,9 @@ namespace Common
       if (ExistsIFace<ExportIFacesList>(ifaceId))
       {
         AddRef();
-        *iface = this;
+        IFaces::IBase *Ptr = dynamic_cast<IFaces::IBase*>(this);
+        if (!(*iface = Ptr))
+          return false;
         return true;
       }
       return false;
