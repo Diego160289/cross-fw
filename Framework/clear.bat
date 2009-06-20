@@ -15,3 +15,6 @@ del /Q Objects\Release\System\Platform\*
 
 del /Q Objects\Debug\FWLoader\*
 del /Q Objects\Release\FWLoader\*
+
+del /Q Objects\Debug\Registry\*
+del /Q Objects\Release\Registry\*

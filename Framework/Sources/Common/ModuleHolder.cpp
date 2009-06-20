@@ -44,9 +44,10 @@ namespace Common
 
   ModuleHolder::IBasePtr ModuleHolder::CreateObject(const char *classId)
   {
-    typedef void* (*PFNCreateObject)(const char *);
+    typedef bool (*PFNCreateObject)(const char *, void **);
     IBasePtr Ret;
-    Ret.Attach(reinterpret_cast<IFaces::IBase*>(Dll->GetProc<PFNCreateObject>("CreateObject")(classId)));
+    if (!Dll->GetProc<PFNCreateObject>("CreateObject")(classId, reinterpret_cast<void**>(&Ret)))
+      throw ModuleHolderException("Can't create object");
     return Ret;
   }
 
