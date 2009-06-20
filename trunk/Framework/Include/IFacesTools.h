@@ -68,12 +68,12 @@ namespace Common
   {
   public:
     static unsigned long GetModuleCounter();
+    ~ModuleCounter();
   private:
     template <typename, typename, template <typename, typename> class, typename>
     friend class CoClassBase;
-    static ModuleCounter Instance;
+    static ModuleCounter& GetInstance();
     ModuleCounter();
-    ~ModuleCounter();
     void Inc();
     void Dec();
     class CounterImpl;
@@ -101,13 +101,13 @@ namespace Common
     virtual unsigned long AddRef()
     {
       SyncObject<TSynObj> Locker(GetSynObj());
-      ModuleCounter::Instance.Inc();
+      ModuleCounter::GetInstance().Inc();
       return ++Counter;
     }
     virtual unsigned long Release()
     {
       SyncObject<TSynObj> Locker(GetSynObj());
-      ModuleCounter::Instance.Dec();
+      ModuleCounter::GetInstance().Dec();
       unsigned long NewCounter = --Counter;
       if (!NewCounter)
         delete this;

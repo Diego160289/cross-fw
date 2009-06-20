@@ -15,10 +15,10 @@ namespace Common
     }
     template <typename TOther>
     explicit RefObjPtr(TOther *ptr)
-      : Ptr(ptr)
+      : Ptr(0)
     {
       if (Ptr)
-        Ptr->AddRef();
+        Ptr->QueryInterface(T::GetIFaceId(), reinterpret_cast<void**> (&ptr));
     }
     RefObjPtr(const RefObjPtr &ptr)
     : Ptr(0)
@@ -84,13 +84,9 @@ namespace Common
     {
       return Ptr;
     }
-    T** operator & () const
+    T** operator & ()
     {
       return &Ptr;
-    }
-    bool IsEmpty() const
-    {
-      return !Ptr;
     }
     T* Get() const
     {

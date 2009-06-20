@@ -69,13 +69,28 @@ namespace Common
   { \
     return ModuleType::GetCoClassId(index); \
   } \
-  extern "C" void* CreateObject(const char *classId) \
+  extern "C" bool CreateObject(const char *classId, void **iface) \
   { \
-    return ModuleType::CreateObject(classId).Detach(); \
+    try \
+    { \
+      Common::RefObjPtr<IFaces::IBase> Ret(ModuleType::CreateObject(classId)); \
+      return !Ret.Get() ? false : Ret->QueryInterface(IFaces::IBase::GetIFaceId(), iface); \
+    } \
+    catch (std::exception &) \
+    { \
+      return false; \
+    } \
   } \
   extern "C" unsigned long GetModuleCounter() \
   { \
-    return Common::ModuleCounter::GetModuleCounter(); \
+    try \
+    { \
+      return Common::ModuleCounter::GetModuleCounter(); \
+    } \
+    catch (std::exception &) \
+    { \
+      return -1; \
+    } \
   }
 
 #endif  // !__MODULE_H__

@@ -1,5 +1,6 @@
 #include "IFacesTools.h"
 #include "Mutex.h"
+#include "Pointers.h""
 
 
 namespace Common
@@ -34,7 +35,7 @@ namespace Common
 
   unsigned long ModuleCounter::GetModuleCounter()
   {
-    return ModuleCounter::Instance.Counter->GetCounter();
+    return ModuleCounter::GetInstance().Counter->GetCounter();
   }
 
   ModuleCounter::ModuleCounter() :
@@ -57,5 +58,11 @@ namespace Common
     Counter->Dec();
   }
 
-  ModuleCounter ModuleCounter::Instance;
+  ModuleCounter& ModuleCounter::GetInstance()
+  {
+    static AutoPtr<ModuleCounter> Instance;
+    if (!Instance.Get())
+      Instance.Reset(new ModuleCounter);
+    return *Instance.Get();
+  }
 }
