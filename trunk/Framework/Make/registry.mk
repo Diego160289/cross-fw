@@ -12,7 +12,7 @@ INCLUDE = ./Include
 
 LIBSDIR = ./Libs/$(MAKETYPE)
 
-LIBS = Common System
+LIBS = Common System TinyXml
 
 TARGET = $(PROJECT)$(DLLFILEEXT)
 

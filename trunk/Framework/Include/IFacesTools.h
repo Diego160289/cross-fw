@@ -169,10 +169,10 @@ namespace Common
       return false;
     }
   private:
-    TSynObj SynObj;
+    mutable TSynObj SynObj;
     unsigned long Counter;
   protected:
-    TSynObj& GetSynObj()
+    TSynObj& GetSynObj() const
     {
       return SynObj;
     }

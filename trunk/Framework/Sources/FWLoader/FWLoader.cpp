@@ -15,7 +15,10 @@ int main()
       Common::RefObjPtr<IFaces::IRegistryCtrl> Reg;
       Obj.QueryInterface(&Reg);
       if (Reg.Get())
-        Reg->Load("Hello");
+      {
+        Reg->Create("c:/temp/_1.xml");
+        //Reg->Remove("c:/temp/_1.xml");
+      }
       Common::RefObjPtr<IFaces::IRegistry> Reg1;
       Reg->QueryInterface(IFaces::IRegistry::GetUUID(), (void**)&Reg1);
       if (Reg1.Get())
