@@ -14,7 +14,7 @@ namespace System
   public:
     DllHolderImpl(const char *libName);
     ~DllHolderImpl();
-    void* GetProc(const char *procNmae);
+    void* GetProc(const char *procName);
   private:
     HINSTANCE Dll;
   };

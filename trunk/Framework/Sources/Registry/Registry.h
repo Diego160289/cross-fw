@@ -4,7 +4,7 @@
 #include "IFacesTools.h"
 #include "Mutex.h"
 
-#include "Xml/tinyxml.h"
+#include "Xml/TinyXml/tinyxml.h"
 
 using IFaces::RetCode;
 using IFaces::retFail;

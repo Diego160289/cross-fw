@@ -13,8 +13,8 @@ namespace System
     delete Dll;
   }
 
-  void* DllHolder::InternalGetProc(const char *procNmae)
+  void* DllHolder::InternalGetProc(const char *procName)
   {
-    return Dll->GetProc(procNmae);
+    return Dll->GetProc(procName);
   }
 }
