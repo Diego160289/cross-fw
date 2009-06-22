@@ -30,6 +30,37 @@ namespace Common
     return false;
   }
 
+  template <typename TList>
+  class InheritedFromIFacesList
+    : public TList::Head
+    , public InheritedFromIFacesList<typename TList::Tail>
+  {
+  public:
+    void CastTo(const char *ifaceId, void **iface)
+    {
+      typedef typename TList::Head CurBase;
+      const char *CurId = CurBase::GetUUID();
+      const char *DestId = ifaceId;
+      while (*DestId && *CurId && *DestId++ == *CurId++);
+      if (*DestId || *CurId)
+      {
+        InheritedFromIFacesList<typename TList::Tail>::CastTo(ifaceId, iface);
+        return;
+      }
+      *iface = static_cast<CurBase*>(this);
+    }
+  };
+
+  template <>
+  class InheritedFromIFacesList<NullType>
+  {
+  public:
+    void CastTo(const char *, void **iface)
+    {
+      *iface = 0;
+    }
+  };
+
   template <typename T, typename TSynObj>
   class MultiObject
   {
@@ -83,13 +114,15 @@ namespace Common
     typename TSynObj = System::MutexStub
   >
   class CoClassBase
-    : public InheritedFromList<TIFacesList>
-    , public InheritedFromList<TYPE_LIST_1(IFaces::IBase)>
+    : public InheritedFromIFacesList<TIFacesList>
+    , public InheritedFromIFacesList<TYPE_LIST_1(IFaces::IBase)>
     , virtual public TCreateStrategy<TCoClass, TSynObj>
     , private NoCopyable
   {
   public:
     typedef TypeList<IFaces::IBase, TIFacesList> ExportIFacesList;
+    typedef InheritedFromIFacesList<TIFacesList> InheritedInterfaces;
+    typedef InheritedFromIFacesList<TYPE_LIST_1(IFaces::IBase)> InheritedBaseInterface;
     CoClassBase()
       : Counter(0)
     {
@@ -117,7 +150,7 @@ namespace Common
         TCoClass *CoClassPtr = dynamic_cast<TCoClass *>(this);
         if (!CoClassPtr)
           return false;
-        CoClassPtr->InheritedFromList<TIFacesList>::CastTo(ifaceId, iface);
+        CoClassPtr->InheritedInterfaces::CastTo(ifaceId, iface);
         if (*iface)
         {
           AddRef();
@@ -125,7 +158,7 @@ namespace Common
         }
         else
         {
-          CoClassPtr->InheritedFromList<TYPE_LIST_1(IFaces::IBase)>::CastTo(ifaceId, iface);
+          CoClassPtr->InheritedBaseInterface::CastTo(ifaceId, iface);
           if (*iface)
           {
             AddRef();
