@@ -1,9 +1,14 @@
 #include "Registry.h"
 #include "SyncObj.h"
+#include "File.h"
 
 #include <iostream>
 
+const char IRegistryImpl::RegistryVersion[] = "1.0";
+
 IRegistryImpl::IRegistryImpl()
+  : IsLoadedState(false)
+  , IsModifiedState(false)
 {
 }
 
@@ -14,7 +19,39 @@ IRegistryImpl::~IRegistryImpl()
 RetCode IRegistryImpl::Create(const char *registryPath)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
-  std::cout << "IRegistryImpl::Create" << std::endl;
+  if (IsLoadedState)
+    return retFail;
+  TiXmlDeclaration Declaration("1.0", "utf-8", "yes");
+  if (!Document.InsertEndChild(Declaration))
+    return retFail;
+  TiXmlElement Registry("Registry");
+  Registry.SetAttribute("Version", RegistryVersion);
+  if (!Registry.InsertEndChild(TiXmlElement("Key")))
+    return retFail;
+  if (!Document.InsertEndChild(Registry))
+    return retFail;
+  if (!Document.SaveFile(registryPath))
+    return retFail;
+  IsLoadedState = true;
+  IsModifiedState = false;
+  return retOk;
+}
+
+RetCode IRegistryImpl::Remove(const char *registryPath)
+{
+  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  if (IsLoadedState)
+    Document.Clear();
+  IsLoadedState = false;
+  IsModifiedState = false;
+  try
+  {
+    System::File::Remove(registryPath);
+  }
+  catch (std::exception &)
+  {
+    return retFail;
+  }
   return retOk;
 }
 
@@ -22,6 +59,18 @@ RetCode IRegistryImpl::Load(const char *registryPath)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   std::cout << "IRegistryImpl::Load" << std::endl;
+  return retOk;
+}
+
+bool IRegistryImpl::IsLoaded() const
+{
+  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  return IsLoadedState;
+}
+
+RetCode IRegistryImpl::Unload()
+{
+  Common::SyncObject<System::Mutex> Locker(GetSynObj());
   return retOk;
 }
 
@@ -50,6 +99,12 @@ RetCode IRegistryImpl::CreatePathKey(const char *pathKey)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   std::cout << "IRegistryImpl::CreatePathKey" << std::endl;
+  return retOk;
+}
+
+RetCode IRegistryImpl::RemovePathKey(const char *pathKey)
+{
+  Common::SyncObject<System::Mutex> Locker(GetSynObj());
   return retOk;
 }
 

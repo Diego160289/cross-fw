@@ -5,7 +5,7 @@
 namespace System
 {
   DllHolder::DllHolderImpl::DllHolderImpl(const char *libName)
-    : Dll(::LoadLibrary(libName))
+    : Dll(::LoadLibraryA(libName))
   {
     if (!Dll)
       throw DllHolderException("Can't load dll");
