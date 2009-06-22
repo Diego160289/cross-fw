@@ -16,9 +16,9 @@ namespace System
     ::FreeLibrary(Dll);
   }
 
-  void* DllHolder::DllHolderImpl::GetProc(const char *procNmae)
+  void* DllHolder::DllHolderImpl::GetProc(const char *procName)
   {
-    void *Ret = (void*)(::GetProcAddress(Dll, procNmae));
+    void *Ret = (void*)(::GetProcAddress(Dll, procName));
     if (!Ret)
       throw DllHolderException("Function not found");
     return Ret;

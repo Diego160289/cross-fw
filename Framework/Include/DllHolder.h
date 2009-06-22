@@ -15,9 +15,9 @@ namespace System
     DllHolder(const char *libName);
     ~DllHolder();
     template <typename T>
-    T GetProc(const char *procNmae)
+    T GetProc(const char *procName)
     {
-      return (T)(InternalGetProc(procNmae));
+      return (T)(InternalGetProc(procName));
     }
   private:
     class DllHolderImpl;

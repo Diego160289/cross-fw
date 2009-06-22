@@ -8,7 +8,7 @@ OBJDIR = ./Objects/$(MAKETYPE)/$(PROJECT)
 
 TARGETDIR = ./Libs/$(MAKETYPE)
 
-INCLUDE = ./Include/Xml
+INCLUDE = ./Include/Xml/TinyXml
 
 TARGET = lib$(PROJECT).a
 

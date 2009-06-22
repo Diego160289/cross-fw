@@ -16,9 +16,9 @@ namespace System
     dlclose(Dll);
   }
 
-  void* DllHolder::DllHolderImpl::GetProc(const char *procNmae)
+  void* DllHolder::DllHolderImpl::GetProc(const char *procName)
   {
-    void *Ret = dlsym(Dll, procNmae);
+    void *Ret = dlsym(Dll, procName);
     if (!Ret)
       throw DllHolderException("Function not found");
     return Ret;
