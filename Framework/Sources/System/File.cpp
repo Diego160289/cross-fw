@@ -10,6 +10,7 @@ namespace System
 
   File::~File()
   {
+    delete Impl;
   }
 
   void File::Remove(const char *fileName)
