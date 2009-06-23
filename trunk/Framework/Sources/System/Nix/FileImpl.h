@@ -2,6 +2,7 @@
 #define __FILEIMPL_H__
 
 #include "File.h"
+#include <unistd.h>
 
 
 namespace System
@@ -14,7 +15,7 @@ namespace System
     ~FileImpl();
     static void Remove(const char *fileName);
   private:
-    HANDLE FileHandle;
+    //HANDLE FileHandle;
   };
 }
 

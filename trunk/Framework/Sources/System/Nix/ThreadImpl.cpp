@@ -5,7 +5,6 @@ namespace System
   Thread::ThreadImpl::ThreadImpl(Common::ICallback *callback)
     : ThreadHandle(0)
   {
-    DWORD Id = 0;
     if (pthread_create(&ThreadHandle, 0, &ThreadImpl::ThreadProc, callback))
       throw ThreadException("Can't create thread");
   }

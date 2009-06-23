@@ -26,7 +26,7 @@ RetCode IRegistryImpl::Create(const char *registryPath)
     return retFail;
   TiXmlElement Registry("Registry");
   Registry.SetAttribute("Version", RegistryVersion);
-  if (!Registry.InsertEndChild(TiXmlElement("Key")))
+  if (!Registry.InsertEndChild(TiXmlElement("Keys")))
     return retFail;
   if (!Document.InsertEndChild(Registry))
     return retFail;
