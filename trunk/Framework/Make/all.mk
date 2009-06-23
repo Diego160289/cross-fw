@@ -10,3 +10,4 @@ make_libs:
 
 make_dlls: 
 	make  -f ./Make/registry.mk
+	make  -f ./Make/tools.mk
