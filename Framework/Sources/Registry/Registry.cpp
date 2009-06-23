@@ -95,6 +95,17 @@ RetCode IRegistryImpl::Close()
   return retOk;
 }
 
+const char* IRegistryImpl::GetCtrlVersion() const
+{
+  return RegistryVersion;
+}
+
+const char* IRegistryImpl::GetLoadedRegistryVersion() const
+{
+  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  return 0;
+}
+
 RetCode IRegistryImpl::CreatePathKey(const char *pathKey)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
