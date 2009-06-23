@@ -11,7 +11,13 @@ using IFaces::retFail;
 using IFaces::retOk;
 
 class IRegistryImpl
-  : public Common::CoClassBase<IRegistryImpl, TYPE_LIST_2(IFaces::IRegistryCtrl, IFaces::IRegistry), Common::MultiObject, System::Mutex>
+  : public Common::CoClassBase
+      <
+        IRegistryImpl,
+        TYPE_LIST_2(IFaces::IRegistryCtrl, IFaces::IRegistry),
+        Common::MultiObject,
+        System::Mutex
+      >
 {
 public:
   DECLARE_UUID(cf7456c3-70c7-4a97-b8e4-f910cd2f823b)
@@ -27,6 +33,9 @@ public:
   virtual RetCode Save(const char *registryPath);
   virtual RetCode IsModified();
   virtual RetCode Close();
+  virtual const char* GetCtrlVersion() const;
+  virtual const char* GetLoadedRegistryVersion() const;
+
 
   // IRegistry
   virtual RetCode CreatePathKey(const char *pathKey);

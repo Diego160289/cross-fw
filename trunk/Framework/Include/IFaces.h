@@ -40,12 +40,41 @@ namespace IFaces
     : public IBase
   {
     DECLARE_UUID(c6f1880a-d666-453c-ae5c-f3c5c30ff526)
+    enum VariantType
+    {
+      vtUnknown,
+      vtBool,
+      vtBinary,
+      vtIBase,
+      vtChar, vtUChar,
+      vtShort, vtUShort,
+      vtInt, vtUInt,
+      vtLong, vtULong,
+      vtFloat, vtDouble,
+      vtConstCharPtr, vtConstWCharPtr
+    };
+    virtual RetCode SetValue(VariantType type, const void *value) = 0;
+    virtual RetCode SetBinaryValue(const void *value, unsigned long bytes) = 0;
+    virtual const void* GetValue(VariantType type) const = 0;
+    virtual const void* GetBinaryValue() const = 0;
+    virtual unsigned long GetValueSize() const = 0;
+    virtual RetCode ConvertTo(VariantType type) = 0;
+    virtual bool IsEmpty() const = 0;
+    virtual VariantType GetType() const = 0;
+    virtual RetCode Clear() = 0;
   };
 
   struct IEnum
     : public IBase
   {
     DECLARE_UUID(327f4f3c-f36d-4168-940d-f690cbb6c65c)
+    virtual RetCode First() = 0;
+    virtual RetCode Last() = 0;
+    virtual RetCode Next() = 0;
+    virtual RetCode Prev() = 0;
+    virtual RetCode IsFirst(bool *isLast) const = 0;
+    virtual RetCode IsLast(bool *isLast) const = 0;
+    virtual RetCode GetItem(IBase **item) = 0;
   };
 
   struct IRegistryCtrl
@@ -60,6 +89,8 @@ namespace IFaces
     virtual RetCode Save(const char *registryPath) = 0;
     virtual RetCode IsModified() = 0;
     virtual RetCode Close() = 0;
+    virtual const char* GetCtrlVersion() const = 0;
+    virtual const char* GetLoadedRegistryVersion() const = 0;
   };
 
   struct IRegistry
@@ -71,6 +102,25 @@ namespace IFaces
     virtual RetCode GetValue(const char *pathKey, IVariant **value) = 0;
     virtual RetCode SetValue(const char *pathKey, IVariant *value) = 0;
     virtual RetCode EnumKey(const char *pathKey, IEnum **enumKey) = 0;
+  };
+
+  struct IMessageQueue
+    : public IBase
+  {
+    DECLARE_UUID(cb93b88d-a610-4f9a-9a46-9b63b6935ff1)
+    virtual const char* GetQueueId() const = 0;
+    virtual bool SetCallback(IBase *callback) = 0;
+    virtual bool Post(/*параметры пока не придумал...*/) = 0;
+  };
+
+  struct IMessageQueueManager
+    : public IBase
+  {
+    DECLARE_UUID(273689f4-69c7-406e-81dd-5b16684707e2)
+    virtual const char* CreateMessageQueue() = 0;
+    virtual bool DestroyMessageQueue(const char *queueId) = 0;
+    virtual bool QueryMessageQueue(const char *queueId, IMessageQueue **messageQueue) = 0;
+    virtual bool EnumMessageQueues(IEnum **messageQuques) = 0;
   };
 
 }
