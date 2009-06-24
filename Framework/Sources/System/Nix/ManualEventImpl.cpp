@@ -41,7 +41,7 @@ namespace System
       pthread_mutex_unlock(&Mtx);
       throw ManualEventException("Can't set event");
     }
-    pthread_mutex_unlock(&mx);
+    pthread_mutex_unlock(&Mtx);
   }
 
   void ManualEvent::ManualEventImpl::Reset()
