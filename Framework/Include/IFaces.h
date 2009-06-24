@@ -14,7 +14,7 @@ namespace IFaces
 
   enum RetCode
   {
-    retOk, retFail
+    retOk, retFalse, retFail
   };
 
   struct IBase
@@ -69,12 +69,8 @@ namespace IFaces
   {
     DECLARE_UUID(327f4f3c-f36d-4168-940d-f690cbb6c65c)
     virtual RetCode First() = 0;
-    virtual RetCode Last() = 0;
-    virtual RetCode Next() = 0;
-    virtual RetCode Prev() = 0;
-    virtual RetCode IsFirst(bool *isLast) const = 0;
-    virtual RetCode IsLast(bool *isLast) const = 0;
-    virtual RetCode GetItem(IBase **item) = 0;
+    virtual RetCode Next(IBase **item) = 0;
+    virtual RetCode Clone(IEnum **newEnum) const= 0;
   };
 
   struct IRegistryCtrl
