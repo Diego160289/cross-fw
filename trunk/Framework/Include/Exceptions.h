@@ -17,4 +17,7 @@
 #define DECLARE_RUNTIME_EXCEPTION(prefix_class_name_) \
 	DECLARE_EXCEPTION_EX(prefix_class_name_, std::runtime_error)
 
+#define DECLARE_LOGIC_EXCEPTION(prefix_class_name_) \
+  DECLARE_EXCEPTION_EX(prefix_class_name_, std::logic_exception)
+
 #endif	// !__EXCEPTIONS_H__

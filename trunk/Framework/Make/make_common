@@ -6,9 +6,10 @@
 CXX = g++
 
 ifeq ($(MAKETYPE), Debug)
-	CXXFLAGS = -O0 -g3 -Wall -D_DEBUG -fmessage-length=0 -pipe
+	CXXFLAGS = -O0 -g3 -Wall -D_DEBUG \
+		-fpermissive -fmessage-length=0 -pipe
 else
-	CXXFLAGS = -O3 -Wall -fmessage-length=0 -pipe
+	CXXFLAGS = -O3 -Wall -fpermissive -fmessage-length=0 -pipe
 endif
 
 ifeq ($(OS), Win)

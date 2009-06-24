@@ -123,6 +123,7 @@ namespace Common
     typedef TypeList<IFaces::IBase, TIFacesList> ExportIFacesList;
     typedef InheritedFromIFacesList<TIFacesList> InheritedInterfaces;
     typedef InheritedFromIFacesList<TYPE_LIST_1(IFaces::IBase)> InheritedBaseInterface;
+    typedef TSynObj TThisSynObj;
     CoClassBase()
       : Counter(0)
     {
