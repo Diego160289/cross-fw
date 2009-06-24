@@ -56,7 +56,7 @@ namespace IFacesImpl
         return retFail;
       if (CurIter == Items.end())
         return retFalse;
-      if ((*CurIter)->QueryInterface(item) != retOk)
+      if (!(*CurIter)->QueryInterface(item))
         return retFail;
       ++CurIter;
       return retOk;
