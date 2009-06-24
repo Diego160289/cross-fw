@@ -56,7 +56,7 @@ namespace IFacesImpl
         return retFail;
       if (CurIter == Items.end())
         return retFalse;
-      if (!(*CurIter)->QueryInterface(item))
+      if (!(*CurIter).QueryInterface(item))
         return retFail;
       ++CurIter;
       return retOk;
@@ -71,7 +71,7 @@ namespace IFacesImpl
           NewInst->CurIter = NewInst->Items.begin() +
             std::distance(Items.begin(), CurIter);
       }
-      return NewInst->QueryInterface(newEnum);
+      return NewInst.QueryInterface(newEnum) ? retOk : retFail;
     }
 
     typedef Common::RefObjPtr<IFaces::IBase> IBasePtr;
@@ -91,7 +91,7 @@ namespace IFacesImpl
   private:
     typedef std::list<IBasePtr> IBasePtrPool;
     bool IsModified;
-    IBasePtrPool Items;
+    mutable IBasePtrPool Items;
     typedef IBasePtrPool::iterator Iterator;
     Iterator CurIter;
   };
