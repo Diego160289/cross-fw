@@ -31,7 +31,7 @@ RetCode IRegistryImpl::Create(const char *registryPath)
   if (!NewDocument->SaveFile(registryPath))
     return retFail;
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
-  if (Document.Get() && InternalUnload() != retOk ||
+  if ((Document.Get() && InternalUnload() != retOk) ||
       InternalLoad(registryPath) != retOk)
   {
     return retFalse;
@@ -124,6 +124,7 @@ const char* IRegistryImpl::GetLoadedRegistryVersion() const
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   if (!Document.Get())
     return 0;
+  const TiXmlElement *Root = Document->RootElement();
   return 0;
 }
 

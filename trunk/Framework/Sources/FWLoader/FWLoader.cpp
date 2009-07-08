@@ -8,7 +8,7 @@ int main()
   try
   {
     Common::SharedPtr<System::DllHolder>
-      Dll(new System::DllHolder("./Registry.dll"));
+      Dll(new System::DllHolder("/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.so"));
     Common::ModuleHolder Module(Dll);
     {
       Common::RefObjPtr<IFaces::IBase> Obj(Module.CreateObject("cf7456c3-70c7-4a97-b8e4-f910cd2f823b"));
@@ -16,7 +16,8 @@ int main()
       Obj.QueryInterface(&Reg);
       if (Reg.Get())
       {
-        Reg->Create("./_1.xml");
+        //Reg->Create("./_1.xml");
+        Reg->Load("./_1.xml");
         //Reg->Remove("./_1.xml");
       }
       Common::RefObjPtr<IFaces::IRegistry> Reg1;
