@@ -3,12 +3,14 @@
 
 #include "IFacesTools.h"
 #include "Mutex.h"
+#include "Pointers.h"
 
 #include "Xml/TinyXml/tinyxml.h"
 
 using IFaces::RetCode;
 using IFaces::retFail;
 using IFaces::retOk;
+using IFaces::retFalse;
 
 class IRegistryImpl
   : public Common::CoClassBase
@@ -32,7 +34,6 @@ public:
   virtual RetCode Unload();
   virtual RetCode Save(const char *registryPath);
   virtual RetCode IsModified();
-  virtual RetCode Close();
   virtual const char* GetCtrlVersion() const;
   virtual const char* GetLoadedRegistryVersion() const;
 
@@ -46,8 +47,8 @@ public:
 
 private:
   static const char RegistryVersion[];
-  TiXmlDocument Document;
-  bool IsLoadedState;
+  typedef Common::SharedPtr<TiXmlDocument> TiXmlDocumentPtr;
+  TiXmlDocumentPtr Document;
   bool IsModifiedState;
 };
 
