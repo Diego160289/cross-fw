@@ -17,7 +17,7 @@ namespace
 
   void base64_encode(char *out, const char *data, unsigned int len)
   {
-    char *base64_set = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    const char *base64_set = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     unsigned char index2,index3;
     unsigned int i=0;
     for(; i<len; (i+=3,data+=3,out+=4))
