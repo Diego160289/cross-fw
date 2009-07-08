@@ -80,8 +80,8 @@ namespace IFaces
     virtual RetCode Load(const char *registryPath) = 0;
     virtual bool IsLoaded() const = 0;
     virtual RetCode Unload() = 0;
-    virtual RetCode Save(const char *registryPath) = 0;
-    virtual RetCode IsModified() = 0;
+    virtual RetCode Save() = 0;
+    virtual bool IsModified() = 0;
     virtual const char* GetCtrlVersion() const = 0;
     virtual const char* GetLoadedRegistryVersion() const = 0;
   };
