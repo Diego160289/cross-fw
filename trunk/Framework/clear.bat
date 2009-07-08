@@ -18,3 +18,9 @@ del /Q Objects\Release\FWLoader\*
 
 del /Q Objects\Debug\Registry\*
 del /Q Objects\Release\Registry\*
+
+del /Q Objects\Debug\TinyXml\*
+del /Q Objects\Release\TinyXml\*
+
+del /Q Objects\Debug\Tools\*
+del /Q Objects\Release\Tools\*

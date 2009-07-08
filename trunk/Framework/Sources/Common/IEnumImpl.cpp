@@ -36,7 +36,7 @@ namespace IFacesImpl
     IBasePtr Ret;
     RetCode Code = Enumerator->Next(&Ret);
     if (Code != retOk && Code != retFalse)
-      throw IEnumHelperException("Can't get first item");
+      throw IEnumHelperException("Can't get next item");
     return Ret;
   }
 

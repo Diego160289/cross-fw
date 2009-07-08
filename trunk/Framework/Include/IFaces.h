@@ -51,14 +51,12 @@ namespace IFaces
       vtInt, vtUInt,
       vtLong, vtULong,
       vtFloat, vtDouble,
-      vtConstCharPtr, vtConstWCharPtr
+      vtString, vtWString
     };
     virtual RetCode SetValue(VariantType type, const void *value) = 0;
     virtual RetCode SetBinaryValue(const void *value, unsigned long bytes) = 0;
-    virtual const void* GetValue(VariantType type) const = 0;
-    virtual const void* GetBinaryValue() const = 0;
+    virtual RetCode GetValue(void **value) const = 0;
     virtual unsigned long GetValueSize() const = 0;
-    virtual RetCode ConvertTo(VariantType type) = 0;
     virtual bool IsEmpty() const = 0;
     virtual VariantType GetType() const = 0;
     virtual RetCode Clear() = 0;
