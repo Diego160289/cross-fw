@@ -32,8 +32,8 @@ public:
   virtual RetCode Load(const char *registryPath);
   virtual bool IsLoaded() const;
   virtual RetCode Unload();
-  virtual RetCode Save(const char *registryPath);
-  virtual RetCode IsModified();
+  virtual RetCode Save();
+  virtual bool IsModified();
   virtual const char* GetCtrlVersion() const;
   virtual const char* GetLoadedRegistryVersion() const;
 
@@ -50,6 +50,8 @@ private:
   typedef Common::SharedPtr<TiXmlDocument> TiXmlDocumentPtr;
   TiXmlDocumentPtr Document;
   bool IsModifiedState;
+  RetCode InternalLoad(const char *registryPath);
+  RetCode InternalUnload();
 };
 
 #endif  // !__REGISTRY_H__

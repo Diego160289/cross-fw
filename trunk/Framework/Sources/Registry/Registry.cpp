@@ -16,7 +16,6 @@ IRegistryImpl::~IRegistryImpl()
 
 RetCode IRegistryImpl::Create(const char *registryPath)
 {
-  Common::SyncObject<System::Mutex> Locker(GetSynObj());
   if (Document.Get())
     return retFail;
   TiXmlDocumentPtr NewDocument(new TiXmlDocument);
@@ -31,8 +30,12 @@ RetCode IRegistryImpl::Create(const char *registryPath)
     return retFail;
   if (!NewDocument->SaveFile(registryPath))
     return retFail;
-  if (Unload() != retOk || Load(registryPath) != retOk)
+  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  if (Document.Get() && InternalUnload() != retOk ||
+      InternalLoad(registryPath) != retOk)
+  {
     return retFalse;
+  }
   return retOk;
 }
 
@@ -52,10 +55,31 @@ RetCode IRegistryImpl::Remove(const char *registryPath)
   return retOk;
 }
 
+RetCode IRegistryImpl::InternalLoad(const char *registryPath)
+{
+  if (Document.Get())
+    return retFail;
+  TiXmlDocumentPtr NewDocumet(new TiXmlDocument);
+  if (!NewDocumet->LoadFile(registryPath, TIXML_ENCODING_UTF8))
+    return retFail;
+  Document.Swap(NewDocumet);
+  IsModifiedState = false;
+  return retOk;
+}
+
+RetCode IRegistryImpl::InternalUnload()
+{
+  if (!Document.Get())
+    return retFail;
+  Document.Release();
+  IsModifiedState = false;
+  return retOk;
+}
+
 RetCode IRegistryImpl::Load(const char *registryPath)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
-  return retOk;
+  return InternalLoad(registryPath);
 }
 
 bool IRegistryImpl::IsLoaded() const
@@ -67,19 +91,27 @@ bool IRegistryImpl::IsLoaded() const
 RetCode IRegistryImpl::Unload()
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  return InternalUnload();
+}
+
+RetCode IRegistryImpl::Save()
+{
+  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  if (!Document.Get())
+    return retFail;
+  if (IsModifiedState)
+  {
+    if (!Document->SaveFile())
+      return retFail;
+  }
+  IsModifiedState = false;
   return retOk;
 }
 
-RetCode IRegistryImpl::Save(const char *registryPath)
+bool IRegistryImpl::IsModified()
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
-  return retOk;
-}
-
-RetCode IRegistryImpl::IsModified()
-{
-  Common::SyncObject<System::Mutex> Locker(GetSynObj());
-  return retOk;
+  return IsModifiedState;
 }
 
 const char* IRegistryImpl::GetCtrlVersion() const
@@ -90,6 +122,8 @@ const char* IRegistryImpl::GetCtrlVersion() const
 const char* IRegistryImpl::GetLoadedRegistryVersion() const
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  if (!Document.Get())
+    return 0;
   return 0;
 }
 
