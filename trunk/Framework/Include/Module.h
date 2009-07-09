@@ -51,25 +51,31 @@ namespace Common
 
 }
 
+#ifdef _MSC_VER
+  #define EXPORT_FUNCTION extern "C" __declspec(dllexport) 
+#else
+  #define EXPORT_FUNCTION extern "C" 
+#endif
+
 #define DECLARE_MODULE_ENTRY_POINT(module_name_, module_guid_, module_coclasslist_) \
   typedef Common::Module<module_coclasslist_> ModuleType; \
-  extern "C" const char* GetModuleName() \
+  EXPORT_FUNCTION const char* GetModuleName() \
   { \
     return module_name_; \
   } \
-  extern "C" const char* GetModuleGuid() \
+  EXPORT_FUNCTION const char* GetModuleGuid() \
   { \
     return #module_guid_; \
   } \
-  extern "C" unsigned GetCoClassCount() \
+  EXPORT_FUNCTION unsigned GetCoClassCount() \
   { \
     return ModuleType::GetCoClassCount(); \
   } \
-  extern "C" const char* GetCoClassId(unsigned index) \
+  EXPORT_FUNCTION const char* GetCoClassId(unsigned index) \
   { \
     return ModuleType::GetCoClassId(index); \
   } \
-  extern "C" bool CreateObject(const char *classId, void **iface) \
+  EXPORT_FUNCTION bool CreateObject(const char *classId, void **iface) \
   { \
     try \
     { \
@@ -83,7 +89,7 @@ namespace Common
       return false; \
     } \
   } \
-  extern "C" unsigned long GetModuleCounter() \
+  EXPORT_FUNCTION unsigned long GetModuleCounter() \
   { \
     try \
     { \
@@ -93,6 +99,6 @@ namespace Common
     { \
       return static_cast<unsigned long>(-1); \
     } \
-  }
+  } \
 
 #endif  // !__MODULE_H__

@@ -1,4 +1,5 @@
 #include "FileImpl.h"
+#include <string>
 
 namespace System
 {
@@ -13,7 +14,7 @@ namespace System
   void File::FileImpl::Remove(const char *fileName)
   {
     if (!::DeleteFileA(fileName))
-      throw FileException(std::string("Can't remove \"") + fileName + std::string("\""));
+      throw FileException((std::string("Can't remove \"") + fileName) + std::string("\""));
   }
 
 }
