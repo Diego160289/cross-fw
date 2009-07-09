@@ -37,10 +37,9 @@ public:
   virtual const char* GetCtrlVersion() const;
   virtual const char* GetLoadedRegistryVersion() const;
 
-
   // IRegistry
-  virtual RetCode CreatePathKey(const char *pathKey);
-  virtual RetCode RemovePathKey(const char *pathKey);
+  virtual RetCode CreateKey(const char *pathKey);
+  virtual RetCode RemoveKey(const char *pathKey);
   virtual RetCode GetValue(const char *pathKey, IFaces::IVariant **value);
   virtual RetCode SetValue(const char *pathKey, IFaces::IVariant *value);
   virtual RetCode EnumKey(const char *pathKey, IFaces::IEnum **enumKey);
@@ -52,6 +51,7 @@ private:
   bool IsModifiedState;
   RetCode InternalLoad(const char *registryPath);
   RetCode InternalUnload();
+  mutable std::string LoadedRegistryVersion;
 };
 
 #endif  // !__REGISTRY_H__

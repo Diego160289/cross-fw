@@ -60,6 +60,8 @@ namespace IFaces
     virtual bool IsEmpty() const = 0;
     virtual VariantType GetType() const = 0;
     virtual RetCode Clear() = 0;
+    virtual const char* PackToBase64() const = 0;
+    virtual RetCode FromBase64Pack(const char *pkg) = 0;
   };
 
   struct IEnum
@@ -90,8 +92,8 @@ namespace IFaces
     : public IBase
   {
     DECLARE_UUID(c5d042c6-e6ec-4361-99b8-78026611b87b)
-    virtual RetCode CreatePathKey(const char *pathKey) = 0;
-    virtual RetCode RemovePathKey(const char *pathKey) = 0;
+    virtual RetCode CreateKey(const char *pathKey) = 0;
+    virtual RetCode RemoveKey(const char *pathKey) = 0;
     virtual RetCode GetValue(const char *pathKey, IVariant **value) = 0;
     virtual RetCode SetValue(const char *pathKey, IVariant *value) = 0;
     virtual RetCode EnumKey(const char *pathKey, IEnum **enumKey) = 0;

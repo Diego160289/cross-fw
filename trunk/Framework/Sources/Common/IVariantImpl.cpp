@@ -91,13 +91,13 @@ namespace IFacesImpl
 
   IVariantHelper& IVariantHelper::operator = (const char *value)
   {
-    Var->SetValue(IFaces::IVariant::vtString, &value);
+    Var->SetValue(IFaces::IVariant::vtString, value);
     return *this;
   }
 
   IVariantHelper& IVariantHelper::operator = (const wchar_t *value)
   {
-    Var->SetValue(IFaces::IVariant::vtWString, &value);
+    Var->SetValue(IFaces::IVariant::vtWString, value);
     return *this;
   }
 

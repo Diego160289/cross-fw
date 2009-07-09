@@ -136,9 +136,12 @@ namespace Common
     }
     virtual unsigned long Release()
     {
-      SyncObject<TSynObj> Locker(GetSynObj());
-      ModuleCounter::GetInstance().Dec();
-      unsigned long NewCounter = --Counter;
+      unsigned long NewCounter = 0;
+      {
+        SyncObject<TSynObj> Locker(GetSynObj());
+        ModuleCounter::GetInstance().Dec();
+        NewCounter = --Counter;
+      }
       if (!NewCounter)
         delete this;
       return NewCounter;

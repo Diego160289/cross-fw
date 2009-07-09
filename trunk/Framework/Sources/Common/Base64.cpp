@@ -70,7 +70,7 @@ namespace
 
   unsigned int calc_bufsize_base64_decode(const char *data, unsigned int len)
   {
-    unsigned int count = 0;
+    unsigned int count = len ? 1 : 0;
     for(;len--;data+=4) {
       count+=3;
       if(*(data+2) != '=') {
@@ -87,7 +87,7 @@ namespace Common
 {
   std::string BinToBase64(const void *data, unsigned bytes)
   {
-    unsigned OutLen = static_cast<unsigned>((bytes / 3.0) * 4 + 1) + 1;
+    unsigned OutLen = static_cast<unsigned>((bytes / 3.0) * 4 + 1) + 2;
     std::vector<char> OutBuf(OutLen, 0);
     base64_encode(&OutBuf[0], reinterpret_cast<const char *>(data), bytes);
     return &OutBuf[0];
