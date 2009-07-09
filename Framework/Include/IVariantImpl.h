@@ -7,6 +7,8 @@
 #include "Exceptions.h"
 #include "RefObjPtr.h"
 #include "Pointers.h"
+#include "Typedefs.h"
+#include "CommonUtils.h"
 
 
 #include <vector>
@@ -56,7 +58,7 @@ namespace IFacesImpl
         Holder.Reset(new IVariantHolderSimple<bool, IFaces::IVariant::vtBool>(*reinterpret_cast<const bool*>(value)));
         break;
       case IFaces::IVariant::vtIBase :
-        Holder.Reset(new IVariantHolderIBase(*reinterpret_cast<IFaces::IBase*>(value)));
+        Holder.Reset(new IVariantHolderIBase(*(IFaces::IBase**)(value)));
         break;
       case IFaces::IVariant::vtChar :
         Holder.Reset(new IVariantHolderSimple<char, IFaces::IVariant::vtChar>(*reinterpret_cast<const char*>(value)));
@@ -89,10 +91,10 @@ namespace IFacesImpl
         Holder.Reset(new IVariantHolderSimple<double, IFaces::IVariant::vtDouble>(*reinterpret_cast<const double*>(value)));
         break;
       case IFaces::IVariant::vtString :
-        Holder.Reset(new IVariantHolderString<char, IFaces::IVariant::vtString>(*reinterpret_cast<const char*>(value)));
+        Holder.Reset(new IVariantHolderString<char, IFaces::IVariant::vtString>(reinterpret_cast<const char*>(value)));
         break;
       case IFaces::IVariant::vtWString :
-        Holder.Reset(new IVariantHolderString<wchar_t, IFaces::IVariant::vtWString>(*reinterpret_cast<const wchar_t*>(value)));
+        Holder.Reset(new IVariantHolderString<wchar_t, IFaces::IVariant::vtWString>(reinterpret_cast<const wchar_t*>(value)));
         break;
       default :
         return retFail;
@@ -134,6 +136,166 @@ namespace IFacesImpl
       Holder.Release();
       return retOk;
     }
+    virtual const char* PackToBase64() const
+    {
+      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      return !Holder.Get() ? 0 : Holder->ToBase64();
+    }
+    virtual RetCode FromBase64Pack(const char *pkg)
+    {
+      Common::CharVectorPtr Data = Common::Base64ToBin(pkg);
+      IFaces::IVariant::VariantType Type = IFaces::IVariant::vtUnknown;
+      size_t TypeSize = sizeof(Type);
+      if (Data->size() < TypeSize)
+        return retFail;
+      memcpy(&Type, &Data->front(), TypeSize);
+      const char *ValData = &Data->front() + TypeSize;
+      if (!ValData)
+        return retFail;
+      size_t ValLen = Data->size() - TypeSize;
+      IVariantHolderPtr NewHolder;
+      switch (Type)
+      {
+      case IFaces::IVariant::vtBool :
+        {
+          if (ValLen != sizeof(bool))
+            return retFail;
+          bool Val = false;
+          memcpy(&Val, ValData, ValLen);
+          NewHolder.Reset(new IVariantHolderSimple<bool, IFaces::IVariant::vtBool>(Val));
+        }
+        break;
+      case IFaces::IVariant::vtChar :
+        {
+          if (ValLen != sizeof(char))
+            return retFail;
+          char Val = 0;
+          memcpy(&Val, ValData, ValLen);
+          NewHolder.Reset(new IVariantHolderSimple<char, IFaces::IVariant::vtChar>(Val));
+        }
+        break;
+      case IFaces::IVariant::vtUChar :
+        {
+          if (ValLen != sizeof(unsigned char))
+            return retFail;
+          unsigned char Val = 0;
+          memcpy(&Val, ValData, ValLen);
+          NewHolder.Reset(new IVariantHolderSimple<unsigned char, IFaces::IVariant::vtUChar>(Val));
+        }
+        break;
+      case IFaces::IVariant::vtShort :
+        {
+          if (ValLen != sizeof(short))
+            return retFail;
+          short Val = 0;
+          memcpy(&Val, ValData, ValLen);
+          NewHolder.Reset(new IVariantHolderSimple<short, IFaces::IVariant::vtShort>(Val));
+        }
+        break;
+      case IFaces::IVariant::vtUShort :
+        {
+          if (ValLen != sizeof(unsigned short))
+            return retFail;
+          unsigned short Val = 0;
+          memcpy(&Val, ValData, ValLen);
+          NewHolder.Reset(new IVariantHolderSimple<unsigned short, IFaces::IVariant::vtUShort>(Val));
+        }
+        break;
+      case IFaces::IVariant::vtInt :
+        {
+          if (ValLen != sizeof(int))
+            return retFail;
+          int Val = 0;
+          memcpy(&Val, ValData, ValLen);
+          NewHolder.Reset(new IVariantHolderSimple<int, IFaces::IVariant::vtInt>(Val));
+        }
+        break;
+      case IFaces::IVariant::vtUInt :
+        {
+          if (ValLen != sizeof(unsigned))
+            return retFail;
+          unsigned Val = 0;
+          memcpy(&Val, ValData, ValLen);
+          NewHolder.Reset(new IVariantHolderSimple<unsigned, IFaces::IVariant::vtUInt>(Val));
+        }
+        break;
+      case IFaces::IVariant::vtLong :
+        {
+          if (ValLen != sizeof(long))
+            return retFail;
+          long Val = 0;
+          memcpy(&Val, ValData, ValLen);
+          NewHolder.Reset(new IVariantHolderSimple<long, IFaces::IVariant::vtLong>(Val));
+        }
+        break;
+      case IFaces::IVariant::vtULong :
+        {
+          if (ValLen != sizeof(unsigned long))
+            return retFail;
+          unsigned long Val = 0;
+          memcpy(&Val, ValData, ValLen);
+          NewHolder.Reset(new IVariantHolderSimple<unsigned long, IFaces::IVariant::vtULong>(Val));
+        }
+        break;
+      case IFaces::IVariant::vtFloat :
+        {
+          if (ValLen != sizeof(float))
+            return retFail;
+          float Val = 0.0f;
+          memcpy(&Val, ValData, ValLen);
+          NewHolder.Reset(new IVariantHolderSimple<float, IFaces::IVariant::vtFloat>(Val));
+        }
+        break;
+      case IFaces::IVariant::vtDouble :
+        {
+          if (ValLen != sizeof(double))
+            return retFail;
+          double Val = 0.0;
+          memcpy(&Val, ValData, ValLen);
+          NewHolder.Reset(new IVariantHolderSimple<double, IFaces::IVariant::vtDouble>(Val));
+        }
+        break;
+      case IFaces::IVariant::vtBinary :
+        {
+          if (ValLen < sizeof(Common::CharVector::size_type))
+            return retFail;
+          Common::CharVector::size_type Bytes = 0;
+          memcpy(&Bytes, ValData, sizeof(Common::CharVector::size_type));
+          ValData += sizeof(Common::CharVector::size_type);
+          NewHolder.Reset(new IVariantHolderBinary(ValData, static_cast<unsigned long>(Bytes)));
+        }
+        break;
+      case IFaces::IVariant::vtString :
+        {
+          typedef std::vector<std::string>::size_type SizeType;
+          if (ValLen < sizeof(SizeType))
+            return retFail;
+          SizeType Bytes = 0;
+          memcpy(&Bytes, ValData, sizeof(SizeType));
+          ValData += sizeof(SizeType);
+          NewHolder.Reset(new IVariantHolderString<char, IFaces::IVariant::vtString>(Bytes ? ValData : 0));
+        }
+        break;
+      case IFaces::IVariant::vtWString:
+        {
+          typedef std::vector<std::wstring>::size_type SizeType;
+          if (ValLen < sizeof(SizeType))
+            return retFail;
+          SizeType Bytes = 0;
+          memcpy(&Bytes, ValData, sizeof(SizeType));
+          ValData += sizeof(SizeType);
+          NewHolder.Reset(new IVariantHolderString<wchar_t, IFaces::IVariant::vtWString>(reinterpret_cast<const wchar_t*>(Bytes ? ValData : 0)));
+        }
+        break;
+      default :
+        break;
+      }
+      if (!NewHolder.Get())
+        return retFail;
+      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Holder = NewHolder;
+      return retOk;
+    }
   private:
     struct IVariantHolder
     {
@@ -141,6 +303,7 @@ namespace IFacesImpl
       virtual IFaces::IVariant::VariantType GetType() const = 0;
       virtual unsigned long GetSize() const = 0;
       virtual void GetData(void **data) const = 0;
+      virtual const char* ToBase64() const = 0;
     };
     template <typename TVal, IFaces::IVariant::VariantType VarType>
     class IVariantHolderSimple
@@ -160,12 +323,28 @@ namespace IFacesImpl
       {
         return sizeof(TVal);
       }
-      virtual void GetData(void **data)
+      virtual void GetData(void **data) const
       {
         *data = &Val;
       }
+      virtual const char* ToBase64() const
+      {
+        std::vector<char> Buf;
+        IFaces::IVariant::VariantType Vt = VarType;
+        std::copy(
+          &reinterpret_cast<const char*>(&Vt)[0],
+          &reinterpret_cast<const char*>(&Vt)[sizeof(Vt)],
+          std::back_inserter(Buf));
+        std::copy(
+          &reinterpret_cast<const char*>(&Val)[0],
+          &reinterpret_cast<const char*>(&Val)[sizeof(Val)],
+          std::back_inserter(Buf));
+        Base64Buf.reset(new std::string(Common::BinToBase64(&Buf[0], static_cast<unsigned>(Buf.size()))));
+        return Base64Buf->c_str();
+      }
     private:
-      TVal Val;
+      mutable TVal Val;
+      mutable Common::StringPtr Base64Buf;
     };
     class IVariantHolderBinary
       : public IVariantHolder
@@ -185,13 +364,31 @@ namespace IFacesImpl
       {
         return static_cast<unsigned long>(Buf.size());
       }
-      virtual void GetData(void **data)
+      virtual void GetData(void **data) const
       {
         *data = Buf.empty() ? 0 : &Buf[0];
       }
+      virtual const char* ToBase64() const
+      {
+        std::vector<char> TmpBuf;
+        IFaces::IVariant::VariantType Vt = IFaces::IVariant::vtBinary;
+        std::copy(
+          &reinterpret_cast<const char*>(&Vt)[0],
+          &reinterpret_cast<const char*>(&Vt)[sizeof(Vt)],
+          std::back_inserter(TmpBuf));
+        Common::CharVector::size_type Len = Buf.size();
+        std::copy(
+          &reinterpret_cast<const char*>(&Len)[0],
+          &reinterpret_cast<const char*>(&Len)[sizeof(Len)],
+          std::back_inserter(TmpBuf));
+        if (Len)
+          std::copy(Buf.begin(), Buf.end(), std::back_inserter(TmpBuf));
+        Base64Buf.reset(new std::string(Common::BinToBase64(&TmpBuf[0], static_cast<unsigned>(TmpBuf.size()))));
+        return Base64Buf->c_str();
+      }
     private:
-      typedef std::vector<char> BufType;
-      BufType Buf;
+       mutable Common::CharVector Buf;
+       mutable Common::StringPtr Base64Buf;
     };
     class IVariantHolderIBase
       : public IVariantHolder
@@ -210,9 +407,13 @@ namespace IFacesImpl
       {
         return sizeof(IFaces::IBase*);
       }
-      virtual void GetData(void **data)
+      virtual void GetData(void **data) const
       {
-        return Ptr.QueryInterface(reinterpret_cast<IFaces::IBase**>(data));
+        Ptr->QueryInterface(IFaces::IBase::GetUUID(), data);
+      }
+      virtual const char* ToBase64() const
+      {
+        return 0;
       }
     private:
       typedef Common::RefObjPtr<IFaces::IBase> IBasePtr;
@@ -236,15 +437,39 @@ namespace IFacesImpl
       }
       virtual unsigned long GetSize() const
       {
-        return sizeof(TChar) * (Str.length() + 1);
+        return static_cast<unsigned long>(sizeof(TChar) * Str.size());
       }
-      virtual void GetData(void **data)
+      virtual void GetData(void **data) const
       {
         *data = &Str[0];
       }
+      virtual const char* ToBase64() const
+      {
+        std::vector<char> TmpBuf;
+        IFaces::IVariant::VariantType Vt = VarType;
+        std::copy(
+          &reinterpret_cast<const char*>(&Vt)[0],
+          &reinterpret_cast<const char*>(&Vt)[sizeof(Vt)],
+          std::back_inserter(TmpBuf));
+        TString::size_type StrSize = Str.size() * sizeof(TString::value_type);
+        std::copy(
+          &reinterpret_cast<const char*>(&StrSize)[0],
+          &reinterpret_cast<const char*>(&StrSize)[sizeof(StrSize)],
+          std::back_inserter(TmpBuf));
+        if (StrSize)
+        {
+          std::copy(
+            &reinterpret_cast<const char*>(&Str[0])[0],
+            &reinterpret_cast<const char*>(&Str[0])[StrSize],
+            std::back_inserter(TmpBuf));
+        }
+        Base64Buf.reset(new std::string(Common::BinToBase64(&TmpBuf[0], static_cast<unsigned>(TmpBuf.size()))));
+        return Base64Buf->c_str();
+      }
     private:
       typedef std::vector<TChar> TString;
-      TString Str;
+      mutable TString Str;
+      mutable Common::StringPtr Base64Buf;
     };
     typedef Common::SharedPtr<IVariantHolder> IVariantHolderPtr;
     IVariantHolderPtr Holder;

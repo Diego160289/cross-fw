@@ -9,6 +9,8 @@ namespace Common
 {
   typedef std::vector<char> CharVector;
   typedef std::auto_ptr<CharVector> CharVectorPtr;
+  typedef std::vector<std::string> StringVector;
+  typedef std::auto_ptr<std::string> StringPtr;
 }
 
 #endif  // !__TYPEDEFS_H__
