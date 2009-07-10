@@ -38,6 +38,7 @@ namespace IFacesImpl
     DECLARE_UUID(0b9550da-6466-4fd4-9a43-40901551f727)
 
     typedef IVariantImpl<TCreateStrategy, TSynObj> ThisType;
+    typedef Common::RefObjPtr<ThisType> ThisTypePtr;
 
     IVariantImpl()
     {
@@ -59,7 +60,7 @@ namespace IFacesImpl
         Holder.Reset(new IVariantHolderSimple<bool, IFaces::IVariant::vtBool>(*reinterpret_cast<const bool*>(value)));
         break;
       case IFaces::IVariant::vtIBase :
-        Holder.Reset(new IVariantHolderIBase(*(IFaces::IBase**)(value)));
+        Holder.Reset(new IVariantHolderIBase((IFaces::IBase*)(value)));
         break;
       case IFaces::IVariant::vtChar :
         Holder.Reset(new IVariantHolderSimple<char, IFaces::IVariant::vtChar>(*reinterpret_cast<const char*>(value)));
@@ -475,6 +476,15 @@ namespace IFacesImpl
     typedef Common::SharedPtr<IVariantHolder> IVariantHolderPtr;
     IVariantHolderPtr Holder;
   };
+
+  template <typename TSyn>
+  typename IVariantImpl<Common::MultiObject, TSyn>::ThisTypePtr
+  CreateVariant()
+  {
+    typename IVariantImpl<Common::MultiObject, TSyn>::ThisTypePtr Ret =
+      IVariantImpl<Common::MultiObject, TSyn>::CreateObject();
+    return Ret;
+  }
 
   DECLARE_RUNTIME_EXCEPTION(IVariantHelper)
 

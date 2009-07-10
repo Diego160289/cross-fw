@@ -64,6 +64,15 @@ namespace IFaces
     virtual RetCode FromBase64Pack(const char *pkg) = 0;
   };
 
+  struct INamedVariable
+    : public IBase
+  {
+    DECLARE_UUID(e6dcbc5f-15c3-4513-9e0f-51011ed23536)
+    virtual const char* GetName() const = 0;
+    virtual RetCode Get(IVariant **var) const = 0;
+    virtual RetCode Set(IVariant *var) = 0;
+  };
+
   struct IEnum
     : public IBase
   {

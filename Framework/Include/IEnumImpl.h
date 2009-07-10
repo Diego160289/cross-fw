@@ -5,7 +5,7 @@
 #include "SyncObj.h"
 #include "Exceptions.h"
 
-#include <list>
+#include <vector>
 #include <iterator>
 
 namespace IFacesImpl
@@ -32,6 +32,7 @@ namespace IFacesImpl
     DECLARE_UUID(6724ad4d-22eb-4d3d-bc0e-4283ef45373e)
 
     typedef IEnumImpl<TCreateStrategy, TSynObj> ThisType;
+    typedef Common::RefObjPtr<ThisType> ThisTypePtr;
 
     IEnumImpl()
       : IsModified(false)
@@ -68,8 +69,7 @@ namespace IFacesImpl
       NewInst->Items = Items;
       if (!(NewInst->IsModified = IsModified))
       {
-          NewInst->CurIter = NewInst->Items.begin() +
-            std::distance(Items.begin(), CurIter);
+          NewInst->CurIter = NewInst->Items.begin() + std::distance(Items.begin(), CurIter);
       }
       return NewInst.QueryInterface(newEnum) ? retOk : retFail;
     }
@@ -89,12 +89,21 @@ namespace IFacesImpl
       IsModified = true;
     }
   private:
-    typedef std::list<IBasePtr> IBasePtrPool;
+    typedef std::vector<IBasePtr> IBasePtrPool;
     bool IsModified;
     mutable IBasePtrPool Items;
     typedef IBasePtrPool::iterator Iterator;
     Iterator CurIter;
   };
+
+  template <typename TSyn>
+  typename IEnumImpl<Common::MultiObject, TSyn>::ThisTypePtr
+  CreateEnum()
+  {
+    typename IEnumImpl<Common::MultiObject, TSyn>::ThisTypePtr Ret =
+      IEnumImpl<Common::MultiObject, TSyn>::CreateObject();
+    return Ret;
+  }
 
   DECLARE_RUNTIME_EXCEPTION(IEnumHelper)
 
