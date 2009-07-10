@@ -9,7 +9,7 @@ namespace IFacesImpl
 
   IEnumHelper::IEnumHelper(const IEnumHelper &enumHelper)
   {
-    if (enumHelper.Enumerator->Clone(&Enumerator) != retOk)
+    if (enumHelper.Enumerator->Clone(Enumerator.GetPPtr()) != retOk)
       throw IEnumHelperException("Can't clone enum");
   }
 
@@ -25,7 +25,7 @@ namespace IFacesImpl
     IBasePtr Ret;
     if (Enumerator->First() != retOk)
       throw IEnumHelperException("Can't get first item");
-    RetCode Code = Enumerator->Next(&Ret);
+    RetCode Code = Enumerator->Next(Ret.GetPPtr());
     if (Code != retOk && Code != retFalse)
       throw IEnumHelperException("Can't get first item");
     return Ret;
@@ -34,7 +34,7 @@ namespace IFacesImpl
   IEnumHelper::IBasePtr IEnumHelper::Next()
   {
     IBasePtr Ret;
-    RetCode Code = Enumerator->Next(&Ret);
+    RetCode Code = Enumerator->Next(Ret.GetPPtr());
     if (Code != retOk && Code != retFalse)
       throw IEnumHelperException("Can't get next item");
     return Ret;

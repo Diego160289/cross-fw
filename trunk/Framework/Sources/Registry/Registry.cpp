@@ -335,7 +335,7 @@ RetCode IRegistryImpl::EnumKey(const char *pathKey, IFaces::IEnum **enumKey)
           Common::RefObjPtr<IFaces::IVariant> NewVar = IFacesImpl::CreateVariant<System::Mutex>();
           {
             Common::RefObjPtr<IFaces::IEnum> CurEnum;
-            if (!EnumStack.back().QueryInterface(&CurEnum))
+            if (!EnumStack.back().QueryInterface(CurEnum.GetPPtr()))
               return retFail;
             IFacesImpl::IVariantHelper Helper(NewVar);
             Helper = static_cast<IFaces::IBase*>(CurEnum.Get());
@@ -344,7 +344,7 @@ RetCode IRegistryImpl::EnumKey(const char *pathKey, IFaces::IEnum **enumKey)
             return retFail;
           EnumStack.push_back(IFacesImpl::CreateEnum<System::Mutex>());
           Common::RefObjPtr<IFaces::IBase> NewItem;
-          if (!NewNamedVar.QueryInterface(&NewItem))
+          if (!NewNamedVar.QueryInterface(NewItem.GetPPtr()))
             return retFail;
           EnumStack.back()->AddItem(NewItem);
           continue;
@@ -367,7 +367,6 @@ RetCode IRegistryImpl::EnumKey(const char *pathKey, IFaces::IEnum **enumKey)
         Common::RefObjPtr<IFaces::IVariant> Var = IFacesImpl::IVariantImpl<Common::MultiObject, System::Mutex>::CreateObject();
         if (Var->FromBase64Pack(Value.c_str()) != retOk)
           return retFail;
-        //IFacesImpl::CreateNamedVariable<System::Mutex>(KeyPair.back().c_str(), 10);
       }
       const TiXmlNode *Parent = i->Parent();
       --Level;
