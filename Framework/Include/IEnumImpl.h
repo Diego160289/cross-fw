@@ -67,10 +67,10 @@ namespace IFacesImpl
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
       Common::RefObjPtr<ThisType> NewInst(ThisType::CreateObject());
       NewInst->Items = Items;
-      if (!(NewInst->IsModified = IsModified))
+      /*if (!(NewInst->IsModified = IsModified))
       {
           NewInst->CurIter = NewInst->Items.begin() + std::distance(Items.begin(), CurIter);
-      }
+      }*/
       return NewInst.QueryInterface(newEnum) ? retOk : retFail;
     }
 

@@ -84,7 +84,7 @@ namespace Common
     {
       return Ptr;
     }
-    T** operator & ()
+    T** GetPPtr()
     {
       return &Ptr;
     }

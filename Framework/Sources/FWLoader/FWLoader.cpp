@@ -10,24 +10,24 @@ int main()
   try
   {
     Common::SharedPtr<System::DllHolder>
-		//Dll(new System::DllHolder("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll"));
-    Dll(new System::DllHolder("/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.so"));
+		Dll(new System::DllHolder("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll"));
+    //Dll(new System::DllHolder("/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.so"));
     Common::ModuleHolder Module(Dll);
     {
       Common::RefObjPtr<IFaces::IBase> Obj(Module.CreateObject("cf7456c3-70c7-4a97-b8e4-f910cd2f823b"));
       Common::RefObjPtr<IFaces::IRegistryCtrl> Reg;
-      Obj.QueryInterface(&Reg);
+      Obj.QueryInterface(Reg.GetPPtr());
       if (Reg.Get())
       {
         //Reg->Create("./_1.xml");
-        //if (Reg->Load("C:\\Projects\\cross-fw\\Eclipse\\WinFW\\_1.xml") != IFaces::retOk)
-        if (Reg->Load("/home/dmitry/cross-fw/Eclipse/NixFW/_1.xml") != IFaces::retOk)
+        if (Reg->Load("C:\\Projects\\cross-fw\\Eclipse\\WinFW\\_1.xml") != IFaces::retOk)
+        //if (Reg->Load("/home/dmitry/cross-fw/Eclipse/NixFW/_1.xml") != IFaces::retOk)
           std::cerr << "Can't load reg" << std::endl;
         else
           std::cout << Reg->GetLoadedRegistryVersion() << std::endl;
         //Reg->Remove("./_1.xml");
         Common::RefObjPtr<IFaces::IRegistry> Reg1;
-        Reg->QueryInterface(IFaces::IRegistry::GetUUID(), (void**)&Reg1);
+        Reg->QueryInterface(IFaces::IRegistry::GetUUID(), (void**)Reg1.GetPPtr());
         if (Reg1.Get())
         {
           if (Reg1->CreateKey("111/333/555") != IFaces::retOk)
@@ -58,12 +58,12 @@ int main()
             if (Reg->Save() != IFaces::retOk)
               std::cerr << "Can't save" << std::endl;
             Common::RefObjPtr<IFaces::IVariant> Var1;
-            if (Reg1->GetValue("111/222/555", &Var1) != IFaces::retOk)
+            if (Reg1->GetValue("111/222/555", Var1.GetPPtr()) != IFaces::retOk)
               std::cerr << "Can't set value" << std::endl;
             else
               std::cout << (const char*)IFacesImpl::IVariantHelper(Var1) << std::endl;
             Common::RefObjPtr<IFaces::IEnum> En;
-            if (Reg1->EnumKey("111", &En) != IFaces::retOk)
+            if (Reg1->EnumKey("111", En.GetPPtr()) != IFaces::retOk)
               std::cerr << "Can't set value" << std::endl;
           }
         }

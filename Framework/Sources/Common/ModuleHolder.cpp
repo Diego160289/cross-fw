@@ -46,7 +46,7 @@ namespace Common
   {
     typedef bool (*PFNCreateObject)(const char *, void **);
     IBasePtr Ret;
-    if (!Dll->GetProc<PFNCreateObject>("CreateObject")(classId, reinterpret_cast<void**>(&Ret)))
+    if (!Dll->GetProc<PFNCreateObject>("CreateObject")(classId, reinterpret_cast<void**>(Ret.GetPPtr())))
       throw ModuleHolderException("Can't create object");
     return Ret;
   }
