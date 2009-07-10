@@ -27,22 +27,22 @@ public:
   virtual ~IRegistryImpl();
 
   // IRegistryCtrl
-  virtual RetCode CALL_TYPE Create(const char *registryPath);
-  virtual RetCode CALL_TYPE Remove(const char *registryPath);
-  virtual RetCode CALL_TYPE Load(const char *registryPath);
-  virtual bool CALL_TYPE IsLoaded() const;
-  virtual RetCode CALL_TYPE Unload();
-  virtual RetCode CALL_TYPE Save();
-  virtual bool CALL_TYPE IsModified();
-  virtual const char* CALL_TYPE GetCtrlVersion() const;
-  virtual const char* CALL_TYPE GetLoadedRegistryVersion() const;
+  virtual RetCode Create(const char *registryPath);
+  virtual RetCode Remove(const char *registryPath);
+  virtual RetCode Load(const char *registryPath);
+  virtual bool IsLoaded() const;
+  virtual RetCode Unload();
+  virtual RetCode Save();
+  virtual bool IsModified();
+  virtual const char* GetCtrlVersion() const;
+  virtual const char* GetLoadedRegistryVersion() const;
 
   // IRegistry
-  virtual RetCode CALL_TYPE CreateKey(const char *pathKey);
-  virtual RetCode CALL_TYPE RemoveKey(const char *pathKey);
-  virtual RetCode CALL_TYPE GetValue(const char *pathKey, IFaces::IVariant **value);
-  virtual RetCode CALL_TYPE SetValue(const char *pathKey, IFaces::IVariant *value);
-  virtual RetCode CALL_TYPE EnumKey(const char *pathKey, IFaces::IEnum **enumKey);
+  virtual RetCode CreateKey(const char *pathKey);
+  virtual RetCode RemoveKey(const char *pathKey);
+  virtual RetCode GetValue(const char *pathKey, IFaces::IVariant **value);
+  virtual RetCode SetValue(const char *pathKey, IFaces::IVariant *value);
+  virtual RetCode EnumKey(const char *pathKey, IFaces::IEnum **enumKey);
 
 private:
   static const char RegistryVersion[];

@@ -17,10 +17,10 @@ public:
   DECLARE_UUID(9a366c11-d401-41ce-8e05-ff5bc27bc16f)
 
   // IMessageQueueManager
-  virtual const char* CALL_TYPE CreateMessageQueue();
-  virtual bool CALL_TYPE DestroyMessageQueue(const char *queueId);
-  virtual bool CALL_TYPE QueryMessageQueue(const char *queueId, IFaces::IMessageQueue **messageQueue);
-  virtual bool CALL_TYPE EnumMessageQueues(IFaces::IEnum **messageQuques);
+  virtual const char* CreateMessageQueue();
+  virtual bool DestroyMessageQueue(const char *queueId);
+  virtual bool QueryMessageQueue(const char *queueId, IFaces::IMessageQueue **messageQueue);
+  virtual bool EnumMessageQueues(IFaces::IEnum **messageQuques);
 
 private:
 };

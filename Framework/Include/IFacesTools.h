@@ -128,13 +128,13 @@ namespace Common
       : Counter(0)
     {
     }
-    virtual unsigned long CALL_TYPE AddRef()
+    virtual unsigned long AddRef()
     {
       SyncObject<TSynObj> Locker(GetSynObj());
       ModuleCounter::GetInstance().Inc();
       return ++Counter;
     }
-    virtual unsigned long CALL_TYPE Release()
+    virtual unsigned long Release()
     {
       unsigned long NewCounter = 0;
       {
@@ -146,7 +146,7 @@ namespace Common
         delete this;
       return NewCounter;
     }
-    virtual bool CALL_TYPE QueryInterface(const char *ifaceId, void **iface, IFaces::IErrorInfo *errInfo = 0)
+    virtual bool QueryInterface(const char *ifaceId, void **iface, IFaces::IErrorInfo *errInfo = 0)
     {
       SyncObject<TSynObj> Locker(GetSynObj());
       if (ExistsIFace<ExportIFacesList>(ifaceId))

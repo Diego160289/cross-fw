@@ -43,14 +43,14 @@ namespace IFacesImpl
     }
 
     // IEnum
-    virtual RetCode CALL_TYPE First()
+    virtual RetCode First()
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
       IsModified = false;
       CurIter = Items.begin();
       return retOk;
     }
-    virtual RetCode CALL_TYPE Next(IFaces::IBase **item)
+    virtual RetCode Next(IFaces::IBase **item)
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
       if (IsModified)
@@ -62,7 +62,7 @@ namespace IFacesImpl
       ++CurIter;
       return retOk;
     }
-    virtual RetCode CALL_TYPE Clone(IFaces::IEnum **newEnum) const
+    virtual RetCode Clone(IFaces::IEnum **newEnum) const
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
       Common::RefObjPtr<ThisType> NewInst(ThisType::CreateObject());

@@ -24,7 +24,7 @@ IRegistryImpl::~IRegistryImpl()
 {
 }
 
-RetCode CALL_TYPE IRegistryImpl::Create(const char *registryPath)
+RetCode IRegistryImpl::Create(const char *registryPath)
 {
   if (Document.Get())
     return retFail;
@@ -49,7 +49,7 @@ RetCode CALL_TYPE IRegistryImpl::Create(const char *registryPath)
   return retOk;
 }
 
-RetCode CALL_TYPE IRegistryImpl::Remove(const char *registryPath)
+RetCode IRegistryImpl::Remove(const char *registryPath)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   Document.Release();
@@ -86,25 +86,25 @@ RetCode IRegistryImpl::InternalUnload()
   return retOk;
 }
 
-RetCode CALL_TYPE IRegistryImpl::Load(const char *registryPath)
+RetCode IRegistryImpl::Load(const char *registryPath)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   return InternalLoad(registryPath);
 }
 
-bool CALL_TYPE IRegistryImpl::IsLoaded() const
+bool IRegistryImpl::IsLoaded() const
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   return !!Document.Get();
 }
 
-RetCode CALL_TYPE IRegistryImpl::Unload()
+RetCode IRegistryImpl::Unload()
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   return InternalUnload();
 }
 
-RetCode CALL_TYPE IRegistryImpl::Save()
+RetCode IRegistryImpl::Save()
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   if (!Document.Get())
@@ -118,18 +118,18 @@ RetCode CALL_TYPE IRegistryImpl::Save()
   return retOk;
 }
 
-bool CALL_TYPE IRegistryImpl::IsModified()
+bool IRegistryImpl::IsModified()
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   return IsModifiedState;
 }
 
-const char* CALL_TYPE IRegistryImpl::GetCtrlVersion() const
+const char* IRegistryImpl::GetCtrlVersion() const
 {
   return RegistryVersion;
 }
 
-const char* CALL_TYPE IRegistryImpl::GetLoadedRegistryVersion() const
+const char* IRegistryImpl::GetLoadedRegistryVersion() const
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   if (!Document.Get())
@@ -142,7 +142,7 @@ const char* CALL_TYPE IRegistryImpl::GetLoadedRegistryVersion() const
   return LoadedRegistryVersion.c_str();
 }
 
-RetCode CALL_TYPE IRegistryImpl::CreateKey(const char *pathKey)
+RetCode IRegistryImpl::CreateKey(const char *pathKey)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   if (!Document.Get())
@@ -180,7 +180,7 @@ RetCode CALL_TYPE IRegistryImpl::CreateKey(const char *pathKey)
   return retOk;
 }
 
-RetCode CALL_TYPE IRegistryImpl::RemoveKey(const char *pathKey)
+RetCode IRegistryImpl::RemoveKey(const char *pathKey)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   if (!Document.Get())
@@ -240,7 +240,7 @@ namespace
   }
 }
 
-RetCode CALL_TYPE IRegistryImpl::GetValue(const char *pathKey, IFaces::IVariant **value)
+RetCode IRegistryImpl::GetValue(const char *pathKey, IFaces::IVariant **value)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   const TiXmlNode *Key = OpenKey(Document.Get(), pathKey);
@@ -268,7 +268,7 @@ RetCode CALL_TYPE IRegistryImpl::GetValue(const char *pathKey, IFaces::IVariant 
   return retOk;
 }
 
-RetCode CALL_TYPE IRegistryImpl::SetValue(const char *pathKey, IFaces::IVariant *value)
+RetCode IRegistryImpl::SetValue(const char *pathKey, IFaces::IVariant *value)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   TiXmlNode *Key = OpenKey(Document.Get(), pathKey);
@@ -291,7 +291,7 @@ RetCode CALL_TYPE IRegistryImpl::SetValue(const char *pathKey, IFaces::IVariant 
   return retOk;
 }
 
-RetCode CALL_TYPE IRegistryImpl::EnumKey(const char *pathKey, IFaces::IEnum **enumKey)
+RetCode IRegistryImpl::EnumKey(const char *pathKey, IFaces::IEnum **enumKey)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   const TiXmlNode *Key = OpenKey(Document.Get(), pathKey);

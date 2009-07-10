@@ -48,7 +48,7 @@ namespace IFacesImpl
     }
 
     // IVariant
-    virtual RetCode CALL_TYPE SetValue(IFaces::IVariant::VariantType type, const void *value)
+    virtual RetCode SetValue(IFaces::IVariant::VariantType type, const void *value)
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
       switch (type)
@@ -103,13 +103,13 @@ namespace IFacesImpl
       }
       return retOk;
     }
-    virtual RetCode CALL_TYPE SetBinaryValue(const void *value, unsigned long bytes)
+    virtual RetCode SetBinaryValue(const void *value, unsigned long bytes)
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
       Holder.Reset(new IVariantHolderBinary(value, bytes));
       return retOk;
     }
-    virtual RetCode CALL_TYPE GetValue(void **value) const
+    virtual RetCode GetValue(void **value) const
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
       if (!Holder.Get())
@@ -117,33 +117,33 @@ namespace IFacesImpl
       Holder->GetData(value);
       return retOk;
     }
-    virtual unsigned long CALL_TYPE GetValueSize() const
+    virtual unsigned long GetValueSize() const
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
       return !Holder.Get() ? 0 : Holder->GetSize();
     }
-    virtual bool CALL_TYPE IsEmpty() const
+    virtual bool IsEmpty() const
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
       return !Holder.Get();
     }
-    virtual IFaces::IVariant::VariantType CALL_TYPE GetType() const
+    virtual IFaces::IVariant::VariantType GetType() const
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
       return Holder.Get() ? Holder->GetType() : IFaces::IVariant::vtUnknown;
     }
-    virtual RetCode CALL_TYPE Clear()
+    virtual RetCode Clear()
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
       Holder.Release();
       return retOk;
     }
-    virtual const char* CALL_TYPE PackToBase64() const
+    virtual const char* PackToBase64() const
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
       return !Holder.Get() ? 0 : Holder->ToBase64();
     }
-    virtual RetCode CALL_TYPE FromBase64Pack(const char *pkg)
+    virtual RetCode FromBase64Pack(const char *pkg)
     {
       Common::CharVectorPtr Data = Common::Base64ToBin(pkg);
       IFaces::IVariant::VariantType Type = IFaces::IVariant::vtUnknown;
