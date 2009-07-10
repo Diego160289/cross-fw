@@ -95,7 +95,7 @@ namespace Common
 
   CharVectorPtr Base64ToBin(const char *base64Str)
   {
-    size_t Len = strlen(base64Str);
+    unsigned Len = static_cast<unsigned>(strlen(base64Str));
     CharVectorPtr Ret(new CharVector(calc_bufsize_base64_decode(base64Str, Len), 0));
     base64_decode(&Ret->front(), base64Str, Len);
     return Ret;

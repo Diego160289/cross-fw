@@ -451,7 +451,7 @@ namespace IFacesImpl
           &reinterpret_cast<const char*>(&Vt)[0],
           &reinterpret_cast<const char*>(&Vt)[sizeof(Vt)],
           std::back_inserter(TmpBuf));
-        TString::size_type StrSize = Str.size() * sizeof(TString::value_type);
+        typename TString::size_type StrSize = (Str.size()) * sizeof(typename TString::value_type);
         std::copy(
           &reinterpret_cast<const char*>(&StrSize)[0],
           &reinterpret_cast<const char*>(&StrSize)[sizeof(StrSize)],
