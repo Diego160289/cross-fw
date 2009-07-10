@@ -10,6 +10,7 @@
 #include "Typedefs.h"
 #include "CommonUtils.h"
 
+#include <string.h>
 
 #include <vector>
 
