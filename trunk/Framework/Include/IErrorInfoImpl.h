@@ -19,11 +19,12 @@ namespace IFacesImpl
   {
   public:
     DECLARE_UUID(631e8a5c-9e5f-4ea3-b115-f88d84119923)
-    virtual RetCode AddError(unsigned long code, const char *message)
+
+    virtual RetCode CALL_TYPE AddError(unsigned long code, const char *message)
     {
       return retOk;
     }
-    virtual RetCode AddError(unsigned long code, const char *message, const char *file, unsigned long line)
+    virtual RetCode CALL_TYPE AddError(unsigned long code, const char *message, const char *file, unsigned long line)
     {
       return retOk;
     }
