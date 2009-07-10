@@ -1,22 +1,22 @@
 #include "MessageQueue.h"
 
 
-const char* CALL_TYPE IMessageQueueManagerImpl::CreateMessageQueue()
+const char* IMessageQueueManagerImpl::CreateMessageQueue()
 {
   return 0;
 }
 
-bool CALL_TYPE IMessageQueueManagerImpl::DestroyMessageQueue(const char *queueId)
+bool IMessageQueueManagerImpl::DestroyMessageQueue(const char *queueId)
 {
   return false;
 }
 
-bool CALL_TYPE IMessageQueueManagerImpl::QueryMessageQueue(const char *queueId, IFaces::IMessageQueue **messageQueue)
+bool IMessageQueueManagerImpl::QueryMessageQueue(const char *queueId, IFaces::IMessageQueue **messageQueue)
 {
   return false;
 }
 
-bool CALL_TYPE IMessageQueueManagerImpl::EnumMessageQueues(IFaces::IEnum **messageQuques)
+bool IMessageQueueManagerImpl::EnumMessageQueues(IFaces::IEnum **messageQuques)
 {
   return false;
 }

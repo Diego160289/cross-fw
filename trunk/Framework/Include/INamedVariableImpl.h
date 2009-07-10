@@ -50,17 +50,17 @@ namespace IFacesImpl
     }
 
     //INamedVariable
-    virtual const char* CALL_TYPE GetName() const
+    virtual const char* GetName() const
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
       return Name.c_str();
     }
-    virtual RetCode CALL_TYPE Get(IFaces::IVariant **var) const
+    virtual RetCode Get(IFaces::IVariant **var) const
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
       return Var.QueryInterface(var) ? retOk : retFail;
     }
-    virtual RetCode CALL_TYPE Set(IFaces::IVariant *var)
+    virtual RetCode Set(IFaces::IVariant *var)
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
       if (!var)
