@@ -291,102 +291,95 @@ RetCode IRegistryImpl::SetValue(const char *pathKey, IFaces::IVariant *value)
   return retOk;
 }
 
+namespace
+{
+  std::string ExtractKeyName(const TiXmlNode *node)
+  {
+    if (node->Type() == TiXmlNode::TEXT)
+      return "";
+    const TiXmlElement *Element = node->ToElement();
+    if (!Element)
+      return "";
+    std::string KeyName = Element->ValueStr();
+    if (KeyName.empty())
+      return "";
+    std::stringstream Io;
+    Io << KeyName;
+    Common::StringVector KeyPair;
+    for (std::string s ; std::getline(Io, s, '_') ; KeyPair.push_back(s));
+    if (KeyPair.size() != 2 || KeyPair.front() != "Key")
+      return "";
+    return KeyPair.back();
+  }
+
+  typedef IFacesImpl::IEnumImpl<Common::MultiObject, System::Mutex>::ThisTypePtr EnumImplPtr;
+
+  bool EnumKeys(const TiXmlNode *node, unsigned level, EnumImplPtr keys)
+  {
+    if (node->Type() == TiXmlNode::TEXT)
+    {
+      std::string ValueStr = node->ValueStr();
+      if (ValueStr.empty())
+        return false;
+      Common::RefObjPtr<IFaces::IVariant> Value = IFacesImpl::CreateVariant<System::Mutex>();
+      if (Value->FromBase64Pack(ValueStr.c_str()) != retOk)
+        return false;
+      const TiXmlNode *Parent = node->Parent();
+      std::string ParentName = ExtractKeyName(Parent);
+      if (ParentName.empty())
+        return false;
+      Common::RefObjPtr<IFaces::INamedVariable> Var = IFacesImpl::CreateNamedVariable<System::Mutex>(ParentName.c_str());
+      if (Var->Set(Value.Get()) != retOk)
+        return false;
+      keys->AddItem(Var);
+      return true;
+    }
+    for (const TiXmlNode *i = node->FirstChild() ; i ; i = i->NextSibling())
+    {
+      if (i->Type() == TiXmlNode::TEXT)
+      {
+        return EnumKeys(i, level + 1, keys);
+      }
+      std::string KeyName = ExtractKeyName(i);
+      if (KeyName.empty())
+        return false;
+      Common::RefObjPtr<IFaces::INamedVariable> Var = IFacesImpl::CreateNamedVariable<System::Mutex>(KeyName.c_str());
+      Common::RefObjPtr<IFaces::IVariant> Value = IFacesImpl::CreateVariant<System::Mutex>();
+      EnumImplPtr Keys = IFacesImpl::CreateEnum<System::Mutex>();
+      {
+        Common::RefObjPtr<IFaces::IBase> Item;
+        if (!Keys.QueryInterface(Item.GetPPtr()) ||
+          Value->SetValue(IFaces::IVariant::vtIBase, Item.Get()) != retOk)
+        {
+          return false;
+        }
+      }
+      if (Var->Set(Value.Get()) != retOk)
+        return false;
+      {
+        Common::RefObjPtr<IFaces::IBase> Item;
+        if (!Var.QueryInterface(Item.GetPPtr()))
+          return false;
+        keys->AddItem(Item);
+        for (int y = level ; y ; --y) std:: cout << " ";
+        std::cout << KeyName << std::endl;
+      }
+      const TiXmlNode *Child = i->FirstChild();
+      if (Child && !EnumKeys(i, level + 1, Keys))
+        return false;
+    }
+    return true;
+  }
+}
+
 RetCode IRegistryImpl::EnumKey(const char *pathKey, IFaces::IEnum **enumKey)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   const TiXmlNode *Key = OpenKey(Document.Get(), pathKey);
   if (!Key)
     return retFail;
-  const TiXmlNode *SubKeys = Key->FirstChild();
-  if (!SubKeys)
+  if (!Key->FirstChild())
     return retFail;
-  if (SubKeys->Type() == TiXmlNode::TEXT)
-    return retFail;
-  try
-  {
-    std::vector<IFacesImpl::IEnumImpl<Common::MultiObject, System::Mutex>::ThisTypePtr> EnumStack;
-    EnumStack.push_back(IFacesImpl::CreateEnum<System::Mutex>());
-    Common::RefObjPtr<IFaces::IEnum> RetEnum(EnumStack.back());
-    unsigned Level = 1;
-    for (const TiXmlNode *i = SubKeys ; i ; )
-    {
-      const TiXmlNode *Next = 0;
-      if (i->Type() != TiXmlNode::TEXT)
-      {
-        const TiXmlElement *Element = i->ToElement();
-        if (!Element)
-          return retFail;
-        std::string KeyName = Element->ValueStr();
-        if (KeyName.empty())
-          return retFail;
-        std::stringstream Io;
-        Io << KeyName;
-        Common::StringVector KeyPair;
-        for (std::string s ; std::getline(Io, s, '_') ; KeyPair.push_back(s));
-        if (KeyPair.size() != 2 || KeyPair.front() != "Key")
-          return retFail;
-        std::cout << KeyPair.back() << std::endl;
-        const TiXmlNode *Child = i->FirstChild();
-        if (Child)
-        {
-          i = Child;
-          ++Level;
-          Common::RefObjPtr<IFaces::INamedVariable> NewNamedVar = IFacesImpl::CreateNamedVariable<System::Mutex>(KeyPair.back().c_str());
-          Common::RefObjPtr<IFaces::IVariant> NewVar = IFacesImpl::CreateVariant<System::Mutex>();
-          {
-            Common::RefObjPtr<IFaces::IEnum> CurEnum;
-            if (!EnumStack.back().QueryInterface(CurEnum.GetPPtr()))
-              return retFail;
-            IFacesImpl::IVariantHelper Helper(NewVar);
-            Helper = static_cast<IFaces::IBase*>(CurEnum.Get());
-          }
-          if (NewNamedVar->Set(NewVar.Get()) != retOk)
-            return retFail;
-          EnumStack.push_back(IFacesImpl::CreateEnum<System::Mutex>());
-          Common::RefObjPtr<IFaces::IBase> NewItem;
-          if (!NewNamedVar.QueryInterface(NewItem.GetPPtr()))
-            return retFail;
-          EnumStack.back()->AddItem(NewItem);
-          continue;
-        }
-        else
-        {
-          Next = i->NextSibling();
-          if (Next)
-          {
-            i = Next;
-            continue;
-          }
-        }
-      }
-      if (i->Type() == TiXmlNode::TEXT)
-      {
-        std::string Value = i->ValueStr();
-        if (Value.empty())
-          return retFail;
-        Common::RefObjPtr<IFaces::IVariant> Var = IFacesImpl::IVariantImpl<Common::MultiObject, System::Mutex>::CreateObject();
-        if (Var->FromBase64Pack(Value.c_str()) != retOk)
-          return retFail;
-      }
-      const TiXmlNode *Parent = i->Parent();
-      --Level;
-      EnumStack.pop_back();
-      Next = Parent->NextSibling();
-      while (!Next && Level)
-      {
-        Parent = Parent->Parent();
-        --Level;
-        EnumStack.pop_back();
-        Next = Parent->NextSibling();
-      }
-      i = Next;
-    }
-    if (!RetEnum.QueryInterface(enumKey))
-      return retFail;
-  }
-  catch (std::exception &)
-  {
-    return retFail;
-  }
-  return retOk;
+  EnumImplPtr Keys = IFacesImpl::CreateEnum<System::Mutex>();
+  return !EnumKeys(Key, 0, Keys) || !Keys.QueryInterface(enumKey) ? retFail : retOk;
 }
