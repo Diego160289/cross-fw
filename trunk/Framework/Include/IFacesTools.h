@@ -65,10 +65,17 @@ namespace Common
   class MultiObject
   {
   public:
+    typedef T TCoClassType;
+    typedef RefObjPtr<TCoClassType> TCoClassTypePtr;
     static RefObjPtr<T> CreateObject()
     {
-      RefObjPtr<T> Ret(new T);
-      return Ret;
+      TCoClassTypePtr Ret(new T);
+      return (Ret->IsSuccessfulCreated = Ret->AfterCreate()) ?
+        Ret : RefObjPtr<T>();
+    }
+  protected:
+    static void FinalizeDestroy()
+    {
     }
   };
 
@@ -76,14 +83,35 @@ namespace Common
   class SingleObject
   {
   public:
-    static RefObjPtr<T> CreateObject()
+    typedef T TCoClassType;
+    typedef RefObjPtr<TCoClassType> TCoClassTypePtr;
+    static TCoClassTypePtr CreateObject()
+    {
+      SyncObject<TSynObj> Locker(InternalGetSyn());
+      TCoClassTypePtr Ret = InternalGetInstance();
+      if (!Ret.Get())
+      {
+        Ret = new T;
+        if (!(Ret->IsSuccessfulCreated = Ret->AfterCreate()))
+          Ret.Release();
+      }
+      return Ret;
+    }
+  private:
+    static TSynObj& InternalGetSyn()
     {
       static TSynObj Syn;
-      SyncObject<TSynObj> Locker(Syn);
-      static RefObjPtr<T> Ret;
-      if (Ret.IsEmpty())
-        Ret = new T;
-      return Ret;
+      return Syn;
+    }
+    static TCoClassTypePtr InternalGetInstance()
+    {
+      static TCoClassTypePtr Instance;
+      return Instance;
+    }
+  protected:
+    static void FinalizeDestroy()
+    {
+      InternalGetInstance().Release();
     }
   };
 
@@ -124,8 +152,10 @@ namespace Common
     typedef InheritedFromIFacesList<TIFacesList> InheritedInterfaces;
     typedef InheritedFromIFacesList<TYPE_LIST_1(IFaces::IBase)> InheritedBaseInterface;
     typedef TSynObj TThisSynObj;
+    typedef TCreateStrategy<TCoClass, TSynObj> TTithCreateStrategy;
     CoClassBase()
       : Counter(0)
+      , IsSuccessfulCreated(false)
     {
     }
     virtual unsigned long AddRef()
@@ -143,7 +173,12 @@ namespace Common
         NewCounter = --Counter;
       }
       if (!NewCounter)
+      {
+        if (IsSuccessfulCreated)
+          BeforeDestroy();
         delete this;
+        TTithCreateStrategy::FinalizeDestroy();
+      }
       return NewCounter;
     }
     virtual bool QueryInterface(const char *ifaceId, void **iface, IFaces::IErrorInfo *errInfo = 0)
@@ -175,10 +210,19 @@ namespace Common
   private:
     mutable TSynObj SynObj;
     unsigned long Counter;
+    bool IsSuccessfulCreated;
+    friend class TCreateStrategy<TCoClass, TSynObj>;
   protected:
     TSynObj& GetSynObj() const
     {
       return SynObj;
+    }
+    virtual bool AfterCreate()
+    {
+      return true;
+    }
+    virtual void BeforeDestroy()
+    {
     }
   };
 
@@ -197,7 +241,9 @@ namespace Common
       if (*ClassId || *CurClassId)
         return ObjectCreator<typename TCoClassList::Tail>::CreateObject(classId);
       RefObjPtr<IFaces::IBase> Ret;
-      CurCoClass::CreateObject()->CurCoClass::QueryInterface(IFaces::IBase::GetUUID(), reinterpret_cast<void**>(&Ret));
+      RefObjPtr<CurCoClass> NewObj = CurCoClass::TTithCreateStrategy::CreateObject();
+      if (NewObj.Get())
+        NewObj->CurCoClass::QueryInterface(IFaces::IBase::GetUUID(), reinterpret_cast<void**>(&Ret));
       return Ret;
     }
   };

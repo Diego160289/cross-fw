@@ -38,7 +38,7 @@ void PrintEnum(Common::RefObjPtr<IFaces::IEnum> e, int n)
   }
 }
 
-int main()
+void TestRegistry()
 {
   try
   {
@@ -111,5 +111,41 @@ int main()
   {
     std::cerr << e.what() << std::endl;
   }
+}
+
+void TestClassFactory()
+{
+  try
+  {
+    Common::SharedPtr<System::DllHolder>
+		Dll(new System::DllHolder("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\ClassFactory.dll"));
+    //Dll(new System::DllHolder("/home/dmitry/cross-fw/Framework/Bin/Debug/ClassFactory.so"));
+    Common::ModuleHolder Module(Dll);
+    {
+      Common::RefObjPtr<IFaces::IBase> Obj(Module.CreateObject("0eedde75-ce15-4eba-9026-3d5f94488c26"));
+      if (Obj.Get())
+      {
+        Common::RefObjPtr<IFaces::IRegistryCtrl> Factory;
+        Obj.QueryInterface(Factory.GetPPtr());
+        if (Factory.Get())
+        {
+        }
+        std::cout << Module.GetModuleCounter() << std::endl;
+      }
+      else
+        std::cerr << "Can't create object" << std::endl;
+    }
+    std::cout << Module.GetModuleCounter() << std::endl;
+  }
+  catch (std::exception &e)
+  {
+    std::cerr << e.what() << std::endl;
+  }
+}
+
+int main()
+{
+  //TestRegistry();
+  TestClassFactory();
   return 0;
 }
