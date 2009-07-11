@@ -82,6 +82,16 @@ namespace IFaces
     virtual RetCode Clone(IEnum **newEnum) const= 0;
   };
 
+  struct IVarMap
+    : public IBase
+  {
+    DECLARE_UUID(6a427591-c9b1-45f0-b676-b940479e14d8)
+    virtual RetCode AddVariable(INamedVariable *namedVar) = 0;
+    virtual RetCode RemoveVariable(const char *varName) = 0;
+    virtual RetCode GetVariable(const char *varName, IVariant **var) = 0;
+    virtual RetCode EnumVariables(IEnum **vars) const= 0;
+  };
+
   struct IRegistryCtrl
     : public IBase
   {
@@ -108,6 +118,21 @@ namespace IFaces
     virtual RetCode EnumKey(const char *pathKey, IEnum **keys) = 0;
   };
 
+  struct IClassFactory
+    : public IBase
+  {
+    DECLARE_UUID(5fc11638-0ef4-4a55-9f04-156c9533cb05)
+    virtual RetCode CreateObject(const char *classId, IBase **obj) = 0;
+  };
+
+  struct IClassFactoryCtrl
+    : public IBase
+  {
+    DECLARE_UUID(64b0fdea-e929-4852-a858-0bea41dc6a0f)
+    virtual RetCode SetRegistry(IRegistry *reg) = 0;
+    virtual RetCode SetParams(IVarMap *params) = 0;
+  };
+
   struct IMessageQueue
     : public IBase
   {
@@ -125,12 +150,6 @@ namespace IFaces
     virtual bool DestroyMessageQueue(const char *queueId) = 0;
     virtual bool QueryMessageQueue(const char *queueId, IMessageQueue **messageQueue) = 0;
     virtual bool EnumMessageQueues(IEnum **messageQuques) = 0;
-  };
-
-  struct IClassFactory
-    : public IBase
-  {
-    DECLARE_UUID(5fc11638-0ef4-4a55-9f04-156c9533cb05)
   };
 
 }
