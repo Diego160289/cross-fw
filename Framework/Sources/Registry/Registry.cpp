@@ -12,7 +12,6 @@
 #include <sstream>
 #include <vector>
 
-#include <iostream>
 
 const char IRegistryImpl::RegistryVersion[] = "1.0";
 
@@ -321,7 +320,7 @@ RetCode IRegistryImpl::GetValue(const char *pathKey, IFaces::IVariant **value)
     return retFail;
   try
   {
-    Common::RefObjPtr<IFaces::IVariant> Var = IFacesImpl::IVariantImpl<Common::MultiObject, System::Mutex>::CreateObject();
+    Common::RefObjPtr<IFaces::IVariant> Var = IFacesImpl::IVariantImpl<System::Mutex>::CreateObject();
     const TiXmlNode *KeyValue = Key->FirstChild();
     if (KeyValue)
     {
@@ -385,7 +384,7 @@ namespace
     return KeyPair.back();
   }
 
-  typedef IFacesImpl::IEnumImpl<Common::MultiObject, System::Mutex>::ThisTypePtr EnumImplPtr;
+  typedef IFacesImpl::IEnumImpl<System::Mutex>::ThisTypePtr EnumImplPtr;
 
   bool EnumKeys(const TiXmlNode *node, EnumImplPtr keys)
   {

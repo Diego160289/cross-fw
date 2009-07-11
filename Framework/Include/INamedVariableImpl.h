@@ -20,26 +20,25 @@ namespace IFacesImpl
 
   template
   <
-    template <typename, typename > class TCreateStrategy = Common::MultiObject,
     typename TSynObj = System::MutexStub
   >
   class INamedVariableImpl
     : public Common::CoClassBase
         <
-          INamedVariableImpl<TCreateStrategy, TSynObj>,
+          INamedVariableImpl<TSynObj>,
           TYPE_LIST_1(IFaces::INamedVariable),
-          TCreateStrategy, TSynObj
+          Common::MultiObject, TSynObj
         >
   {
   public:
     DECLARE_UUID(249cae34-efba-46b3-aebe-ad72e0ba97ab)
 
-    typedef INamedVariableImpl<TCreateStrategy, TSynObj> ThisType;
+    typedef INamedVariableImpl<TSynObj> ThisType;
     typedef Common::RefObjPtr<ThisType> ThisTypePtr;
 
     INamedVariableImpl()
       : Name("")
-      , Var(IFacesImpl::IVariantImpl<Common::MultiObject, TSynObj>::CreateObject())
+      , Var(IFacesImpl::IVariantImpl<TSynObj>::CreateObject())
     {
     }
 
@@ -74,21 +73,21 @@ namespace IFacesImpl
   };
 
   template <typename TSyn>
-  typename INamedVariableImpl<Common::MultiObject, TSyn>::ThisTypePtr
+  typename INamedVariableImpl<TSyn>::ThisTypePtr
   CreateNamedVariable(const char *name)
   {
-    typename INamedVariableImpl<Common::MultiObject, TSyn>::ThisTypePtr Ret =
-      INamedVariableImpl<Common::MultiObject, TSyn>::CreateObject();
+    typename INamedVariableImpl<TSyn>::ThisTypePtr Ret =
+      INamedVariableImpl<TSyn>::CreateObject();
     Ret->SetName(name);
     return Ret;
   }
 
   template <typename TSyn>
-  typename INamedVariableImpl<Common::MultiObject, TSyn>::ThisTypePtr
+  typename INamedVariableImpl<TSyn>::ThisTypePtr
   CreateNamedVariable(const char *name, IFaces::IVariant *var)
   {
-    typename INamedVariableImpl<Common::MultiObject, TSyn>::ThisTypePtr Ret =
-      INamedVariableImpl<Common::MultiObject, TSyn>::CreateObject();
+    typename INamedVariableImpl<TSyn>::ThisTypePtr Ret =
+      INamedVariableImpl<TSyn>::CreateObject();
     Ret->SetName(name);
     Ret->Set(var);
     return Ret;

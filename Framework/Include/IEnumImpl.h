@@ -17,21 +17,20 @@ namespace IFacesImpl
 
   template
   <
-    template <typename, typename > class TCreateStrategy = Common::MultiObject,
     typename TSynObj = System::MutexStub
   >
   class IEnumImpl
     : public Common::CoClassBase
         <
-          IEnumImpl<TCreateStrategy, TSynObj>,
+          IEnumImpl<TSynObj>,
           TYPE_LIST_1(IFaces::IEnum),
-          TCreateStrategy, TSynObj
+          Common::MultiObject, TSynObj
         >
   {
   public:
     DECLARE_UUID(6724ad4d-22eb-4d3d-bc0e-4283ef45373e)
 
-    typedef IEnumImpl<TCreateStrategy, TSynObj> ThisType;
+    typedef IEnumImpl<TSynObj> ThisType;
     typedef Common::RefObjPtr<ThisType> ThisTypePtr;
 
     IEnumImpl()
@@ -97,12 +96,10 @@ namespace IFacesImpl
   };
 
   template <typename TSyn>
-  typename IEnumImpl<Common::MultiObject, TSyn>::ThisTypePtr
+  typename IEnumImpl<TSyn>::ThisTypePtr
   CreateEnum()
   {
-    typename IEnumImpl<Common::MultiObject, TSyn>::ThisTypePtr Ret =
-      IEnumImpl<Common::MultiObject, TSyn>::CreateObject();
-    return Ret;
+    return IEnumImpl<TSyn>::CreateObject();
   }
 
   DECLARE_RUNTIME_EXCEPTION(IEnumHelper)

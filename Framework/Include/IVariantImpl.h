@@ -23,21 +23,20 @@ namespace IFacesImpl
 
   template
   <
-    template <typename, typename > class TCreateStrategy = Common::MultiObject,
     typename TSynObj = System::MutexStub
   >
   class IVariantImpl
     : public Common::CoClassBase
         <
-          IVariantImpl<TCreateStrategy, TSynObj>,
+          IVariantImpl<TSynObj>,
           TYPE_LIST_1(IFaces::IVariant),
-          TCreateStrategy, TSynObj
+          Common::MultiObject, TSynObj
         >
   {
   public:
     DECLARE_UUID(0b9550da-6466-4fd4-9a43-40901551f727)
 
-    typedef IVariantImpl<TCreateStrategy, TSynObj> ThisType;
+    typedef IVariantImpl<TSynObj> ThisType;
     typedef Common::RefObjPtr<ThisType> ThisTypePtr;
 
     IVariantImpl()
@@ -478,12 +477,10 @@ namespace IFacesImpl
   };
 
   template <typename TSyn>
-  typename IVariantImpl<Common::MultiObject, TSyn>::ThisTypePtr
+  typename IVariantImpl<TSyn>::ThisTypePtr
   CreateVariant()
   {
-    typename IVariantImpl<Common::MultiObject, TSyn>::ThisTypePtr Ret =
-      IVariantImpl<Common::MultiObject, TSyn>::CreateObject();
-    return Ret;
+    return IVariantImpl<TSyn>::CreateObject();
   }
 
   DECLARE_RUNTIME_EXCEPTION(IVariantHelper)
