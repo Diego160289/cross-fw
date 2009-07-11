@@ -24,3 +24,6 @@ del /Q Objects\Release\TinyXml\*
 
 del /Q Objects\Debug\Tools\*
 del /Q Objects\Release\Tools\*
+
+del /Q Objects\Debug\ClassFactory\*
+del /Q Objects\Release\ClassFactory\*

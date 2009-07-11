@@ -127,6 +127,12 @@ namespace IFaces
     virtual bool EnumMessageQueues(IEnum **messageQuques) = 0;
   };
 
+  struct IClassFactory
+    : public IBase
+  {
+    DECLARE_UUID(5fc11638-0ef4-4a55-9f04-156c9533cb05)
+  };
+
 }
 
 #endif	// !__IFACES_H__
