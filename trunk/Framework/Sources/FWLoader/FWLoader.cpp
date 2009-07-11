@@ -118,8 +118,8 @@ void TestClassFactory()
   try
   {
     Common::SharedPtr<System::DllHolder>
-		Dll(new System::DllHolder("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\ClassFactory.dll"));
-    //Dll(new System::DllHolder("/home/dmitry/cross-fw/Framework/Bin/Debug/ClassFactory.so"));
+		//Dll(new System::DllHolder("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\ClassFactory.dll"));
+    Dll(new System::DllHolder("/home/dmitry/cross-fw/Framework/Bin/Debug/ClassFactory.so"));
     Common::ModuleHolder Module(Dll);
     {
       Common::RefObjPtr<IFaces::IBase> Obj(Module.CreateObject("0eedde75-ce15-4eba-9026-3d5f94488c26"));
