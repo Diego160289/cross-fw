@@ -5,6 +5,7 @@
 #include "IVariantImpl.h"
 #include "INamedVariableImpl.h"
 #include "IEnumImpl.h"
+#include "CommonUtils.h"
 
 
 #include <iterator>
@@ -65,6 +66,102 @@ RetCode IRegistryImpl::Remove(const char *registryPath)
   return retOk;
 }
 
+namespace
+{
+  std::string GetRegistryVersion(const TiXmlDocument *doc)
+  {
+    if (!doc)
+      return std::string();
+    const TiXmlElement *Registry = doc->FirstChildElement("Registry");
+    if (!Registry)
+      return std::string();
+    std::string Ret;
+    if (Registry->QueryValueAttribute("Version", &Ret) != TIXML_SUCCESS)
+      return std::string();
+    return Ret;
+  }
+
+  std::string GetKeysHash(const TiXmlDocument *doc)
+  {
+    if (!doc)
+      return std::string();
+    const TiXmlElement *Registry = doc->FirstChildElement("Registry");
+    if (!Registry)
+      return std::string();
+    const TiXmlNode *Hash = Registry->FirstChildElement("Hash");
+    if (!Hash)
+      return std::string();
+    const TiXmlNode *HashText = Hash->FirstChild();
+    return !HashText ? std::string() : HashText->ValueStr();
+  }
+
+  TiXmlNode* OpenRegistry(TiXmlDocument *doc)
+  {
+    if (!doc)
+      return 0;
+    return doc->FirstChildElement("Registry");
+  }
+
+  TiXmlNode* OpenKeys(TiXmlDocument *doc)
+  {
+    if (!doc)
+      return 0;
+    TiXmlNode *Registry = OpenRegistry(doc);
+    if (!Registry)
+      return 0;
+    return Registry->FirstChildElement("Keys");
+  }
+
+  TiXmlNode* OpenKey(TiXmlDocument *doc, const char *pathKey)
+  {
+    TiXmlNode *Keys = OpenKeys(doc);
+    if (!Keys)
+      return 0;
+    std::stringstream Io;
+    Io << pathKey;
+    Common::StringVector KeyPool;
+    for (std::string s ; std::getline(Io, s, '/') ; KeyPool.push_back(s));
+    if (KeyPool.empty())
+      return 0;
+    for (Common::StringVector::const_iterator i = KeyPool.begin() ; i != KeyPool.end() ; ++i)
+    {
+      std::string CurKeyName = "Key_" + (*i);
+      if (!(Keys = Keys->FirstChildElement(CurKeyName.c_str())))
+        return 0;
+    }
+    return Keys;
+  }
+
+  class RegistryHash
+  {
+  public:
+    std::string Create(TiXmlDocument *doc)
+    {
+      const TiXmlNode *Keys = OpenKeys(doc);
+      if (!Keys)
+        return std::string();
+      std::string Str;
+      if (!CreateString(Keys->FirstChild(), &Str) || Str.length() < 1)
+        return std::string();
+      return Common::GetChecksumMD5(Str.c_str(), static_cast<unsigned>(Str.length()));
+    }
+  private:
+    bool CreateString(const TiXmlNode *keys, std::string *str)
+    {
+      if (!keys)
+        return false;
+      for (const TiXmlNode *i = keys ; i ; i = i->NextSibling())
+      {
+        str->append(i->ValueStr());
+        const TiXmlNode *Child = i->FirstChild();
+        if (Child && !CreateString(Child, str))
+          return false;
+      }
+      return true;
+    }
+  };
+}
+
 RetCode IRegistryImpl::InternalLoad(const char *registryPath)
 {
   if (Document.Get())
@@ -72,6 +169,11 @@ RetCode IRegistryImpl::InternalLoad(const char *registryPath)
   TiXmlDocumentPtr NewDocumet(new TiXmlDocument);
   if (!NewDocumet->LoadFile(registryPath, TIXML_ENCODING_UTF8))
     return retFail;
+  if (GetRegistryVersion(NewDocumet.Get()) != RegistryVersion ||
+    GetKeysHash(NewDocumet.Get()) != RegistryHash().Create(NewDocumet.Get()))
+  {
+    return retFail;
+  }
   Document.Swap(NewDocumet);
   IsModifiedState = false;
   return retOk;
@@ -111,6 +213,22 @@ RetCode IRegistryImpl::Save()
     return retFail;
   if (IsModifiedState)
   {
+    std::string Hash = RegistryHash().Create(Document.Get());
+    if (Hash.empty())
+      return retFail;
+    TiXmlNode *Registry = OpenRegistry(Document.Get());
+    if (!Registry)
+      return retFail;
+    {
+      TiXmlNode *HashNode = Registry->FirstChildElement("Hash");
+      if (HashNode && !Registry->RemoveChild(HashNode))
+        return retFail;
+    }
+    TiXmlText HashText(Hash);
+    HashText.SetCDATA(true);
+    TiXmlElement HashNode("Hash");
+    HashNode.InsertEndChild(HashText);
+    Registry->InsertEndChild(HashNode);
     if (!Document->SaveFile())
       return retFail;
   }
@@ -132,25 +250,13 @@ const char* IRegistryImpl::GetCtrlVersion() const
 const char* IRegistryImpl::GetLoadedRegistryVersion() const
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
-  if (!Document.Get())
-    return 0;
-  const TiXmlElement *Registry = Document->FirstChildElement("Registry");
-  if (!Registry)
-    return 0;
-  if (Registry->QueryValueAttribute("Version", &LoadedRegistryVersion) != TIXML_SUCCESS)
-    return 0;
-  return LoadedRegistryVersion.c_str();
+  return (LoadedRegistryVersion = GetRegistryVersion(Document.Get())).c_str();
 }
 
 RetCode IRegistryImpl::CreateKey(const char *pathKey)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
-  if (!Document.Get())
-    return retFail;
-  TiXmlElement *Registry = Document->FirstChildElement("Registry");
-  if (!Registry)
-    return retFail;
-  TiXmlNode *Keys = Registry->FirstChildElement("Keys");
+  TiXmlNode *Keys = OpenKeys(Document.Get());
   if (!Keys)
     return retFail;
   std::stringstream Io;
@@ -183,12 +289,7 @@ RetCode IRegistryImpl::CreateKey(const char *pathKey)
 RetCode IRegistryImpl::RemoveKey(const char *pathKey)
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
-  if (!Document.Get())
-    return retFail;
-  TiXmlElement *Registry = Document->FirstChildElement("Registry");
-  if (!Registry)
-    return retFail;
-  TiXmlNode *Keys = Registry->FirstChildElement("Keys");
+  TiXmlNode *Keys = OpenKeys(Document.Get());
   if (!Keys)
     return retFail;
   std::stringstream Io;
@@ -210,34 +311,6 @@ RetCode IRegistryImpl::RemoveKey(const char *pathKey)
     return retFail;
   IsModifiedState = true;
   return retOk;
-}
-
-namespace
-{
-  TiXmlNode* OpenKey(TiXmlDocument *doc, const char *pathKey)
-  {
-    if (!doc)
-      return 0;
-    TiXmlElement *Registry = doc->FirstChildElement("Registry");
-    if (!Registry)
-      return 0;
-    TiXmlNode *Keys = Registry->FirstChildElement("Keys");
-    if (!Keys)
-      return 0;
-    std::stringstream Io;
-    Io << pathKey;
-    Common::StringVector KeyPool;
-    for (std::string s ; std::getline(Io, s, '/') ; KeyPool.push_back(s));
-    if (KeyPool.empty())
-      return 0;
-    for (Common::StringVector::const_iterator i = KeyPool.begin() ; i != KeyPool.end() ; ++i)
-    {
-      std::string CurKeyName = "Key_" + (*i);
-      if (!(Keys = Keys->FirstChildElement(CurKeyName.c_str())))
-        return 0;
-    }
-    return Keys;
-  }
 }
 
 RetCode IRegistryImpl::GetValue(const char *pathKey, IFaces::IVariant **value)
@@ -314,7 +387,7 @@ namespace
 
   typedef IFacesImpl::IEnumImpl<Common::MultiObject, System::Mutex>::ThisTypePtr EnumImplPtr;
 
-  bool EnumKeys(const TiXmlNode *node, unsigned level, EnumImplPtr keys)
+  bool EnumKeys(const TiXmlNode *node, EnumImplPtr keys)
   {
     if (node->Type() == TiXmlNode::TEXT)
     {
@@ -338,7 +411,7 @@ namespace
     {
       if (i->Type() == TiXmlNode::TEXT)
       {
-        return EnumKeys(i, level + 1, keys);
+        return EnumKeys(i, keys);
       }
       std::string KeyName = ExtractKeyName(i);
       if (KeyName.empty())
@@ -361,18 +434,17 @@ namespace
         if (!Var.QueryInterface(Item.GetPPtr()))
           return false;
         keys->AddItem(Item);
-        for (int y = level ; y ; --y) std:: cout << " ";
-        std::cout << KeyName << std::endl;
       }
       const TiXmlNode *Child = i->FirstChild();
-      if (Child && !EnumKeys(i, level + 1, Keys))
+      if (Child && !EnumKeys(i, Keys))
         return false;
     }
     return true;
   }
 }
 
-RetCode IRegistryImpl::EnumKey(const char *pathKey, IFaces::IEnum **enumKey)
+RetCode IRegistryImpl::EnumKey(const char *pathKey, IFaces::IEnum **keys)
+try
 {
   Common::SyncObject<System::Mutex> Locker(GetSynObj());
   const TiXmlNode *Key = OpenKey(Document.Get(), pathKey);
@@ -381,5 +453,9 @@ RetCode IRegistryImpl::EnumKey(const char *pathKey, IFaces::IEnum **enumKey)
   if (!Key->FirstChild())
     return retFail;
   EnumImplPtr Keys = IFacesImpl::CreateEnum<System::Mutex>();
-  return !EnumKeys(Key, 0, Keys) || !Keys.QueryInterface(enumKey) ? retFail : retOk;
+  return !EnumKeys(Key, Keys) || !Keys.QueryInterface(keys) ? retFail : retOk;
+}
+catch (std::exception &)
+{
+  return retFail;
 }

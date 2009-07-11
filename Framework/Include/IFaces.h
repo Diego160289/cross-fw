@@ -105,7 +105,7 @@ namespace IFaces
     virtual RetCode RemoveKey(const char *pathKey) = 0;
     virtual RetCode GetValue(const char *pathKey, IVariant **value) = 0;
     virtual RetCode SetValue(const char *pathKey, IVariant *value) = 0;
-    virtual RetCode EnumKey(const char *pathKey, IEnum **enumKey) = 0;
+    virtual RetCode EnumKey(const char *pathKey, IEnum **keys) = 0;
   };
 
   struct IMessageQueue

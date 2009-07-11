@@ -42,7 +42,7 @@ public:
   virtual RetCode RemoveKey(const char *pathKey);
   virtual RetCode GetValue(const char *pathKey, IFaces::IVariant **value);
   virtual RetCode SetValue(const char *pathKey, IFaces::IVariant *value);
-  virtual RetCode EnumKey(const char *pathKey, IFaces::IEnum **enumKey);
+  virtual RetCode EnumKey(const char *pathKey, IFaces::IEnum **keys);
 
 private:
   static const char RegistryVersion[];
