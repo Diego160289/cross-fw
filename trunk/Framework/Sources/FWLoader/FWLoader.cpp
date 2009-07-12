@@ -5,6 +5,8 @@
 
 #include "IVariantImpl.h"
 
+#include "RefObjQIPtr.h"
+
 void PrintEnum(Common::RefObjPtr<IFaces::IEnum> e, int n)
 {
   e->First();
@@ -125,10 +127,10 @@ void TestClassFactory()
       Common::RefObjPtr<IFaces::IBase> Obj(Module.CreateObject("0eedde75-ce15-4eba-9026-3d5f94488c26"));
       if (Obj.Get())
       {
-        Common::RefObjPtr<IFaces::IRegistryCtrl> Factory;
-        Obj.QueryInterface(Factory.GetPPtr());
+        Common::RefObjQIPtr<IFaces::IClassFactory> Factory(Obj);
         if (Factory.Get())
         {
+          std::cout << "Ok" << std::endl;
         }
         std::cout << Module.GetModuleCounter() << std::endl;
       }
