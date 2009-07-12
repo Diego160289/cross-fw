@@ -4,6 +4,7 @@
 #include "IFaces.h"
 
 #include "IVariantImpl.h"
+#include "IEnumImpl.h"
 #include "Mutex.h"
 
 #include <sstream>
@@ -253,102 +254,150 @@ void TestRegistryModule(const char *location, const char *moduleName, bool isNew
 
 DECLARE_RUNTIME_EXCEPTION(FWLoader)
 
-namespace ComponentWrappers
+namespace Common
 {
-
-  DECLARE_RUNTIME_EXCEPTION(RegistryCtr)
-
-  class RegistryCtrl
-    : private Common::NoCopyable
+  namespace Wrappers
   {
-  public:
-    typedef Common::RefObjPtr<IFaces::IRegistryCtrl> IRegistryCtrlPtr;
-    
-    RegistryCtrl(IRegistryCtrlPtr regCtrl)
-      : RegCtrl(regCtrl)
-    {
-      if (!RegCtrl.Get())
-        throw RegistryCtrException("Empty IRegistryCtrl pointer");
-    }
-    void Create(const char *registryPath)
-    {
-      if (RegCtrl->Create(registryPath) != IFaces::retOk)
-        throw RegistryCtrException("Can't create registry");
-    }
-    void Remove(const char *registryPath)
-    {
-      if (RegCtrl->Remove(registryPath) != IFaces::retOk)
-        throw RegistryCtrException("Can't remove registry");
-    }
-    void Load(const char *registryPath)
-    {
-      if (RegCtrl->Load(registryPath) != IFaces::retOk)
-        throw RegistryCtrException("Can't load registry");
-    }
-    bool IsLoaded() const
-    {
-    }
-    void Unload()
-    {
-      if (RegCtrl->Unload() != IFaces::retOk)
-        throw RegistryCtrException("Can't unload registry");
-    }
-  private:
-    IRegistryCtrlPtr RegCtrl;
-  };
 
-  DECLARE_RUNTIME_EXCEPTION(Registry)
+    DECLARE_RUNTIME_EXCEPTION(RegistryCtr)
 
-  class Registry
-    : private Common::NoCopyable
-  {
-  public:
-    typedef Common::RefObjPtr<IFaces::IRegistry> IRegistryPtr;
-    
-    Registry(IRegistryPtr reg)
-      : Reg(reg)
+    class RegistryCtrl
     {
-      if (!Reg.Get())
-        throw RegistryException("Empty IRegistry pointer");
-    }
-    void CreateKey(const std::string &pathKey)
+    public:
+      typedef Common::RefObjPtr<IFaces::IRegistryCtrl> IRegistryCtrlPtr;
+      
+      RegistryCtrl(IRegistryCtrlPtr regCtrl)
+        : RegCtrl(regCtrl)
+      {
+        if (!RegCtrl.Get())
+          throw RegistryCtrException("Empty IRegistryCtrl pointer");
+      }
+      void Create(const char *registryPath)
+      {
+        if (RegCtrl->Create(registryPath) != IFaces::retOk)
+          throw RegistryCtrException("Can't create registry");
+      }
+      void Remove(const char *registryPath)
+      {
+        if (RegCtrl->Remove(registryPath) != IFaces::retOk)
+          throw RegistryCtrException("Can't remove registry");
+      }
+      void Load(const char *registryPath)
+      {
+        if (RegCtrl->Load(registryPath) != IFaces::retOk)
+          throw RegistryCtrException("Can't load registry");
+      }
+      bool IsLoaded() const
+      {
+      }
+      void Unload()
+      {
+        if (RegCtrl->Unload() != IFaces::retOk)
+          throw RegistryCtrException("Can't unload registry");
+      }
+    private:
+      IRegistryCtrlPtr RegCtrl;
+    };
+
+    class RegistryKeysEnum
     {
-    }
-    void RemoveKey(const std::string &pathKey)
+    public:
+      RegistryKeysEnum(IFacesImpl::IEnumHelper)
+      {
+      }
+    };
+
+    DECLARE_RUNTIME_EXCEPTION(Registry)
+
+    class Registry
     {
-    }
-    const IFacesImpl::IVariantHelper GetValue(const std::string &pathKey)
-    {
-    }
-    template <typename T>
-    void SetValue(const std::string &pathKey, const T &value)
-    {
-    }
-    void SetValue(const std::string &pathKey, const void *data, unsigned long bytes)
-    {
-    }
-    void SetValue(const std::string &pathKey, IFaces::IBase *iface)
-    {
-    }
-    IFacesImpl::IEnumHelper EnumKey(const char *pathKey)
-    {
-    }
-  private:
-  };
+    public:
+      typedef Common::RefObjPtr<IFaces::IRegistry> IRegistryPtr;
+      
+      Registry(IRegistryPtr reg)
+        : Reg(reg)
+      {
+        if (!Reg.Get())
+          throw RegistryException("Empty IRegistry pointer");
+      }
+      void CreateKey(const std::string &pathKey)
+      {
+        if (Reg->CreateKey(pathKey.c_str()) != IFaces::retOk)
+          throw RegistryException("Can't create key");
+      }
+      void RemoveKey(const std::string &pathKey)
+      {
+        if (Reg->RemoveKey(pathKey.c_str()) != IFaces::retOk)
+          throw RegistryException("Can't remove key");
+      }
+      const IFacesImpl::IVariantHelper GetValue(const std::string &pathKey)
+      {
+        IFacesImpl::IVariantHelper::IVariantPtr Var;
+        if (Reg->GetValue(pathKey.c_str(), Var.GetPPtr()) != IFaces::retOk)
+          throw RegistryException("Can't get value");
+        return Var;
+      }
+      template <typename T>
+      void SetValue(const std::string &pathKey, const T &value)
+      {
+        IFacesImpl::IVariantHelper::IVariantPtr Var = IFacesImpl::CreateVariant<System::Mutex>();
+        {
+          IFacesImpl::IVariantHelper Helper(Var);
+          Helper = value;
+        }
+        if (Reg->SetValue(pathKey.c_str(), Var.Get()) != IFaces::retOk)
+          throw RegistryException("Can't set value");
+      }
+      void SetValue(const std::string &pathKey, const void *data, unsigned long bytes)
+      {
+        IFacesImpl::IVariantHelper::IVariantPtr Var = IFacesImpl::CreateVariant<System::Mutex>();
+        {
+          IFacesImpl::IVariantHelper Helper(Var);
+          Helper.SetBinaryData(data, bytes);
+        }
+        if (Reg->SetValue(pathKey.c_str(), Var.Get()) != IFaces::retOk)
+          throw RegistryException("Can't set value");
+      }
+      void SetValue(const std::string &pathKey, IFaces::IBase *iface)
+      {
+        IFacesImpl::IVariantHelper::IVariantPtr Var = IFacesImpl::CreateVariant<System::Mutex>();
+        {
+          IFacesImpl::IVariantHelper Helper(Var);
+          Helper = iface;
+        }
+        if (Reg->SetValue(pathKey.c_str(), Var.Get()) != IFaces::retOk)
+          throw RegistryException("Can't set value");
+      }
+      IFacesImpl::IEnumHelper EnumKey(const std::string &pathKey)
+      {
+        IFacesImpl::IEnumHelper::IEnumPtr Enum;
+        if (Reg->EnumKey(pathKey.c_str(), Enum.GetPPtr()) != IFaces::retOk)
+          throw RegistryException("Can't enum key");
+        return Enum;
+      }
+    private:
+      IRegistryPtr Reg;
+    };
+
+  }
 }
 
 class FWLoader
   : private Common::NoCopyable
 {
 public:
-  FWLoader(const char *registryModuleName, const char *registryClassId, const char *registryName)
+  FWLoader(const char *registryModuleName, const char *registryClassId, const char *registryName,
+    const char *classFactoryId)
     : RegistryModule(Common::ModuleHolder::DllHolderPtr(new System::DllHolder(registryModuleName)))
     , RegistryCtrl(RegistryModule.CreateObject(registryClassId))
   {
     {
-      ComponentWrappers::RegistryCtrl Ctrl(RegistryCtrl);
+      Common::Wrappers::RegistryCtrl Ctrl(RegistryCtrl);
       Ctrl.Load(registryName);
     }
+    Common::RefObjQIPtr<IFaces::IRegistry> Reg(RegistryCtrl);
+    Common::Wrappers::Registry Reg1(Reg);
+    Reg1.EnumKey("ComponentInformation");
   }
 private:
   Common::ModuleHolder RegistryModule;
@@ -369,7 +418,7 @@ int main()
   {
     FWLoader Loader(
       "C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll",
-      "cf7456c3-70c7-4a97-b8e4-f910cd2f823b", "TestReg.xml"
+      "cf7456c3-70c7-4a97-b8e4-f910cd2f823b", "TestReg.xml", "0eedde75-ce15-4eba-9026-3d5f94488c26"
       );
   }
   catch (std::exception &e)
