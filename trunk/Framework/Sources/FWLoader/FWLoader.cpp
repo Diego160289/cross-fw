@@ -4,8 +4,11 @@
 #include "IFaces.h"
 
 #include "IVariantImpl.h"
+#include "Mutex.h"
 
+#include <sstream>
 #include "RefObjQIPtr.h"
+#include "RefObjPtr.h"
 
 void PrintEnum(Common::RefObjPtr<IFaces::IEnum> e, int n)
 {
@@ -145,9 +148,233 @@ void TestClassFactory()
   }
 }
 
+void TestRegistryModule(const char *location, const char *moduleName, bool isNew = false)
+{
+  try
+  {
+    Common::SharedPtr<System::DllHolder>
+      Dll(new System::DllHolder("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll"));
+    //Dll(new System::DllHolder("/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.so"));
+    Common::ModuleHolder Module(Dll);
+    Common::RefObjQIPtr<IFaces::IRegistryCtrl> RegCtrl(Module.CreateObject("cf7456c3-70c7-4a97-b8e4-f910cd2f823b"));
+    if (!RegCtrl.Get())
+    {
+      std::cerr << "Can'r load reg" << std::endl;
+      return;
+    }
+    if (isNew)
+    {
+      if (RegCtrl->Create("TestReg.xml") != IFaces::retOk)
+      {
+        std::cerr << "Can't create reg file" << std::endl;
+        return;
+      }
+    }
+    else
+    {
+      if (RegCtrl->Load("TestReg.xml") != IFaces::retOk)
+      {
+        std::cerr << "Can't load reg file" << std::endl;
+        return;
+      }
+    }
+    Common::RefObjQIPtr<IFaces::IRegistry> Reg(RegCtrl);
+    if (!Reg.Get())
+    {
+      std::cerr << "Can't get reg iface" << std::endl;
+      return;
+    }
+    if (Reg->CreateKey("ComponentInformation") != IFaces::retOk)
+    {
+      std::cerr << "Can't create key ComponentInformation" << std::endl;
+      return;
+    }
+    try
+    {
+      std::string ModuleFullName = location;
+      ModuleFullName += "/";
+      ModuleFullName += moduleName;
+      Common::ModuleHolder CmpMod(Common::SharedPtr<System::DllHolder>(new System::DllHolder(ModuleFullName.c_str())));
+      std::string ComponentKey = "ComponentInformation/" + CmpMod.GetModuleGuid();
+      if (Reg->CreateKey(ComponentKey.c_str()) != IFaces::retOk)
+        throw std::logic_error("Can't create component key");
+      if (Reg->CreateKey((ComponentKey + "/Type").c_str()) != IFaces::retOk)
+        throw std::logic_error("Can't create component type key");
+      Common::RefObjPtr<IFaces::IVariant> Var = IFacesImpl::CreateVariant<System::Mutex>();
+      IFacesImpl::IVariantHelper VH(Var);
+      VH = "Inproc";
+      if (Reg->SetValue((ComponentKey + "/Type").c_str(), Var.Get()) != IFaces::retOk)
+        throw std::logic_error("can't set reg val");
+      if (Reg->CreateKey((ComponentKey + "/Name").c_str()) != IFaces::retOk)
+        throw std::logic_error("Can't create component name key");
+      IFacesImpl::CreateVariant<System::Mutex>();
+      VH = moduleName;
+      if (Reg->SetValue((ComponentKey + "/Name").c_str(), Var.Get()) != IFaces::retOk)
+        throw std::logic_error("can't set reg val");
+      if (Reg->CreateKey((ComponentKey + "/Location").c_str()) != IFaces::retOk)
+        throw std::logic_error("Can't create component Location key");
+      VH = location;
+      if (Reg->SetValue((ComponentKey + "/Location").c_str(), Var.Get()) != IFaces::retOk)
+        throw std::logic_error("can't set reg val");
+      if (Reg->CreateKey((ComponentKey + "/Description").c_str()) != IFaces::retOk)
+        throw std::logic_error("Can't create component Description key");
+      VH = CmpMod.GetModuleName().c_str();
+      if (Reg->SetValue((ComponentKey + "/Description").c_str(), Var.Get()) != IFaces::retOk)
+        throw std::logic_error("can't set reg val");
+      if (Reg->CreateKey((ComponentKey + "/ClassIDs").c_str()) != IFaces::retOk)
+        throw std::logic_error("Can't create component ClassIDs key");
+      Common::ModuleHolder::StringList IDs = CmpMod.GetCoClassIds();
+      unsigned Index = 0;
+      for (Common::ModuleHolder::StringList::const_iterator i = IDs.begin() ; i != IDs.end() ; ++i)
+      {
+        std::stringstream Io;
+        Io << Index++;
+        if (Reg->CreateKey((ComponentKey + "/ClassIDs/ClassId_" + Io.str()).c_str()) != IFaces::retOk)
+          throw std::logic_error("Can't create component ClassID key");
+        VH = i->c_str();
+        if (Reg->SetValue((ComponentKey + "/ClassIDs/ClassId_" + Io.str()).c_str(), Var.Get()) != IFaces::retOk)
+          throw std::logic_error("can't set classid val");
+      }
+    }
+    catch (std::exception &e)
+    {
+      std::cerr << e.what() << std::endl;
+      return;
+    }
+    if (RegCtrl->Save() != IFaces::retOk)
+      std::cerr << "Can't save reg" << std::endl;
+  }
+  catch (std::exception &e)
+  {
+    std::cerr << e.what() << std::endl;
+    return;
+  }
+}
+
+DECLARE_RUNTIME_EXCEPTION(FWLoader)
+
+namespace ComponentWrappers
+{
+
+  DECLARE_RUNTIME_EXCEPTION(RegistryCtr)
+
+  class RegistryCtrl
+    : private Common::NoCopyable
+  {
+  public:
+    typedef Common::RefObjPtr<IFaces::IRegistryCtrl> IRegistryCtrlPtr;
+    
+    RegistryCtrl(IRegistryCtrlPtr regCtrl)
+      : RegCtrl(regCtrl)
+    {
+      if (!RegCtrl.Get())
+        throw RegistryCtrException("Empty IRegistryCtrl pointer");
+    }
+    void Create(const char *registryPath)
+    {
+      if (RegCtrl->Create(registryPath) != IFaces::retOk)
+        throw RegistryCtrException("Can't create registry");
+    }
+    void Remove(const char *registryPath)
+    {
+      if (RegCtrl->Remove(registryPath) != IFaces::retOk)
+        throw RegistryCtrException("Can't remove registry");
+    }
+    void Load(const char *registryPath)
+    {
+      if (RegCtrl->Load(registryPath) != IFaces::retOk)
+        throw RegistryCtrException("Can't load registry");
+    }
+    bool IsLoaded() const
+    {
+    }
+    void Unload()
+    {
+      if (RegCtrl->Unload() != IFaces::retOk)
+        throw RegistryCtrException("Can't unload registry");
+    }
+  private:
+    IRegistryCtrlPtr RegCtrl;
+  };
+
+  DECLARE_RUNTIME_EXCEPTION(Registry)
+
+  class Registry
+    : private Common::NoCopyable
+  {
+  public:
+    typedef Common::RefObjPtr<IFaces::IRegistry> IRegistryPtr;
+    
+    Registry(IRegistryPtr reg)
+      : Reg(reg)
+    {
+      if (!Reg.Get())
+        throw RegistryException("Empty IRegistry pointer");
+    }
+    void CreateKey(const std::string &pathKey)
+    {
+    }
+    void RemoveKey(const std::string &pathKey)
+    {
+    }
+    const IFacesImpl::IVariantHelper GetValue(const std::string &pathKey)
+    {
+    }
+    template <typename T>
+    void SetValue(const std::string &pathKey, const T &value)
+    {
+    }
+    void SetValue(const std::string &pathKey, const void *data, unsigned long bytes)
+    {
+    }
+    void SetValue(const std::string &pathKey, IFaces::IBase *iface)
+    {
+    }
+    IFacesImpl::IEnumHelper EnumKey(const char *pathKey)
+    {
+    }
+  private:
+  };
+}
+
+class FWLoader
+  : private Common::NoCopyable
+{
+public:
+  FWLoader(const char *registryModuleName, const char *registryClassId, const char *registryName)
+    : RegistryModule(Common::ModuleHolder::DllHolderPtr(new System::DllHolder(registryModuleName)))
+    , RegistryCtrl(RegistryModule.CreateObject(registryClassId))
+  {
+    {
+      ComponentWrappers::RegistryCtrl Ctrl(RegistryCtrl);
+      Ctrl.Load(registryName);
+    }
+  }
+private:
+  Common::ModuleHolder RegistryModule;
+  Common::RefObjQIPtr<IFaces::IRegistryCtrl> RegistryCtrl;
+};
+
+// TODO: 
+//    1. убрать неск методов из IRegistryCtrl
+//    2. Save для реестра в отдельный поток
+
 int main()
 {
   //TestRegistry();
-  TestClassFactory();
+  //TestRegistryModule("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug", "Registry.dll", true);
+  //TestRegistryModule("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug", "ClassFactory.dll");
+  //TestClassFactory();
+  try
+  {
+    FWLoader Loader(
+      "C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll",
+      "cf7456c3-70c7-4a97-b8e4-f910cd2f823b", "TestReg.xml"
+      );
+  }
+  catch (std::exception &e)
+  {
+    std::cerr << e.what() << std::endl;
+  }
   return 0;
 }

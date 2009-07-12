@@ -33,13 +33,13 @@ namespace Common
       : Ptr(0)
     {
       if (ptr.Get())
-        ptr.QueryInterface(&Ptr);
+        ptr->QueryInterface(T::GetUUID(), reinterpret_cast<void**>(&Ptr));
     }
     RefObjQIPtr(const RefObjPtr<T> &ptr)
       : Ptr()
     {
       if (ptr.Get())
-        ptr.QueryInterface(&Ptr);
+        ptr->QueryInterface(T::GetUUID(), reinterpret_cast<void**>(&Ptr));
     }
     template <typename TOther>
     RefObjQIPtr(const RefObjPtr<TOther> &ptr)
@@ -87,6 +87,10 @@ namespace Common
       Swap(Tmp);
       return *this;
     }
+    operator RefObjPtr<T> () const
+    {
+      return RefObjPtr<T>(Ptr);
+    }
     ~RefObjQIPtr()
     {
       Release();
@@ -131,6 +135,7 @@ namespace Common
     template <typename > friend class RefObjQIPtr;
     T *Ptr;
   };
+ 
 }
 
 #endif  // !__REFOBJQIPTR_H__
