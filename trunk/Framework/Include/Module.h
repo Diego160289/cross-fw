@@ -52,9 +52,9 @@ namespace Common
 }
 
 #ifdef _MSC_VER
-  #define EXPORT_FUNCTION extern "C" __declspec(dllexport) 
+  #define EXPORT_FUNCTION extern "C" __declspec(dllexport)
 #else
-  #define EXPORT_FUNCTION extern "C" 
+  #define EXPORT_FUNCTION extern "C"
 #endif
 
 #define DECLARE_MODULE_ENTRY_POINT(module_name_, module_guid_, module_coclasslist_) \
@@ -82,7 +82,7 @@ namespace Common
       Common::RefObjPtr<IFaces::IBase> Obj(ModuleType::CreateObject(classId)); \
       if (!Obj.Get()) \
         return false; \
-      return Obj->QueryInterface(IFaces::IBase::GetUUID(), iface); \
+      return Obj->QueryInterface(IFaces::IBase::GetUUID(), iface) == IFaces::retOk; \
     } \
     catch (std::exception &) \
     { \

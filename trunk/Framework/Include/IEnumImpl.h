@@ -70,7 +70,7 @@ namespace IFacesImpl
       {
           NewInst->CurIter = NewInst->Items.begin() + std::distance(Items.begin(), CurIter);
       }
-      return NewInst.QueryInterface(newEnum) ? retOk : retFail;
+      return NewInst.QueryInterface(newEnum);
     }
 
     typedef Common::RefObjPtr<IFaces::IBase> IBasePtr;

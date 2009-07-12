@@ -57,7 +57,7 @@ namespace IFacesImpl
     virtual RetCode Get(IFaces::IVariant **var) const
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
-      return Var.QueryInterface(var) ? retOk : retFail;
+      return Var.QueryInterface(var);
     }
     virtual RetCode Set(IFaces::IVariant *var)
     {
