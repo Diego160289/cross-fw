@@ -70,9 +70,10 @@ namespace Common
       Ptr = 0;
     }
     template <typename Q>
-    bool QueryInterface(Q **ptr)
+    IFaces::RetCode QueryInterface(Q **ptr)
     {
-      return !Ptr ? false : Ptr->QueryInterface(Q::GetUUID(), reinterpret_cast<void**>(ptr));
+      return !Ptr ? IFaces::retFail :
+        Ptr->QueryInterface(Q::GetUUID(), reinterpret_cast<void**>(ptr));
     }
     T* Detach()
     {

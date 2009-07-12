@@ -10,6 +10,12 @@
 
 namespace Common
 {
+  using IFaces::RetCode;
+  using IFaces::retOk;
+  using IFaces::retFalse;
+  using IFaces::retFail;
+  using IFaces::retNoInterface;
+
   template <typename TList>
   inline bool ExistsIFace(const char *ifaceId)
   {
@@ -181,19 +187,19 @@ namespace Common
       }
       return NewCounter;
     }
-    virtual bool QueryInterface(const char *ifaceId, void **iface, IFaces::IErrorInfo *errInfo = 0)
+    virtual  RetCode QueryInterface(const char *ifaceId, void **iface)
     {
       SyncObject<TSynObj> Locker(GetSynObj());
       if (ExistsIFace<ExportIFacesList>(ifaceId))
       {
         TCoClass *CoClassPtr = dynamic_cast<TCoClass *>(this);
         if (!CoClassPtr)
-          return false;
+          return retFail;
         CoClassPtr->InheritedInterfaces::CastTo(ifaceId, iface);
         if (*iface)
         {
           AddRef();
-          return true;
+          return retNoInterface;
         }
         else
         {
@@ -201,11 +207,11 @@ namespace Common
           if (*iface)
           {
             AddRef();
-            return true;
+            return retOk;
           }
         }
       }
-      return false;
+      return retFail;
     }
   private:
     mutable TSynObj SynObj;
@@ -242,8 +248,12 @@ namespace Common
         return ObjectCreator<typename TCoClassList::Tail>::CreateObject(classId);
       RefObjPtr<IFaces::IBase> Ret;
       RefObjPtr<CurCoClass> NewObj = CurCoClass::TTithCreateStrategy::CreateObject();
-      if (NewObj.Get())
-        NewObj->CurCoClass::QueryInterface(IFaces::IBase::GetUUID(), reinterpret_cast<void**>(&Ret));
+      if (NewObj.Get() &&
+        NewObj->CurCoClass::QueryInterface(IFaces::IBase::GetUUID(),
+          reinterpret_cast<void**>(&Ret)) != retOk)
+      {
+        return RefObjPtr<IFaces::IBase>();
+      }
       return Ret;
     }
   };

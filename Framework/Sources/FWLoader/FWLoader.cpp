@@ -11,7 +11,7 @@ void PrintEnum(Common::RefObjPtr<IFaces::IEnum> e, int n)
   for (Common::RefObjPtr<IFaces::IBase> i ; e->Next(i.GetPPtr()) == IFaces::retOk ; i.Release())
   {
     Common::RefObjPtr<IFaces::INamedVariable> v;
-    if (!i.QueryInterface(v.GetPPtr()))
+    if (i.QueryInterface(v.GetPPtr()) != IFaces::retOk)
       throw std::runtime_error("query err");
     Common::RefObjPtr<IFaces::IVariant> v1;
     if (v->Get(v1.GetPPtr()) !=IFaces::retOk)
@@ -24,7 +24,7 @@ void PrintEnum(Common::RefObjPtr<IFaces::IEnum> e, int n)
       for (int k = 0 ; k < n ; ++k) std::cout << " ";
       std::cout << "Key " << v->GetName() << std::endl;
       Common::RefObjPtr<IFaces::IEnum> e2;
-      if (!e1.QueryInterface(e2.GetPPtr()))
+      if (e1.QueryInterface(e2.GetPPtr()) != IFaces::retOk)
         throw std::runtime_error("query err2");
       PrintEnum(e2, n + 2);
     }
@@ -118,8 +118,8 @@ void TestClassFactory()
   try
   {
     Common::SharedPtr<System::DllHolder>
-		//Dll(new System::DllHolder("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\ClassFactory.dll"));
-    Dll(new System::DllHolder("/home/dmitry/cross-fw/Framework/Bin/Debug/ClassFactory.so"));
+		Dll(new System::DllHolder("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\ClassFactory.dll"));
+    //Dll(new System::DllHolder("/home/dmitry/cross-fw/Framework/Bin/Debug/ClassFactory.so"));
     Common::ModuleHolder Module(Dll);
     {
       Common::RefObjPtr<IFaces::IBase> Obj(Module.CreateObject("0eedde75-ce15-4eba-9026-3d5f94488c26"));

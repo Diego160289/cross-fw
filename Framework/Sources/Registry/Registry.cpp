@@ -330,7 +330,7 @@ RetCode IRegistryImpl::GetValue(const char *pathKey, IFaces::IVariant **value)
       if (!Value.empty() && Var->FromBase64Pack(Value.c_str()) != retOk)
         return retFail;
     }
-    if (!Var.QueryInterface(value))
+    if (Var.QueryInterface(value) != retOk)
       return retFail;
   }
   catch (std::exception &)
@@ -420,7 +420,7 @@ namespace
       EnumImplPtr Keys = IFacesImpl::CreateEnum<System::Mutex>();
       {
         Common::RefObjPtr<IFaces::IBase> Item;
-        if (!Keys.QueryInterface(Item.GetPPtr()) ||
+        if (Keys.QueryInterface(Item.GetPPtr()) != retOk ||
           Value->SetValue(IFaces::IVariant::vtIBase, Item.Get()) != retOk)
         {
           return false;
@@ -430,7 +430,7 @@ namespace
         return false;
       {
         Common::RefObjPtr<IFaces::IBase> Item;
-        if (!Var.QueryInterface(Item.GetPPtr()))
+        if (Var.QueryInterface(Item.GetPPtr()) != retOk)
           return false;
         keys->AddItem(Item);
       }
@@ -452,7 +452,7 @@ try
   if (!Key->FirstChild())
     return retFail;
   EnumImplPtr Keys = IFacesImpl::CreateEnum<System::Mutex>();
-  return !EnumKeys(Key, Keys) || !Keys.QueryInterface(keys) ? retFail : retOk;
+  return !EnumKeys(Key, Keys) || Keys.QueryInterface(keys) != retOk ? retFail : retOk;
 }
 catch (std::exception &)
 {

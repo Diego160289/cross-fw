@@ -10,11 +10,10 @@
 
 namespace IFaces
 {
-  struct IErrorInfo;
 
   enum RetCode
   {
-    retOk, retFalse, retFail
+    retOk, retFalse, retFail, retNoInterface
   };
 
   struct IBase
@@ -25,7 +24,7 @@ namespace IFaces
     }
     virtual unsigned long AddRef() = 0;
     virtual unsigned long Release() = 0;
-    virtual bool QueryInterface(const char *ifaceId, void **iface, IErrorInfo *errInfo = 0) = 0;
+    virtual RetCode QueryInterface(const char *ifaceId, void **iface) = 0;
   };
 
   struct IErrorInfo
