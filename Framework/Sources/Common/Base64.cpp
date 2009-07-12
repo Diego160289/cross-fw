@@ -87,7 +87,7 @@ namespace Common
 {
   std::string BinToBase64(const void *data, unsigned bytes)
   {
-    unsigned OutLen = static_cast<unsigned>((bytes / 3.0) * 4 + 1) + 2;
+    unsigned OutLen = (4 * bytes / 3) + 5;
     std::vector<char> OutBuf(OutLen, 0);
     base64_encode(&OutBuf[0], reinterpret_cast<const char *>(data), bytes);
     return &OutBuf[0];
