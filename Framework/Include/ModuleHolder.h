@@ -8,6 +8,7 @@
 #include "Pointers.h"
 #include "IFaces.h"
 #include "RefObjPtr.h"
+#include "RefObjQIPtr.h"
 
 namespace Common
 {
@@ -32,6 +33,7 @@ namespace Common
     mutable std::string ModuleGuid;
     mutable StringList CoClassIds;
   };
+
 }
 
 #endif  // !__MODULEHOLDER_H__
