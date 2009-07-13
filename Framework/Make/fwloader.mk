@@ -36,7 +36,7 @@ endif
 	-o $(OBJDIR)/$(notdir $@)
 
 all: $(OBJ)
-	$(CXX) \
+	$(CXX) -lpthread \
 	$(addprefix $(OBJDIR)/,$(notdir $(OBJ))) \
 	$(addprefix -L ,$(LIBSDIR)) \
 	$(addprefix -l ,$(LIBS)) \

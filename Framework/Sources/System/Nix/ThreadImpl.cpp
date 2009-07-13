@@ -1,5 +1,7 @@
 #include "ThreadImpl.h"
 
+
+
 namespace System
 {
   Thread::ThreadImpl::ThreadImpl(Common::ICallback *callback)

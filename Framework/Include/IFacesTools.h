@@ -167,8 +167,7 @@ namespace Common
     virtual unsigned long AddRef()
     {
       SyncObject<TSynObj> Locker(GetSynObj());
-      ModuleCounter::GetInstance().Inc();
-      return ++Counter;
+      return InternalAddRef();
     }
     virtual unsigned long Release()
     {
@@ -198,7 +197,7 @@ namespace Common
         CoClassPtr->InheritedInterfaces::CastTo(ifaceId, iface);
         if (*iface)
         {
-          AddRef();
+          InternalAddRef();
           return retOk;
         }
         else
@@ -206,7 +205,7 @@ namespace Common
           CoClassPtr->InheritedBaseInterface::CastTo(ifaceId, iface);
           if (*iface)
           {
-            AddRef();
+            InternalAddRef();
             return retOk;
           }
         }
@@ -218,6 +217,11 @@ namespace Common
     unsigned long Counter;
     bool IsSuccessfulCreated;
     friend class TCreateStrategy<TCoClass, TSynObj>;
+    unsigned long InternalAddRef()
+    {
+      ModuleCounter::GetInstance().Inc();
+      return ++Counter;
+    }
   protected:
     TSynObj& GetSynObj() const
     {

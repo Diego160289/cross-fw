@@ -5,7 +5,6 @@
 
 #include "IVariantImpl.h"
 #include "IEnumImpl.h"
-#include "ThreadLoop.h"
 
 #include <sstream>
 #include "RefObjQIPtr.h"
@@ -18,8 +17,8 @@ void TestRegistryModule(const char *location, const char *moduleName, bool isNew
   try
   {
     Common::SharedPtr<System::DllHolder>
-      Dll(new System::DllHolder("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll"));
-    //Dll(new System::DllHolder("/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.so"));
+      //Dll(new System::DllHolder("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll"));
+      Dll(new System::DllHolder("/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.so"));
     Common::ModuleHolder Module(Dll);
     Common::RefObjQIPtr<IFaces::IRegistryCtrl> RegCtrl(Module.CreateObject("cf7456c3-70c7-4a97-b8e4-f910cd2f823b"));
     if (!RegCtrl.Get())
@@ -120,36 +119,27 @@ private:
   Common::RefObjPtr<IFaces::IClassFactoryCtrl> FactoryCtrl;
 };
 
-// TODO: 
-//    1. убрать неск методов из IRegistryCtrl
-//    2. Save для реестра в отдельный поток
-
-
-#include <windows.h>
-
-void Func()
-{
-  static int i = 0;
-  std::cout << i++ << std::endl;
-}
+// TODO:
+//    1. пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ IRegistryCtrl
+//    2. Save пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
 int main()
 {
   //TestRegistryModule("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug", "Registry.dll", true);
   //TestRegistryModule("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug", "ClassFactory.dll");
+  //TestRegistryModule("/home/dmitry/cross-fw/Framework/Bin/Debug", "Registry.so", true);
+  //TestRegistryModule("/home/dmitry/cross-fw/Framework/Bin/Debug", "ClassFactory.so");
   try
   {
-    System::ThreadLoop tt(System::Thread::ThreadCallbackPtr(new Common::IFuncCallbackImpl<void ()>(&Func)));
-    for (int i = 0 ; i < 100 ; ++i)
-    {
-      tt.Resume();
-      ::Sleep(100);
-    }
-    Sleep(5000);
     /*FWLoader Loader(
       "C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll",
       "cf7456c3-70c7-4a97-b8e4-f910cd2f823b", "TestReg.xml", "0eedde75-ce15-4eba-9026-3d5f94488c26"
       );*/
+    FWLoader Loader(
+      "/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.so",
+      "cf7456c3-70c7-4a97-b8e4-f910cd2f823b",
+      "/home/dmitry/cross-fw/Framework/Bin/Debug/TestReg.xml", "0eedde75-ce15-4eba-9026-3d5f94488c26"
+      );
   }
   catch (std::exception &e)
   {
