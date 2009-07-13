@@ -13,7 +13,7 @@ namespace System
   class Thread
     : private Common::NoCopyable
   {
-  private:
+  public:
     typedef Common::SharedPtr<Common::ICallback> ThreadCallbackPtr;
     Thread(ThreadCallbackPtr callback);
     ~Thread();

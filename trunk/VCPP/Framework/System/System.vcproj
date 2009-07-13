@@ -209,6 +209,10 @@
 			RelativePath="..\..\..\Framework\Sources\System\Thread.cpp"
 			>
 		</File>
+		<File
+			RelativePath="..\..\..\Framework\Sources\System\ThreadLoop.cpp"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

@@ -31,13 +31,12 @@ namespace Common
     PMethod Mtd;
   };
 
-  template <typename TObject>
+  template <typename TPFunc>
   class IFuncCallbackImpl
     : public ICallback
   {
   public:
-    typedef void (*PFunc)();
-    IFuncCallbackImpl(PFunc func)
+    IFuncCallbackImpl(TPFunc *func)
       : Func(func)
     {
     }
@@ -46,7 +45,7 @@ namespace Common
       Func();
     }
   private:
-    PFunc Func;;
+    TPFunc *Func;;
   };
 
 }
