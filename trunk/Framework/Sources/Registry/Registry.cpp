@@ -379,9 +379,9 @@ namespace
     Io << KeyName;
     Common::StringVector KeyPair;
     for (std::string s ; std::getline(Io, s, '_') ; KeyPair.push_back(s));
-    if (KeyPair.size() != 2 || KeyPair.front() != "Key")
+    if (KeyPair.size() < 2 || KeyPair.front() != "Key")
       return "";
-    return KeyPair.back();
+    return KeyPair[1];
   }
 
   typedef IFacesImpl::IEnumImpl<System::Mutex>::ThisTypePtr EnumImplPtr;
