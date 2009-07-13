@@ -167,6 +167,10 @@
 			RelativePath="..\..\..\Framework\Sources\Common\ModuleHolder.cpp"
 			>
 		</File>
+		<File
+			RelativePath="..\..\..\Framework\Sources\Common\RegistryWrappers.cpp"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

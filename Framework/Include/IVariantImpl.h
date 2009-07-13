@@ -271,10 +271,7 @@ namespace IFacesImpl
           typedef std::vector<std::string>::size_type SizeType;
           if (ValLen < sizeof(SizeType))
             return retFail;
-          SizeType Bytes = 0;
-          memcpy(&Bytes, ValData, sizeof(SizeType));
-          ValData += sizeof(SizeType);
-          NewHolder.Reset(new IVariantHolderString<char, IFaces::IVariant::vtString>(Bytes ? ValData : 0));
+          NewHolder.Reset(new IVariantHolderString<char, IFaces::IVariant::vtString>(ValData));
         }
         break;
       case IFaces::IVariant::vtWString:
@@ -282,10 +279,7 @@ namespace IFacesImpl
           typedef std::vector<std::wstring>::size_type SizeType;
           if (ValLen < sizeof(SizeType))
             return retFail;
-          SizeType Bytes = 0;
-          memcpy(&Bytes, ValData, sizeof(SizeType));
-          ValData += sizeof(SizeType);
-          NewHolder.Reset(new IVariantHolderString<wchar_t, IFaces::IVariant::vtWString>(reinterpret_cast<const wchar_t*>(Bytes ? ValData : 0)));
+          NewHolder.Reset(new IVariantHolderString<wchar_t, IFaces::IVariant::vtWString>(reinterpret_cast<const wchar_t*>(ValData)));
         }
         break;
       default :
@@ -452,19 +446,15 @@ namespace IFacesImpl
           &reinterpret_cast<const char*>(&Vt)[0],
           &reinterpret_cast<const char*>(&Vt)[sizeof(Vt)],
           std::back_inserter(TmpBuf));
-        typename TString::size_type StrSize = (Str.size()) * sizeof(typename TString::value_type);
-        std::copy(
-          &reinterpret_cast<const char*>(&StrSize)[0],
-          &reinterpret_cast<const char*>(&StrSize)[sizeof(StrSize)],
-          std::back_inserter(TmpBuf));
-        if (StrSize)
+        if (Str.size())
         {
           std::copy(
             &reinterpret_cast<const char*>(&Str[0])[0],
-            &reinterpret_cast<const char*>(&Str[0])[StrSize],
+            &reinterpret_cast<const char*>(&Str[0])[Str.size() * sizeof(typename TString::size_type)],
             std::back_inserter(TmpBuf));
         }
-        Base64Buf.reset(new std::string(Common::BinToBase64(&TmpBuf[0], static_cast<unsigned>(TmpBuf.size()))));
+        Base64Buf.reset(new std::string(Common::BinToBase64(
+          &TmpBuf[0], static_cast<unsigned>(TmpBuf.size() * sizeof(typename TString::size_type)))));
         return Base64Buf->c_str();
       }
     private:

@@ -199,7 +199,7 @@ namespace Common
         if (*iface)
         {
           AddRef();
-          return retNoInterface;
+          return retOk;
         }
         else
         {
@@ -211,7 +211,7 @@ namespace Common
           }
         }
       }
-      return retFail;
+      return retNoInterface;
     }
   private:
     mutable TSynObj SynObj;
