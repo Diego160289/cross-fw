@@ -5,12 +5,13 @@
 
 #include "IVariantImpl.h"
 #include "IEnumImpl.h"
-#include "Mutex.h"
+#include "ThreadLoop.h"
 
 #include <sstream>
 #include "RefObjQIPtr.h"
 #include "RefObjPtr.h"
 #include "ComponentWrappers.h"
+
 
 void TestRegistryModule(const char *location, const char *moduleName, bool isNew = false)
 {
@@ -93,16 +94,22 @@ public:
       Common::Wrappers::RegistryCtrl Ctrl(RegistryCtrl);
       Ctrl.Load(registryName);
     }
+    Common::RefObjQIPtr<IFaces::IRegistry> Registry(RegistryCtrl);
     Common::Wrappers::RegistryComponent::ComponentInfoPtr FactoryInfo =
-      Common::Wrappers::RegistryComponent(Common::RefObjQIPtr<IFaces::IRegistry>(RegistryCtrl)).GetComponentInfo(classFactoryId);
+      Common::Wrappers::RegistryComponent(Registry).GetComponentInfo(classFactoryId);
     if (FactoryInfo->GetType() != Common::Wrappers::RegistryComponent::ComponentInfo::ctInProc)
       throw FWLoaderException("Can't load not inproc class factory");
     std::string FactoryModuleName = FactoryInfo->GetLocation() + "/" + FactoryInfo->GetModuleName();
     ModuleHolderPtr NewfactoryModule(new Common::ModuleHolder(Common::ModuleHolder::DllHolderPtr(new System::DllHolder(FactoryModuleName.c_str()))));
     Common::RefObjQIPtr<IFaces::IClassFactoryCtrl> NewFactoryCtrl(NewfactoryModule->CreateObject(classFactoryId));
     if (!NewFactoryCtrl.Get())
+      throw FWLoaderException("Can't get class factory control");
+    Common::RefObjQIPtr<IFaces::IClassFactory> Factory(NewFactoryCtrl);
+    if (!Factory.Get())
       throw FWLoaderException("Can't get class factory");
-    
+    if (FactoryCtrl->SetRegistry(Registry.Get()) != IFaces::retOk)
+      throw FWLoaderException("Can't set registry into class factory");
+
     ClassFactorModule.Swap(NewfactoryModule);
     FactoryCtrl = NewFactoryCtrl;
   }
@@ -117,16 +124,32 @@ private:
 //    1. убрать неск методов из IRegistryCtrl
 //    2. Save для реестра в отдельный поток
 
+
+#include <windows.h>
+
+void Func()
+{
+  static int i = 0;
+  std::cout << i++ << std::endl;
+}
+
 int main()
 {
   //TestRegistryModule("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug", "Registry.dll", true);
   //TestRegistryModule("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug", "ClassFactory.dll");
   try
   {
-    FWLoader Loader(
+    System::ThreadLoop tt(System::Thread::ThreadCallbackPtr(new Common::IFuncCallbackImpl<void ()>(&Func)));
+    for (int i = 0 ; i < 100 ; ++i)
+    {
+      tt.Resume();
+      ::Sleep(100);
+    }
+    Sleep(5000);
+    /*FWLoader Loader(
       "C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll",
       "cf7456c3-70c7-4a97-b8e4-f910cd2f823b", "TestReg.xml", "0eedde75-ce15-4eba-9026-3d5f94488c26"
-      );
+      );*/
   }
   catch (std::exception &e)
   {

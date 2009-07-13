@@ -13,7 +13,9 @@ namespace IFaces
 
   enum RetCode
   {
-    retOk, retFalse, retFail, retNoInterface
+    retOk, retFalse, retFail,
+    retNoInterface, retNotImpl,
+    retBadParam
   };
 
   struct IBase

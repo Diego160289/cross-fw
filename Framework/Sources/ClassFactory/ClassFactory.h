@@ -3,11 +3,19 @@
 
 #include "IFacesTools.h"
 #include "Mutex.h"
+#include "Pointers.h"
+#include "RefObjPtr.h"
+#include "ModuleHolder.h"
+
+#include <map>
+#include <string>
 
 using IFaces::RetCode;
 using IFaces::retFail;
 using IFaces::retOk;
 using IFaces::retFalse;
+using IFaces::retBadParam;
+using IFaces::retNotImpl;
 
 class IClassFactoryImpl
   : public Common::CoClassBase
@@ -34,6 +42,13 @@ public:
   virtual void BeforeDestroy();
 
 private:
+  System::Mutex RegistryMtx;
+  Common::RefObjPtr<IFaces::IRegistry> Registry;
+
+  typedef Common::SharedPtr<Common::ModuleHolder> ModuleHolderPtr;
+  typedef std::map<std::string, ModuleHolderPtr> ModulePool;
+  System::Mutex ModulesMtx;
+  ModulePool Modules;
 };
 
 #endif  // !__MESSAGEQUEUE_H__
