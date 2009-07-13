@@ -186,63 +186,24 @@ void TestRegistryModule(const char *location, const char *moduleName, bool isNew
       std::cerr << "Can't get reg iface" << std::endl;
       return;
     }
-    if (Reg->CreateKey("ComponentInformation") != IFaces::retOk)
-    {
-      std::cerr << "Can't create key ComponentInformation" << std::endl;
-      return;
-    }
-    try
-    {
-      std::string ModuleFullName = location;
-      ModuleFullName += "/";
-      ModuleFullName += moduleName;
-      Common::ModuleHolder CmpMod(Common::SharedPtr<System::DllHolder>(new System::DllHolder(ModuleFullName.c_str())));
-      std::string ComponentKey = "ComponentInformation/" + CmpMod.GetModuleGuid();
-      if (Reg->CreateKey(ComponentKey.c_str()) != IFaces::retOk)
-        throw std::logic_error("Can't create component key");
-      if (Reg->CreateKey((ComponentKey + "/Type").c_str()) != IFaces::retOk)
-        throw std::logic_error("Can't create component type key");
-      Common::RefObjPtr<IFaces::IVariant> Var = IFacesImpl::CreateVariant<System::Mutex>();
-      IFacesImpl::IVariantHelper VH(Var);
-      VH = "Inproc";
-      if (Reg->SetValue((ComponentKey + "/Type").c_str(), Var.Get()) != IFaces::retOk)
-        throw std::logic_error("can't set reg val");
-      if (Reg->CreateKey((ComponentKey + "/Name").c_str()) != IFaces::retOk)
-        throw std::logic_error("Can't create component name key");
-      IFacesImpl::CreateVariant<System::Mutex>();
-      VH = moduleName;
-      if (Reg->SetValue((ComponentKey + "/Name").c_str(), Var.Get()) != IFaces::retOk)
-        throw std::logic_error("can't set reg val");
-      if (Reg->CreateKey((ComponentKey + "/Location").c_str()) != IFaces::retOk)
-        throw std::logic_error("Can't create component Location key");
-      VH = location;
-      if (Reg->SetValue((ComponentKey + "/Location").c_str(), Var.Get()) != IFaces::retOk)
-        throw std::logic_error("can't set reg val");
-      if (Reg->CreateKey((ComponentKey + "/Description").c_str()) != IFaces::retOk)
-        throw std::logic_error("Can't create component Description key");
-      VH = CmpMod.GetModuleName().c_str();
-      if (Reg->SetValue((ComponentKey + "/Description").c_str(), Var.Get()) != IFaces::retOk)
-        throw std::logic_error("can't set reg val");
-      if (Reg->CreateKey((ComponentKey + "/ClassIDs").c_str()) != IFaces::retOk)
-        throw std::logic_error("Can't create component ClassIDs key");
-      Common::ModuleHolder::StringList IDs = CmpMod.GetCoClassIds();
-      unsigned Index = 0;
-      for (Common::ModuleHolder::StringList::const_iterator i = IDs.begin() ; i != IDs.end() ; ++i)
-      {
-        std::stringstream Io;
-        Io << Index++;
-        if (Reg->CreateKey((ComponentKey + "/ClassIDs/ClassId_" + Io.str()).c_str()) != IFaces::retOk)
-          throw std::logic_error("Can't create component ClassID key");
-        VH = i->c_str();
-        if (Reg->SetValue((ComponentKey + "/ClassIDs/ClassId_" + Io.str()).c_str(), Var.Get()) != IFaces::retOk)
-          throw std::logic_error("can't set classid val");
-      }
-    }
-    catch (std::exception &e)
-    {
-      std::cerr << e.what() << std::endl;
-      return;
-    }
+
+    std::string Path = location;
+    Path += "/";
+    Path += moduleName;
+    Common::ModuleHolder CmpMod(Common::ModuleHolder::DllHolderPtr(
+      new System::DllHolder(Path.c_str()))
+      );
+    Common::Wrappers::RegistryComponent::ComponentInfo Info;
+    Info.SetType(Common::Wrappers::RegistryComponent::ComponentInfo::ctInProc);
+    Info.SetModuleGuid(CmpMod.GetModuleGuid());
+    Info.SetModuleName(moduleName);
+    Info.SetLocation(location);
+    Info.SetDescription(CmpMod.GetModuleName());
+    Common::ModuleHolder::StringList IDs = CmpMod.GetCoClassIds();
+    for (Common::ModuleHolder::StringList::const_iterator i = IDs.begin() ; i != IDs.end() ; ++i)
+      Info.AddClassId(i->c_str());
+    Common::Wrappers::RegistryComponent(Reg).SetComponentInfo(Info);
+
     if (RegCtrl->Save() != IFaces::retOk)
       std::cerr << "Can't save reg" << std::endl;
   }
@@ -264,19 +225,29 @@ public:
   FWLoader(const char *registryModuleName, const char *registryClassId, const char *registryName,
     const char *classFactoryId)
     : RegistryModule(Common::ModuleHolder::DllHolderPtr(new System::DllHolder(registryModuleName)))
-    , RegistryCtrl(RegistryModule.CreateObject(registryClassId))
   {
+    Common::RefObjQIPtr<IFaces::IRegistryCtrl> RegistryCtrl(RegistryModule.CreateObject(registryClassId));
     {
       Common::Wrappers::RegistryCtrl Ctrl(RegistryCtrl);
       Ctrl.Load(registryName);
     }
-    Common::RefObjQIPtr<IFaces::IRegistry> Reg(RegistryCtrl);
-    Common::Wrappers::Registry Reg1(Reg);
-    Reg1.EnumKey("ComponentInformation")->GetChildKeys();
+    Common::Wrappers::RegistryComponent::ComponentInfoPtr FactoryInfo =
+      Common::Wrappers::RegistryComponent(Common::RefObjQIPtr<IFaces::IRegistry>(RegistryCtrl)).GetComponentInfo(classFactoryId);
+    if (FactoryInfo->GetType() != Common::Wrappers::RegistryComponent::ComponentInfo::ctInProc)
+      throw FWLoaderException("Can't load not inproc class factory");
+    std::string FactoryModuleName = FactoryInfo->GetLocation() + "/" + FactoryInfo->GetModuleName();
+    ModuleHolderPtr NewfactoryModule(new Common::ModuleHolder(Common::ModuleHolder::DllHolderPtr(new System::DllHolder(FactoryModuleName.c_str()))));
+    Common::RefObjQIPtr<IFaces::IClassFactoryCtrl> NewFactoryCtrl(NewfactoryModule->CreateObject(classFactoryId));
+    if (!NewFactoryCtrl.Get())
+      throw FWLoaderException("Can't get class factory");
+    ClassFactorModule.Swap(NewfactoryModule);
+    FactoryCtrl = NewFactoryCtrl;
   }
 private:
   Common::ModuleHolder RegistryModule;
-  Common::RefObjQIPtr<IFaces::IRegistryCtrl> RegistryCtrl;
+  typedef Common::SharedPtr<Common::ModuleHolder> ModuleHolderPtr;
+  ModuleHolderPtr ClassFactorModule;
+  Common::RefObjPtr<IFaces::IClassFactoryCtrl> FactoryCtrl;
 };
 
 // TODO: 
