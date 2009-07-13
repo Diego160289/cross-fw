@@ -112,17 +112,17 @@ namespace Common
 
     bool Registry::Key::HasChildKeys() const
     {
-      Common::RefObjQIPtr<IFaces::INamedVariable> Var = Keys.First();
+      RefObjQIPtr<IFaces::INamedVariable> Var = Keys.First();
       if (!Var.Get())
         throw RegistryException("Can't get variable");
-      Common::RefObjPtr<IFaces::IVariant> Value;
+      RefObjPtr<IFaces::IVariant> Value;
       if (Var->Get(Value.GetPPtr()) != IFaces::retOk)
         throw RegistryException("Can't get value");
       if (Value->GetType() != IFaces::IVariant::vtIBase)
         return false;
-      Common::RefObjPtr<IFaces::IBase> ChildItem;
+      RefObjPtr<IFaces::IBase> ChildItem;
       if (Value->GetValue(reinterpret_cast<void**>(ChildItem.GetPPtr())) != IFaces::retOk ||
-        !Common::RefObjQIPtr<IFaces::IEnum>(ChildItem).Get())
+        !RefObjQIPtr<IFaces::IEnum>(ChildItem).Get())
       {
         throw RegistryException("Unknown child item");
       }
@@ -131,10 +131,10 @@ namespace Common
 
     bool Registry::Key::HasValue() const
     {
-      Common::RefObjQIPtr<IFaces::INamedVariable> Var = Keys.First();
+      RefObjQIPtr<IFaces::INamedVariable> Var = Keys.First();
       if (!Var.Get())
         throw RegistryException("Can't get variable");
-      Common::RefObjPtr<IFaces::IVariant> Value;
+      RefObjPtr<IFaces::IVariant> Value;
       if (Var->Get(Value.GetPPtr()) != IFaces::retOk)
         throw RegistryException("Can't get value");
       return Value->GetType() != IFaces::IVariant::vtIBase;
@@ -147,10 +147,10 @@ namespace Common
 
     const IFacesImpl::IVariantHelper Registry::Key::GetKeyValue() const
     {
-      Common::RefObjQIPtr<IFaces::INamedVariable> Var = Keys.First();
+      RefObjQIPtr<IFaces::INamedVariable> Var = Keys.First();
       if (!Var.Get())
         throw RegistryException("Can't get variable");
-      Common::RefObjPtr<IFaces::IVariant> Value;
+      RefObjPtr<IFaces::IVariant> Value;
       if (Var->Get(Value.GetPPtr()) != IFaces::retOk)
         throw RegistryException("Can't get value");
       if (Value->GetType() == IFaces::IVariant::vtIBase)
@@ -161,18 +161,18 @@ namespace Common
     const Registry::Key::KeysPoolPtr Registry::Key::GetChildKeys() const
     {
       KeysPoolPtr RetPool(new KeysPool);
-      for (Common::RefObjQIPtr<IFaces::INamedVariable> Var = Keys.First() ;
+      for (RefObjQIPtr<IFaces::INamedVariable> Var = Keys.First() ;
         Var.Get() ; Var = Keys.Next())
       {
-        Common::RefObjPtr<IFaces::IVariant> Value;
+        RefObjPtr<IFaces::IVariant> Value;
         if (Var->Get(Value.GetPPtr()) != IFaces::retOk)
           throw RegistryException("Can't get value");
         if (Value->GetType() != IFaces::IVariant::vtIBase)
           throw RegistryException("Unknown child item");
-        Common::RefObjPtr<IFaces::IBase> ChildItem;
+        RefObjPtr<IFaces::IBase> ChildItem;
         if (Value->GetValue(reinterpret_cast<void**>(ChildItem.GetPPtr())) != IFaces::retOk)
           throw RegistryException("Can't get child enum");
-        Common::RefObjQIPtr<IFaces::IEnum> Enum(ChildItem);
+        RefObjQIPtr<IFaces::IEnum> Enum(ChildItem);
         if (!Enum.Get())
           throw RegistryException("Unknown child item");
         RetPool->push_back(KeyPtr(new Key(IFacesImpl::IEnumHelper(Enum), Var->GetName())));
@@ -287,7 +287,7 @@ namespace Common
       ClassIDs.push_back(classId);
     }
 
-    const Common::StringVector& RegistryComponent::ComponentInfo::GetClassIDs() const
+    const StringVector& RegistryComponent::ComponentInfo::GetClassIDs() const
     {
       return ClassIDs;
     }
@@ -320,8 +320,8 @@ namespace Common
     {
       std::string KeyComponentClassId = Key_ComponentClassIDs;
       KeyComponentClassId += "/";
-      Common::StringVector ClassIDs = info.GetClassIDs();
-      for (Common::StringVector::const_iterator i = ClassIDs.begin() ; i != ClassIDs.end() ; ++i)
+      StringVector ClassIDs = info.GetClassIDs();
+      for (StringVector::const_iterator i = ClassIDs.begin() ; i != ClassIDs.end() ; ++i)
       {
         std::string ClassId = KeyComponentClassId;
         ClassId += *i;
@@ -352,7 +352,7 @@ namespace Common
       Key += Key_ClassIDs;
       Reg.CreateKey(Key);
       unsigned Index = 0;
-      for (Common::StringVector::const_iterator i = ClassIDs.begin() ; i != ClassIDs.end() ; ++i)
+      for (StringVector::const_iterator i = ClassIDs.begin() ; i != ClassIDs.end() ; ++i)
       {
         std::stringstream Io;
         Io << Key_ClassId << Index++;

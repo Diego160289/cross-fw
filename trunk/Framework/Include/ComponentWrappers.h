@@ -23,7 +23,7 @@ namespace Common
     class RegistryCtrl
     {
     public:
-      typedef Common::RefObjPtr<IFaces::IRegistryCtrl> IRegistryCtrlPtr;
+      typedef RefObjPtr<IFaces::IRegistryCtrl> IRegistryCtrlPtr;
 
       RegistryCtrl(IRegistryCtrlPtr regCtrl);
       void Create(const char *registryPath);
@@ -40,14 +40,14 @@ namespace Common
     class Registry
     {
     public:
-      typedef Common::RefObjPtr<IFaces::IRegistry> IRegistryPtr;
+      typedef RefObjPtr<IFaces::IRegistry> IRegistryPtr;
 
       class Key
       {
       public:
-        typedef Common::SharedPtr<Key> KeyPtr;
+        typedef SharedPtr<Key> KeyPtr;
         typedef std::vector<KeyPtr> KeysPool;
-        typedef Common::SharedPtr<KeysPool> KeysPoolPtr;
+        typedef SharedPtr<KeysPool> KeysPoolPtr;
         bool HasChildKeys() const;
         bool HasValue() const;
         const std::string GetKeyName() const;
@@ -118,17 +118,17 @@ namespace Common
         void SetDescription(const std::string &description);
         const std::string& GetDescription() const;
         void AddClassId(const std::string &classId);
-        const Common::StringVector& GetClassIDs() const;
+        const StringVector& GetClassIDs() const;
       private:
         ComponentType Type;
         std::string ModuleGuid;
         std::string ModuleName;
         std::string Location;
         std::string Description;
-        Common::StringVector ClassIDs;
+        StringVector ClassIDs;
       };
-      typedef Common::SharedPtr<ComponentInfo> ComponentInfoPtr;
-      typedef Common::RefObjPtr<IFaces::IRegistry> IRegistryPtr;
+      typedef SharedPtr<ComponentInfo> ComponentInfoPtr;
+      typedef RefObjPtr<IFaces::IRegistry> IRegistryPtr;
       RegistryComponent(IRegistryPtr reg);
       ComponentInfoPtr GetComponentInfo(const std::string &classId) const;
       void SetComponentInfo(const ComponentInfo &info);
