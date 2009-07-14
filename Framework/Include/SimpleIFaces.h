@@ -37,7 +37,7 @@ namespace Common
   };
 
   template <typename TObject>
-  ICallbackPtr CreateMemberCakkback(TObject &obj, void (TObject::*mtd)())
+  ICallbackPtr CreateMemberCallback(TObject &obj, void (TObject::*mtd)())
   {
     return ICallbackPtr(new IMemberCallbackImpl<TObject>(obj, mtd));
   }
@@ -60,7 +60,7 @@ namespace Common
   };
 
   template <typename TFunc>
-  ICallbackPtr CreateFuncCakkback(TFunc *func)
+  ICallbackPtr CreateFuncCallback(TFunc *func)
   {
     return ICallbackPtr(new IFuncCallbackImpl<TFunc>(func));
   }

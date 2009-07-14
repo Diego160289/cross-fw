@@ -425,7 +425,7 @@ catch (std::exception &)
 bool IRegistryImpl::FinalizeCreate()
 {
   SaveLoop.Reset(new System::ThreadLoop(
-    CreateMemberCakkback(*this, &IRegistryImpl::SaveRegistry)
+    CreateMemberCallback(*this, &IRegistryImpl::SaveRegistry)
     ));
   return true;
 }
@@ -433,7 +433,7 @@ bool IRegistryImpl::FinalizeCreate()
 void IRegistryImpl::BeforeDestroy()
 {
   SaveLoop.Release();
-  
+  Save();
 }
 
 void IRegistryImpl::SaveRegistry()

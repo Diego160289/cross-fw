@@ -1,7 +1,10 @@
 #include "ClassFactory.h"
 #include "ComponentWrappers.h"
 
-#include <iostream>
+#include <vector>
+
+
+const unsigned IClassFactoryImpl::CleanTimeout = 5000;
 
 IClassFactoryImpl::IClassFactoryImpl()
 {
@@ -54,7 +57,7 @@ RetCode IClassFactoryImpl::SetRegistry(IFaces::IRegistry *reg)
 
 bool IClassFactoryImpl::FinalizeCreate()
 {
-  std::cout << "Create" << std::endl;
+  CleanLoop.Reset(new System::PulsedLoop(Common::CreateMemberCallback(*this, &IClassFactoryImpl::Clean), CleanTimeout, CleanTimeout));
   return true;
 }
 
@@ -63,5 +66,29 @@ void IClassFactoryImpl::BeforeDestroy()
   {
     Common::SyncObject<System::Mutex> Locker(RegistryMtx);
     Registry.Release();
+  }
+  CleanLoop.Release();
+  Clean();
+}
+
+void IClassFactoryImpl::Clean()
+{
+  std::vector<ModuleHolderPtr> RemovedModules;
+  Common::SyncObject<System::Mutex> Locker(ModulesMtx);
+  for (ModulePool::iterator i = Modules.begin() ; i != Modules.end() ; )
+  {
+    try
+    {
+      if (!i->second->GetModuleCounter())
+      {
+        RemovedModules.push_back(i->second);
+        i = Modules.erase(i);
+      }
+      else
+        ++i;
+    }
+    catch (std::exception &)
+    {
+    }
   }
 }

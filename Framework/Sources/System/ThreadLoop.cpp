@@ -28,7 +28,7 @@ namespace System
     : IsRun(true)
     , Callback(callback)
   {
-    InternalCallback = Common::CreateMemberCakkback(*this, &ThreadLoop::ThreadLoopImpl::CallbackFunc);
+    InternalCallback = Common::CreateMemberCallback(*this, &ThreadLoop::ThreadLoopImpl::CallbackFunc);
     Event_.Reset();
     Thread_.Reset(new Thread(InternalCallback));
   }

@@ -6,6 +6,7 @@
 #include "Pointers.h"
 #include "RefObjPtr.h"
 #include "ModuleHolder.h"
+#include "PulsedLoop.h"
 
 #include <map>
 #include <string>
@@ -43,6 +44,10 @@ public:
 private:
   System::Mutex RegistryMtx;
   Common::RefObjPtr<IFaces::IRegistry> Registry;
+
+  static const unsigned CleanTimeout;
+  Common::SharedPtr<System::PulsedLoop> CleanLoop;
+  void Clean();
 
   typedef Common::SharedPtr<Common::ModuleHolder> ModuleHolderPtr;
   typedef std::map<std::string, ModuleHolderPtr> ModulePool;
