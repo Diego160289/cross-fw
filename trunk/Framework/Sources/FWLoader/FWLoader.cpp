@@ -17,8 +17,8 @@ void TestRegistryModule(const char *location, const char *moduleName, bool isNew
   try
   {
     Common::SharedPtr<System::DllHolder>
-      //Dll(new System::DllHolder("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll"));
-      Dll(new System::DllHolder("/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.so"));
+      Dll(new System::DllHolder("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll"));
+      //Dll(new System::DllHolder("/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.so"));
     Common::ModuleHolder Module(Dll);
     Common::RefObjQIPtr<IFaces::IRegistryCtrl> RegCtrl(Module.CreateObject("cf7456c3-70c7-4a97-b8e4-f910cd2f823b"));
     if (!RegCtrl.Get())
@@ -106,7 +106,7 @@ public:
     Common::RefObjQIPtr<IFaces::IClassFactory> Factory(NewFactoryCtrl);
     if (!Factory.Get())
       throw FWLoaderException("Can't get class factory");
-    if (FactoryCtrl->SetRegistry(Registry.Get()) != IFaces::retOk)
+    if (NewFactoryCtrl->SetRegistry(Registry.Get()) != IFaces::retOk)
       throw FWLoaderException("Can't set registry into class factory");
 
     ClassFactorModule.Swap(NewfactoryModule);
@@ -125,21 +125,21 @@ private:
 
 int main()
 {
-  //TestRegistryModule("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug", "Registry.dll", true);
-  //TestRegistryModule("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug", "ClassFactory.dll");
+  TestRegistryModule("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug", "Registry.dll", true);
+  TestRegistryModule("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug", "ClassFactory.dll");
   //TestRegistryModule("/home/dmitry/cross-fw/Framework/Bin/Debug", "Registry.so", true);
   //TestRegistryModule("/home/dmitry/cross-fw/Framework/Bin/Debug", "ClassFactory.so");
   try
   {
-    /*FWLoader Loader(
+    FWLoader Loader(
       "C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll",
       "cf7456c3-70c7-4a97-b8e4-f910cd2f823b", "TestReg.xml", "0eedde75-ce15-4eba-9026-3d5f94488c26"
-      );*/
-    FWLoader Loader(
+      );
+    /*FWLoader Loader(
       "/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.so",
       "cf7456c3-70c7-4a97-b8e4-f910cd2f823b",
       "/home/dmitry/cross-fw/Framework/Bin/Debug/TestReg.xml", "0eedde75-ce15-4eba-9026-3d5f94488c26"
-      );
+      );*/
   }
   catch (std::exception &e)
   {
