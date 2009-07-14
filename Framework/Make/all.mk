@@ -1,4 +1,4 @@
-##ll: make_bin
+#ll: make_bin
 
 make_bin: make_libs make_dlls
 	make -f ./Make/fwloader.mk
