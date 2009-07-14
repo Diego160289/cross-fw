@@ -27,3 +27,6 @@ del /Q Objects\Release\Tools\*
 
 del /Q Objects\Debug\ClassFactory\*
 del /Q Objects\Release\ClassFactory\*
+
+del /Q Objects\Debug\CmpRegClient\*
+del /Q Objects\Release\CmpRegClient\*

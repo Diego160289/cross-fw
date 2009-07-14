@@ -75,20 +75,20 @@ void IClassFactoryImpl::Clean()
 {
   std::vector<ModuleHolderPtr> RemovedModules;
   Common::SyncObject<System::Mutex> Locker(ModulesMtx);
-  for (ModulePool::iterator i = Modules.begin() ; i != Modules.end() ; )
+  Common::StringVector RemovedKeys;
+  for (ModulePool::iterator i = Modules.begin() ; i != Modules.end() ; ++i)
   {
     try
     {
       if (!i->second->GetModuleCounter())
-      {
-        RemovedModules.push_back(i->second);
-        i = Modules.erase(i);
-      }
-      else
-        ++i;
+        continue;
+      RemovedModules.push_back(i->second);
+      RemovedKeys.push_back(i->first);
     }
     catch (std::exception &)
     {
     }
   }
+  for (Common::StringVector::const_iterator i = RemovedKeys.begin() ; i != RemovedKeys.end() ; ++i)
+    Modules.erase(*i);
 }
