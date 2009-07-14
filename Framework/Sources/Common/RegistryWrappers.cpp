@@ -358,7 +358,7 @@ namespace Common
         Io << Key_ClassId << Index++;
         std::string ClassIdKey = Key + "/" + Io.str();
         Reg.CreateKey(ClassIdKey);
-        Reg.SetValue(ClassIdKey, i->c_str());
+        Reg.SetValue(ClassIdKey, static_cast<const char*>(i->c_str()));
       }
     }
   }
