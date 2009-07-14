@@ -1,18 +1,39 @@
 #include "ThreadLoop.h"
 #include "SyncObj.h"
+#include "Pointers.h"
+#include "Mutex.h"
+#include "Thread.h"
+#include "ManualEvent.h"
 
 namespace System
 {
-  ThreadLoop::ThreadLoop(Common::ICallbackPtr callback)
+  class ThreadLoop::ThreadLoopImpl
+    : public Common::NoCopyable
+  {
+  public:
+    ThreadLoopImpl(Common::ICallbackPtr callback);
+    ~ThreadLoopImpl();
+    void Resume();
+  private:
+    Common::ICallbackPtr InternalCallback;
+    volatile bool IsRun;
+    Common::ICallbackPtr Callback;
+    Mutex Mutex_;
+    ManualEvent Event_;
+    Common::SharedPtr<Thread> Thread_;
+    void CallbackFunc();
+  };
+
+  ThreadLoop::ThreadLoopImpl::ThreadLoopImpl(Common::ICallbackPtr callback)
     : IsRun(true)
     , Callback(callback)
   {
-    InternalCallback = Common::CreateMemberCakkback(*this, &ThreadLoop::CallbackFunc);
+    InternalCallback = Common::CreateMemberCakkback(*this, &ThreadLoop::ThreadLoopImpl::CallbackFunc);
     Event_.Reset();
     Thread_.Reset(new Thread(InternalCallback));
   }
 
-  ThreadLoop::~ThreadLoop()
+  ThreadLoop::ThreadLoopImpl::~ThreadLoopImpl()
   {
     {
       Common::SyncObject<Mutex> Locker(Mutex_);
@@ -22,13 +43,13 @@ namespace System
     Thread_.Release();
   }
 
-  void ThreadLoop::Resume()
+  void ThreadLoop::ThreadLoopImpl::Resume()
   {
     Common::SyncObject<Mutex> Locker(Mutex_);
     Event_.Set();
   }
 
-  void ThreadLoop::CallbackFunc()
+  void ThreadLoop::ThreadLoopImpl::CallbackFunc()
   {
     while (true)
     {
@@ -54,5 +75,20 @@ namespace System
       {
       }
     }
+  }
+
+  ThreadLoop::ThreadLoop(Common::ICallbackPtr callback)
+    : Impl(new ThreadLoopImpl(callback))
+  {
+  }
+
+  ThreadLoop::~ThreadLoop()
+  {
+    delete Impl;
+  }
+
+  void ThreadLoop::Resume()
+  {
+    Impl->Resume();
   }
 }

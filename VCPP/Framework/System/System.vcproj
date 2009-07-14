@@ -181,6 +181,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\Framework\Sources\System\Win\PulsedTimerImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Framework\Sources\System\Win\PulsedTimerImpl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Framework\Sources\System\Win\ThreadImpl.cpp"
 				>
 			</File>
@@ -203,6 +211,10 @@
 		</File>
 		<File
 			RelativePath="..\..\..\Framework\Sources\System\Mutex.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Framework\Sources\System\PulsedTimer.cpp"
 			>
 		</File>
 		<File

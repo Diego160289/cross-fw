@@ -3,10 +3,6 @@
 
 #include "NoCopyable.h"
 #include "SimpleIFaces.h"
-#include "Pointers.h"
-#include "Mutex.h"
-#include "Thread.h"
-#include "ManualEvent.h"
 
 namespace System
 {
@@ -18,13 +14,8 @@ namespace System
     ~ThreadLoop();
     void Resume();
   private:
-    Common::ICallbackPtr InternalCallback;
-    volatile bool IsRun;
-    Common::ICallbackPtr Callback;
-    Mutex Mutex_;
-    ManualEvent Event_;
-    Common::SharedPtr<Thread> Thread_;
-    void CallbackFunc();
+    class ThreadLoopImpl;
+    ThreadLoopImpl *Impl;
   };
 }
 #endif  // !__THREADLOOP_H__
