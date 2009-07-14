@@ -98,23 +98,20 @@ public:
       throw FWLoaderException("Can't load not inproc class factory");
     std::string FactoryModuleName = FactoryInfo->GetLocation() + "/" + FactoryInfo->GetModuleName();
     ModuleHolderPtr NewfactoryModule(new Common::ModuleHolder(Common::ModuleHolder::DllHolderPtr(new System::DllHolder(FactoryModuleName.c_str()))));
-    Common::RefObjQIPtr<IFaces::IClassFactoryCtrl> NewFactoryCtrl(NewfactoryModule->CreateObject(classFactoryId));
-    if (!NewFactoryCtrl.Get())
+    Common::RefObjQIPtr<IFaces::IClassFactoryCtrl> FactoryCtrl(NewfactoryModule->CreateObject(classFactoryId));
+    if (!FactoryCtrl.Get())
       throw FWLoaderException("Can't get class factory control");
-    Common::RefObjQIPtr<IFaces::IClassFactory> Factory(NewFactoryCtrl);
-    if (!Factory.Get())
+    Common::RefObjQIPtr<IFaces::IClassFactory> NewFactory(FactoryCtrl);
+    if (!NewFactory.Get())
       throw FWLoaderException("Can't get class factory");
-    if (NewFactoryCtrl->SetRegistry(Registry.Get()) != IFaces::retOk)
+    if (FactoryCtrl->SetRegistry(Registry.Get()) != IFaces::retOk)
       throw FWLoaderException("Can't set registry into class factory");
 
     ClassFactorModule.Swap(NewfactoryModule);
-    FactoryCtrl = NewFactoryCtrl;
+    Factory = NewFactory;
   }
   ~FWLoader()
   {
-    std::cout << "RegistryModule " << RegistryModule.GetModuleCounter() << std::endl;
-    std::cout << "ClassFactorModule " << ClassFactorModule->GetModuleCounter() << std::endl;
-    FactoryCtrl.Release();
     std::cout << "RegistryModule " << RegistryModule.GetModuleCounter() << std::endl;
     std::cout << "ClassFactorModule " << ClassFactorModule->GetModuleCounter() << std::endl;
   }
@@ -122,42 +119,32 @@ private:
   Common::ModuleHolder RegistryModule;
   typedef Common::SharedPtr<Common::ModuleHolder> ModuleHolderPtr;
   ModuleHolderPtr ClassFactorModule;
-  Common::RefObjPtr<IFaces::IClassFactoryCtrl> FactoryCtrl;
+  Common::RefObjPtr<IFaces::IClassFactory> Factory;
 };
 
-// TODO:
-//    1. ������ ���� ������� �� IRegistryCtrl
-//    2. Save ��� ������� � ��������� �����
 
-
-void Func()
-{
-  static int i = 0;
-  std::cout << i ++ << std::endl;
-}
+#include <windows.h>
 
 int main()
 {
-  //TestRegistryModule("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug", "Registry.dll", true);
-  //TestRegistryModule("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug", "ClassFactory.dll");
+  TestRegistryModule("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug", "Registry.dll", true);
+  TestRegistryModule("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug", "ClassFactory.dll");
   //TestRegistryModule("/home/dmitry/cross-fw/Framework/Bin/Debug", "Registry.so", true);
   //TestRegistryModule("/home/dmitry/cross-fw/Framework/Bin/Debug", "ClassFactory.so");
   try
   {
-    /*FWLoader Loader(
+    FWLoader Loader(
       "C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll",
       "cf7456c3-70c7-4a97-b8e4-f910cd2f823b",
       "C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\TestReg.xml",
       "0eedde75-ce15-4eba-9026-3d5f94488c26"
-      );*/
+      );
+    system("PAUSE");
     /*FWLoader Loader(
       "/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.so",
       "cf7456c3-70c7-4a97-b8e4-f910cd2f823b",
       "/home/dmitry/cross-fw/Framework/Bin/Debug/TestReg.xml", "0eedde75-ce15-4eba-9026-3d5f94488c26"
       );*/
-
-    System::PulsedTimer tt(Common::CreateFuncCakkback(&Func), 1000, 1000);
-    ::system("PAUSE");
   }
   catch (std::exception &e)
   {
