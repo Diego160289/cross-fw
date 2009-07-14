@@ -3,7 +3,7 @@
 
 namespace System
 {
-  Thread::Thread(ThreadCallbackPtr callback)
+  Thread::Thread(Common::ICallbackPtr callback)
     : Callback(callback)
     , Impl(new ThreadImpl(callback.Get()))
   {

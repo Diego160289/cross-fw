@@ -102,10 +102,7 @@ namespace IFaces
     virtual RetCode Load(const char *registryPath) = 0;
     virtual bool IsLoaded() const = 0;
     virtual RetCode Unload() = 0;
-    virtual RetCode Save() = 0;
-    virtual bool IsModified() = 0;
     virtual const char* GetCtrlVersion() const = 0;
-    virtual const char* GetLoadedRegistryVersion() const = 0;
   };
 
   struct IRegistry
@@ -131,7 +128,6 @@ namespace IFaces
   {
     DECLARE_UUID(64b0fdea-e929-4852-a858-0bea41dc6a0f)
     virtual RetCode SetRegistry(IRegistry *reg) = 0;
-    virtual RetCode SetParams(IVarMap *params) = 0;
   };
 
   struct IMessageQueue

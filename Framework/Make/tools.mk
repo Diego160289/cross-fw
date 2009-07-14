@@ -5,7 +5,7 @@ PROJECT := Tools
 ifeq ($(OS), Win)
 	LINKCXXFLAGS = 
 else
-	LINKCXXFLAGS = -pthreads
+	LINKCXXFLAGS = -lpthreads
 endif
 
 include ./Make/make_component

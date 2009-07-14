@@ -3,11 +3,11 @@
 
 namespace System
 {
-  ThreadLoop::ThreadLoop(Thread::ThreadCallbackPtr callback)
+  ThreadLoop::ThreadLoop(Common::ICallbackPtr callback)
     : IsRun(true)
     , Callback(callback)
   {
-    InternalCallback.Reset(new Common::IMemberCallbackImpl<ThreadLoop>(*this, &ThreadLoop::CallbackFunc));
+    InternalCallback = Common::CreateMemberCakkback(*this, &ThreadLoop::CallbackFunc);
     Event_.Reset();
     Thread_.Reset(new Thread(InternalCallback));
   }
@@ -34,14 +34,20 @@ namespace System
     {
       try
       {
-        Event_.Wait();
+        if (IsRun)
+          Event_.Wait();
+        else
+          break;
         if (IsRun)
           Callback->Do();
         else
           break;
         {
           Common::SyncObject<Mutex> Locker(Mutex_);
-          Event_.Reset();
+          if (IsRun)
+            Event_.Reset();
+          else
+            break;
         }
       }
       catch (std::exception &)

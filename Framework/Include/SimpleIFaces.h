@@ -1,6 +1,9 @@
 #ifndef __SIMPLEIFACES_H__
 #define __SIMPLEIFACES_H__
 
+#include "Pointers.h"
+
+
 namespace Common
 {
   struct ICallback
@@ -10,6 +13,8 @@ namespace Common
     }
     virtual void Do() = 0;
   };
+
+  typedef Common::SharedPtr<ICallback> ICallbackPtr;
 
   template <typename TObject>
   class IMemberCallbackImpl
@@ -31,6 +36,12 @@ namespace Common
     PMethod Mtd;
   };
 
+  template <typename TObject>
+  ICallbackPtr CreateMemberCakkback(TObject &obj, void (TObject::*mtd)())
+  {
+    return ICallbackPtr(new IMemberCallbackImpl<TObject>(obj, mtd));
+  }
+
   template <typename TPFunc>
   class IFuncCallbackImpl
     : public ICallback
@@ -48,6 +59,11 @@ namespace Common
     TPFunc *Func;;
   };
 
+  template <typename TFunc>
+  ICallbackPtr CreateFuncCakkback(TFunc *func)
+  {
+    return ICallbackPtr(new IFuncCallbackImpl<TFunc>(func));
+  }
 }
 
 #endif  // !__SIMPLEIFACES_H__

@@ -14,13 +14,13 @@ namespace System
     : public Common::NoCopyable
   {
   public:
-    ThreadLoop(Thread::ThreadCallbackPtr callback);
+    ThreadLoop(Common::ICallbackPtr callback);
     ~ThreadLoop();
     void Resume();
   private:
-    Thread::ThreadCallbackPtr InternalCallback;
+    Common::ICallbackPtr InternalCallback;
     volatile bool IsRun;
-    Thread::ThreadCallbackPtr Callback;
+    Common::ICallbackPtr Callback;
     Mutex Mutex_;
     ManualEvent Event_;
     Common::SharedPtr<Thread> Thread_;

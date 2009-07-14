@@ -23,7 +23,7 @@ OBJ = $(CPP:.cpp=.o)
 CURCFG := Build: '$(PROJECT)' $(OS) $(MAKETYPE)
 
 ifeq ($(OS),Nix)
-	SYSLIBS = dl
+	SYSLIBS += dl
 else
 	SYSLIBS =
 endif
@@ -36,7 +36,7 @@ endif
 	-o $(OBJDIR)/$(notdir $@)
 
 all: $(OBJ)
-	$(CXX) -lpthread \
+	$(CXX) \
 	$(addprefix $(OBJDIR)/,$(notdir $(OBJ))) \
 	$(addprefix -L ,$(LIBSDIR)) \
 	$(addprefix -l ,$(LIBS)) \

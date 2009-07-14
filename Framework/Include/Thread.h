@@ -14,11 +14,10 @@ namespace System
     : private Common::NoCopyable
   {
   public:
-    typedef Common::SharedPtr<Common::ICallback> ThreadCallbackPtr;
-    Thread(ThreadCallbackPtr callback);
+    Thread(Common::ICallbackPtr callback);
     ~Thread();
   private:
-    ThreadCallbackPtr Callback;
+    Common::ICallbackPtr Callback;
     class ThreadImpl;
     ThreadImpl *Impl;
   };
