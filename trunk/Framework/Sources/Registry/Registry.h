@@ -4,6 +4,7 @@
 #include "IFacesTools.h"
 #include "Mutex.h"
 #include "Pointers.h"
+#include "ThreadLoop.h"
 
 #include "Xml/TinyXml/tinyxml.h"
 
@@ -32,10 +33,7 @@ public:
   virtual RetCode Load(const char *registryPath);
   virtual bool IsLoaded() const;
   virtual RetCode Unload();
-  virtual RetCode Save();
-  virtual bool IsModified();
   virtual const char* GetCtrlVersion() const;
-  virtual const char* GetLoadedRegistryVersion() const;
 
   // IRegistry
   virtual RetCode CreateKey(const char *pathKey);
@@ -44,8 +42,16 @@ public:
   virtual RetCode SetValue(const char *pathKey, IFaces::IVariant *value);
   virtual RetCode EnumKey(const char *pathKey, IFaces::IEnum **keys);
 
+  virtual bool FinalizeCreate();
+  virtual void BeforeDestroy();
+
 private:
   static const char RegistryVersion[];
+
+  Common::SharedPtr<System::ThreadLoop> SaveLoop;
+  void SaveRegistry();
+  void Save();
+
   typedef Common::SharedPtr<TiXmlDocument> TiXmlDocumentPtr;
   TiXmlDocumentPtr Document;
   bool IsModifiedState;

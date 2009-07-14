@@ -11,14 +11,15 @@
 #include "RefObjPtr.h"
 #include "ComponentWrappers.h"
 
+#include "PulsedTimer.h"
 
 void TestRegistryModule(const char *location, const char *moduleName, bool isNew = false)
 {
   try
   {
     Common::SharedPtr<System::DllHolder>
-      //Dll(new System::DllHolder("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll"));
-      Dll(new System::DllHolder("/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.so"));
+      Dll(new System::DllHolder("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll"));
+      //Dll(new System::DllHolder("/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.so"));
     Common::ModuleHolder Module(Dll);
     Common::RefObjQIPtr<IFaces::IRegistryCtrl> RegCtrl(Module.CreateObject("cf7456c3-70c7-4a97-b8e4-f910cd2f823b"));
     if (!RegCtrl.Get())
@@ -28,7 +29,7 @@ void TestRegistryModule(const char *location, const char *moduleName, bool isNew
     }
     if (isNew)
     {
-      if (RegCtrl->Create("TestReg.xml") != IFaces::retOk)
+      if (RegCtrl->Create("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\TestReg.xml") != IFaces::retOk)
       {
         std::cerr << "Can't create reg file" << std::endl;
         return;
@@ -36,7 +37,7 @@ void TestRegistryModule(const char *location, const char *moduleName, bool isNew
     }
     else
     {
-      if (RegCtrl->Load("TestReg.xml") != IFaces::retOk)
+      if (RegCtrl->Load("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\TestReg.xml") != IFaces::retOk)
       {
         std::cerr << "Can't load reg file" << std::endl;
         return;
@@ -65,9 +66,6 @@ void TestRegistryModule(const char *location, const char *moduleName, bool isNew
     for (Common::ModuleHolder::StringList::const_iterator i = IDs.begin() ; i != IDs.end() ; ++i)
       Info.AddClassId(i->c_str());
     Common::Wrappers::RegistryComponent(Reg).SetComponentInfo(Info);
-
-    if (RegCtrl->Save() != IFaces::retOk)
-      std::cerr << "Can't save reg" << std::endl;
   }
   catch (std::exception &e)
   {
@@ -131,6 +129,13 @@ private:
 //    1. ������ ���� ������� �� IRegistryCtrl
 //    2. Save ��� ������� � ��������� �����
 
+
+void Func()
+{
+  static int i = 0;
+  std::cout << i ++ << std::endl;
+}
+
 int main()
 {
   //TestRegistryModule("C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug", "Registry.dll", true);
@@ -141,13 +146,18 @@ int main()
   {
     /*FWLoader Loader(
       "C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll",
-      "cf7456c3-70c7-4a97-b8e4-f910cd2f823b", "TestReg.xml", "0eedde75-ce15-4eba-9026-3d5f94488c26"
+      "cf7456c3-70c7-4a97-b8e4-f910cd2f823b",
+      "C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\TestReg.xml",
+      "0eedde75-ce15-4eba-9026-3d5f94488c26"
       );*/
-    FWLoader Loader(
+    /*FWLoader Loader(
       "/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.so",
       "cf7456c3-70c7-4a97-b8e4-f910cd2f823b",
       "/home/dmitry/cross-fw/Framework/Bin/Debug/TestReg.xml", "0eedde75-ce15-4eba-9026-3d5f94488c26"
-      );
+      );*/
+
+    System::PulsedTimer tt(Common::CreateFuncCakkback(&Func), 1000, 1000);
+    ::system("PAUSE");
   }
   catch (std::exception &e)
   {

@@ -182,8 +182,8 @@ RetCode IRegistryImpl::InternalUnload()
 {
   if (!Document.Get())
     return retFail;
+  Save();
   Document.Release();
-  IsModifiedState = false;
   return retOk;
 }
 
@@ -205,51 +205,9 @@ RetCode IRegistryImpl::Unload()
   return InternalUnload();
 }
 
-RetCode IRegistryImpl::Save()
-{
-  Common::SyncObject<System::Mutex> Locker(GetSynObj());
-  if (!Document.Get())
-    return retFail;
-  if (IsModifiedState)
-  {
-    std::string Hash = RegistryHash().Create(Document.Get());
-    if (Hash.empty())
-      return retFail;
-    TiXmlNode *Registry = OpenRegistry(Document.Get());
-    if (!Registry)
-      return retFail;
-    {
-      TiXmlNode *HashNode = Registry->FirstChildElement("Hash");
-      if (HashNode && !Registry->RemoveChild(HashNode))
-        return retFail;
-    }
-    TiXmlText HashText(Hash);
-    HashText.SetCDATA(true);
-    TiXmlElement HashNode("Hash");
-    HashNode.InsertEndChild(HashText);
-    Registry->InsertEndChild(HashNode);
-    if (!Document->SaveFile())
-      return retFail;
-  }
-  IsModifiedState = false;
-  return retOk;
-}
-
-bool IRegistryImpl::IsModified()
-{
-  Common::SyncObject<System::Mutex> Locker(GetSynObj());
-  return IsModifiedState;
-}
-
 const char* IRegistryImpl::GetCtrlVersion() const
 {
   return RegistryVersion;
-}
-
-const char* IRegistryImpl::GetLoadedRegistryVersion() const
-{
-  Common::SyncObject<System::Mutex> Locker(GetSynObj());
-  return (LoadedRegistryVersion = GetRegistryVersion(Document.Get())).c_str();
 }
 
 RetCode IRegistryImpl::CreateKey(const char *pathKey)
@@ -277,7 +235,10 @@ RetCode IRegistryImpl::CreateKey(const char *pathKey)
       if (!(Keys = Keys->InsertEndChild(TiXmlElement(CurKeyName.c_str()))))
         return retFail;
       else
+      {
         IsModifiedState = true;
+        SaveLoop->Resume();
+      }
     }
     else
       Keys = CurKey;
@@ -309,6 +270,7 @@ RetCode IRegistryImpl::RemoveKey(const char *pathKey)
   if (!Parent || !Parent->RemoveChild(Keys))
     return retFail;
   IsModifiedState = true;
+  SaveLoop->Resume();
   return retOk;
 }
 
@@ -360,6 +322,7 @@ RetCode IRegistryImpl::SetValue(const char *pathKey, IFaces::IVariant *value)
   }
   Key->InsertEndChild(Text);
   IsModifiedState = true;
+  SaveLoop->Resume();
   return retOk;
 }
 
@@ -457,4 +420,49 @@ try
 catch (std::exception &)
 {
   return retFail;
+}
+
+bool IRegistryImpl::FinalizeCreate()
+{
+  SaveLoop.Reset(new System::ThreadLoop(
+    CreateMemberCakkback(*this, &IRegistryImpl::SaveRegistry)
+    ));
+  return true;
+}
+
+void IRegistryImpl::BeforeDestroy()
+{
+  SaveLoop.Release();
+  
+}
+
+void IRegistryImpl::SaveRegistry()
+{
+  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  Save();
+}
+
+void IRegistryImpl::Save()
+{
+  if (!Document.Get() || !IsModifiedState)
+    return;
+  std::string Hash = RegistryHash().Create(Document.Get());
+  if (Hash.empty())
+    return;
+  TiXmlNode *Registry = OpenRegistry(Document.Get());
+  if (!Registry)
+    return;
+  {
+    TiXmlNode *HashNode = Registry->FirstChildElement("Hash");
+    if (HashNode && !Registry->RemoveChild(HashNode))
+      return;
+  }
+  TiXmlText HashText(Hash);
+  HashText.SetCDATA(true);
+  TiXmlElement HashNode("Hash");
+  HashNode.InsertEndChild(HashText);
+  Registry->InsertEndChild(HashNode);
+  if (!Document->SaveFile())
+    return;
+  IsModifiedState = false;
 }

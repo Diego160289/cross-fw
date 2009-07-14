@@ -12,6 +12,12 @@ LIBSDIR = ./Libs/$(MAKETYPE)
 
 LIBS += Common System
 
+ifeq ($(OS),Nix)
+	SYSLIBS =
+else
+	SYSLIBS =
+endif
+
 TARGET = $(PROJECT)$(DLLFILEEXT)
 
 CPP = $(wildcard $(SRCDIR)/*.cpp)
@@ -33,5 +39,6 @@ all: $(OBJ)
 	$(addprefix $(OBJDIR)/,$(notdir $(OBJ))) \
 	$(addprefix -L ,$(LIBSDIR)) \
 	$(addprefix -l ,$(LIBS)) \
+	$(addprefix -l ,$(SYSLIBS)) \
 	-o $(TARGETDIR)/$(TARGET)
 	@echo Success $(CURCFG)

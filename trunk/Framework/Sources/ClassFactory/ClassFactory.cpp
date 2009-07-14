@@ -52,12 +52,7 @@ RetCode IClassFactoryImpl::SetRegistry(IFaces::IRegistry *reg)
   return retOk;
 }
 
-RetCode IClassFactoryImpl::SetParams(IFaces::IVarMap *params)
-{
-  return retOk;
-}
-
-bool IClassFactoryImpl::AfterCreate()
+bool IClassFactoryImpl::FinalizeCreate()
 {
   std::cout << "Create" << std::endl;
   return true;

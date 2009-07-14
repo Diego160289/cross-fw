@@ -36,9 +36,8 @@ public:
 
   // IClassFactoryCtrl
   virtual RetCode SetRegistry(IFaces::IRegistry *reg) ;
-  virtual RetCode SetParams(IFaces::IVarMap *params);
 
-  virtual bool AfterCreate();
+  virtual bool FinalizeCreate();
   virtual void BeforeDestroy();
 
 private:

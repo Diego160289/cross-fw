@@ -76,7 +76,7 @@ namespace Common
     static RefObjPtr<T> CreateObject()
     {
       TCoClassTypePtr Ret(new T);
-      return (Ret->IsSuccessfulCreated = Ret->AfterCreate()) ?
+      return (Ret->IsSuccessfulCreated = Ret->FinalizeCreate()) ?
         Ret : RefObjPtr<T>();
     }
   protected:
@@ -98,7 +98,7 @@ namespace Common
       if (!Ret.Get())
       {
         Ret = new T;
-        if (!(Ret->IsSuccessfulCreated = Ret->AfterCreate()))
+        if (!(Ret->IsSuccessfulCreated = Ret->FinalizeCreate()))
           Ret.Release();
       }
       return Ret;
@@ -227,7 +227,7 @@ namespace Common
     {
       return SynObj;
     }
-    virtual bool AfterCreate()
+    virtual bool FinalizeCreate()
     {
       return true;
     }
