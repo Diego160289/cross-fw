@@ -1,6 +1,6 @@
 PROJECT := CmpRegClient
 
-LIBS += TinyXml Registry
+LIBS += Registry TinyXml
 
 ifeq ($(OS),Nix)
 	SYSLIBS += pthread dl

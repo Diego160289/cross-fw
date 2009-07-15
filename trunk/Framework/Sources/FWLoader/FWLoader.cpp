@@ -58,17 +58,17 @@ int main()
 {
   try
   {
-    FWLoader Loader(
+    /*FWLoader Loader(
       "C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll",
       "cf7456c3-70c7-4a97-b8e4-f910cd2f823b",
       "C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\TestReg.xml",
       "0eedde75-ce15-4eba-9026-3d5f94488c26"
-      );
-    /*FWLoader Loader(
-      "/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.so",
-      "cf7456c3-70c7-4a97-b8e4-f910cd2f823b",
-      "/home/dmitry/cross-fw/Framework/Bin/Debug/TestReg.xml", "0eedde75-ce15-4eba-9026-3d5f94488c26"
       );*/
+    FWLoader Loader(
+      "./Registry.so",
+      "cf7456c3-70c7-4a97-b8e4-f910cd2f823b",
+      "./TestReg.xml", "0eedde75-ce15-4eba-9026-3d5f94488c26"
+      );
   }
   catch (std::exception &e)
   {
