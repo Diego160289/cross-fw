@@ -181,19 +181,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\Framework\Sources\System\Win\PulsedTimerImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Framework\Sources\System\Win\PulsedTimerImpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\Framework\Sources\System\Win\ThreadImpl.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\Framework\Sources\System\Win\ThreadImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Framework\Sources\System\Win\TimerImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Framework\Sources\System\Win\TimerImpl.h"
 				>
 			</File>
 		</Filter>
@@ -218,15 +218,15 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\Framework\Sources\System\PulsedTimer.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\..\..\Framework\Sources\System\Thread.cpp"
 			>
 		</File>
 		<File
 			RelativePath="..\..\..\Framework\Sources\System\ThreadLoop.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Framework\Sources\System\Timer.cpp"
 			>
 		</File>
 	</Files>

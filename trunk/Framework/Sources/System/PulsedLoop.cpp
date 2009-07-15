@@ -13,11 +13,11 @@ namespace System
     PulsedLoopImpl(Common::ICallbackPtr callback, unsigned period, unsigned startAfter)
     {
       Loop.Reset(new ThreadLoop(callback));
-      Timer.Reset(new Timer(Common::CreateMemberCallback(*this, &PulsedLoopImpl::Resume), period, startAfter));
+      Timer_.Reset(new Timer(Common::CreateMemberCallback(*this, &PulsedLoopImpl::Resume), period, startAfter));
     }
   private:
     Common::SharedPtr<ThreadLoop> Loop;
-    Common::SharedPtr<Timer> Timer;
+    Common::SharedPtr<Timer> Timer_;
     void Resume()
     {
       Loop->Resume();
