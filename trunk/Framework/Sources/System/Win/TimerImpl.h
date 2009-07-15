@@ -1,7 +1,7 @@
-#ifndef __PULSEDTIMERIMPL_H__
-#define __PULSEDTIMERIMPL_H__
+#ifndef __TimerIMPL_H__
+#define __TimerIMPL_H__
 
-#include "PulsedTimer.h"
+#include "Timer.h"
 
 #ifndef _WIN32_WINNT
   #define _WIN32_WINNT 0x0501
@@ -13,12 +13,12 @@
 namespace System
 {
 
-  class PulsedTimer::PulsedTimerImpl
+  class Timer::TimerImpl
     : private Common::NoCopyable
   {
   public:
-    PulsedTimerImpl(Common::ICallback *callback, unsigned period, unsigned startAfter);
-    ~PulsedTimerImpl();
+    TimerImpl(Common::ICallback *callback, unsigned period, unsigned startAfter);
+    ~TimerImpl();
   private:
     HANDLE TimerQueue_;
     HANDLE Timer_;
@@ -27,4 +27,4 @@ namespace System
 
 }
 
-#endif  // !__PULSEDTIMERIMPL_H__
+#endif  // !__TimerIMPL_H__
