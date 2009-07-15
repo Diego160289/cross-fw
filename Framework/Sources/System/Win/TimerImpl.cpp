@@ -1,29 +1,29 @@
-#include "PulsedTimerImpl.h"
+#include "TimerImpl.h"
 
 namespace System
 {
 
-  PulsedTimer::PulsedTimerImpl::PulsedTimerImpl(Common::ICallback *callback, unsigned period, unsigned startAfter)
+  Timer::TimerImpl::TimerImpl(Common::ICallback *callback, unsigned period, unsigned startAfter)
     : TimerQueue_(0)
     , Timer_(0)
   {
     if (!(TimerQueue_ = ::CreateTimerQueue()))
-      throw PulsedTimerException("Can't create timer queue");
-    if (!::CreateTimerQueueTimer(&Timer_, TimerQueue_, &PulsedTimerImpl::TimerFunc, callback, startAfter, period, 0))
+      throw TimerException("Can't create timer queue");
+    if (!::CreateTimerQueueTimer(&Timer_, TimerQueue_, &TimerImpl::TimerFunc, callback, startAfter, period, 0))
     {
       ::DeleteTimerQueue(TimerQueue_);
       TimerQueue_ = NULL;
-      throw PulsedTimerException("Can't create timer");
+      throw TimerException("Can't create timer");
     }
   }
 
-  PulsedTimer::PulsedTimerImpl::~PulsedTimerImpl()
+  Timer::TimerImpl::~TimerImpl()
   {
     ::DeleteTimerQueueTimer(TimerQueue_, Timer_, NULL);
     ::DeleteTimerQueue(TimerQueue_);
   }
 
-  VOID CALLBACK PulsedTimer::PulsedTimerImpl::TimerFunc(PVOID param, BOOLEAN)
+  VOID CALLBACK Timer::TimerImpl::TimerFunc(PVOID param, BOOLEAN)
   {
     reinterpret_cast<Common::ICallback*>(param)->Do();
   }

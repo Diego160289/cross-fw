@@ -8,18 +8,18 @@
 namespace System
 {
 
-  DECLARE_RUNTIME_EXCEPTION(PulsedTimer)
+  DECLARE_RUNTIME_EXCEPTION(Timer)
 
-  class PulsedTimer
+  class Timer
     : private Common::NoCopyable
   {
   public:
-    PulsedTimer(Common::ICallbackPtr callback, unsigned period, unsigned startAfter);
-    ~PulsedTimer();
+    Timer(Common::ICallbackPtr callback, unsigned period, unsigned startAfter);
+    ~Timer();
   private:
     Common::ICallbackPtr Callback;
-    class PulsedTimerImpl;
-    PulsedTimerImpl *Impl;
+    class TimerImpl;
+    TimerImpl *Impl;
   };
 
 }
