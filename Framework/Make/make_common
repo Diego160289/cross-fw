@@ -46,7 +46,12 @@ endif
 
 ifeq ($(TARGETTYPE), Exe)
 	TARGETDIR = ./Bin/$(MAKETYPE)
+
 	TARGET = $(PROJECT)$(EXEFILEEXT)
+
+	LIBSDIR += ./Libs/$(MAKETYPE)
+
+	LIBS += Common System
 endif
 
 INCLUDE += ./Include $(SRCDIR)/$(OS)
@@ -91,8 +96,9 @@ endif
 ifeq ($(TARGETTYPE), Exe)
 all: $(OBJ)
 	$(CXX) \
+	$(CXXFLAGS) $(LINKCXXFLAGS) \
 	$(wildcard $(OBJDIR)/Platform/*.o) \
-	$(wildcard $(OBJDIR)/*.o)
+	$(wildcard $(OBJDIR)/*.o) \
 	$(addprefix -L ,$(LIBSDIR)) \
 	$(addprefix -l ,$(LIBS)) \
 	$(addprefix -l ,$(SYSLIBS)) \
