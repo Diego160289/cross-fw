@@ -3,7 +3,7 @@ PROJECT := ClassFactory
 ifeq ($(OS),Nix)
 	SYSLIBS += pthread dl
 else
-	SYSLIBS =
+	SYSLIBS +=
 endif
 
-include ./Make/make_component
+include ./Make/make_common

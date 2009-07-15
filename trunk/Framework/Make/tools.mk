@@ -1,11 +1,9 @@
 PROJECT := Tools
 
-# LIBS = TinyXml
-
-ifeq ($(OS), Win)
-	LINKCXXFLAGS = 
+ifeq ($(OS),Nix)
+	SYSLIBS += pthread
 else
-	LINKCXXFLAGS = -lpthreads
+	SYSLIBS +=
 endif
 
-include ./Make/make_component
+include ./Make/make_common
