@@ -3,7 +3,7 @@
 
 #include "NoCopyable.h"
 #include "Exceptions.h"
-#include "simpleifaces.h"
+#include "SimpleIFaces.h"
 
 namespace System
 {
