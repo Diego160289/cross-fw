@@ -3,6 +3,10 @@
 
 #include "PulsedTimer.h"
 
+#include <sys/time.h>
+#include <sys/signal.h>
+#include <pthread.h>
+
 
 namespace System
 {
@@ -14,6 +18,10 @@ namespace System
     PulsedTimerImpl(Common::ICallback *callback, unsigned period, unsigned startAfter);
     ~PulsedTimerImpl();
   private:
+    sigevent SigEvent;
+    timer_t TimerId;
+    itimerspec Value;
+    static void TimerFunc(union sigval val);
   };
 
 }
