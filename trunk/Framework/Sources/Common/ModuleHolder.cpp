@@ -29,7 +29,7 @@ namespace Common
     return ModuleName;
   }
 
-  const ModuleHolder::StringList& ModuleHolder::GetCoClassIds() const
+  const Common::StringVector& ModuleHolder::GetCoClassIds() const
   {
     if (CoClassIds.empty())
     {

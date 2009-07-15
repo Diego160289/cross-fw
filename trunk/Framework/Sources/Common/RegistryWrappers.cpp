@@ -194,7 +194,7 @@ namespace Common
     const char RegistryComponent::ComponentInfo::Type_OutProc[] = "OutProc";
     const char RegistryComponent::ComponentInfo::Type_Remote[] = "Remote";
 
-          RegistryComponent::ComponentInfo::ComponentInfo()
+      RegistryComponent::ComponentInfo::ComponentInfo()
       : Type(ctUnknown)
     {
     }
@@ -218,7 +218,7 @@ namespace Common
       if (type == Type_Remote)
         Type = ctRemote;
       else
-        throw RegistryException("Bad type");
+        throw RegistryComponentException("Bad type");
     }
 
     RegistryComponent::ComponentInfo::ComponentType RegistryComponent::ComponentInfo::GetType() const
@@ -360,6 +360,43 @@ namespace Common
         Reg.CreateKey(ClassIdKey);
         Reg.SetValue(ClassIdKey, static_cast<const char*>(i->c_str()));
       }
+    }
+
+    void RegistryComponent::RemoveModule(const std::string &moduleId)
+    {
+      std::string KeyInfo = Key_ComponentInformation;
+      KeyInfo += "/" + moduleId +"/";
+      Registry::Key::KeysPoolPtr ClassIDs = Reg.EnumKey(KeyInfo + Key_ClassIDs)->GetChildKeys();
+      std::string KeyClassIDs = Key_ComponentClassIDs;
+      KeyClassIDs += "/";
+      for (Registry::Key::KeysPool::const_iterator i = ClassIDs->begin() ; i != ClassIDs->end() ; ++i)
+        Reg.RemoveKey(KeyClassIDs + (const char*)(*i)->GetKeyValue());
+      KeyInfo = Key_ComponentInformation;
+      KeyInfo += "/" + moduleId;
+      Reg.RemoveKey(KeyInfo);
+    }
+
+    RegistryComponent::ComponentInfoPoolPtr RegistryComponent::GetAllComponentsInfo() const
+    {
+      Registry::Key::KeysPoolPtr Modules = Reg.EnumKey(Key_ComponentInformation)->GetChildKeys();
+      ComponentInfoPoolPtr RetPool(new ComponentInfoPool);
+      for (Registry::Key::KeysPool::const_iterator i = Modules->begin() ; i != Modules->end() ; ++i)
+      {
+        ComponentInfoPtr Info(new ComponentInfo);
+        std::string Guid = (*i)->GetKeyName();
+        Info->SetModuleGuid(Guid);
+        std::string Key = Key_ComponentInformation;
+        Key += "/" + Guid + "/";
+        Info->SetType((const char*)Reg.GetValue(Key + Key_Type));
+        Info->SetDescription((const char*)Reg.GetValue(Key + Key_Description));
+        Info->SetModuleName((const char*)Reg.GetValue(Key + Key_ModuleName));
+        Info->SetLocation((const char*)Reg.GetValue(Key + Key_Location));
+        RetPool->push_back(Info);
+        Registry::Key::KeysPoolPtr ClassIDs = Reg.EnumKey(Key + Key_ClassIDs)->GetChildKeys();
+        for (Registry::Key::KeysPool::const_iterator j = ClassIDs->begin() ; j != ClassIDs->end() ; ++j)
+          Info->AddClassId((const char*)(*j)->GetKeyValue());
+      }
+      return RetPool;
     }
   }
 }

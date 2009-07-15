@@ -82,6 +82,8 @@ namespace Common
       IRegistryPtr Reg;
     };
 
+    DECLARE_RUNTIME_EXCEPTION(RegistryComponent)
+
     class RegistryComponent
     {
     public:
@@ -128,10 +130,14 @@ namespace Common
         StringVector ClassIDs;
       };
       typedef SharedPtr<ComponentInfo> ComponentInfoPtr;
+      typedef std::vector<ComponentInfoPtr> ComponentInfoPool;
+      typedef Common::SharedPtr<ComponentInfoPool> ComponentInfoPoolPtr;
       typedef RefObjPtr<IFaces::IRegistry> IRegistryPtr;
       RegistryComponent(IRegistryPtr reg);
       ComponentInfoPtr GetComponentInfo(const std::string &classId) const;
       void SetComponentInfo(const ComponentInfo &info);
+      void RemoveModule(const std::string &moduleId);
+      ComponentInfoPoolPtr GetAllComponentsInfo() const;
     private:
       Registry Reg;
     };
