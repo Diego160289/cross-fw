@@ -1,11 +1,11 @@
 PROJECT := Registry
 
-LIBS = TinyXml
+LIBS += TinyXml
 
 ifeq ($(OS),Nix)
 	SYSLIBS += pthread
 else
-	SYSLIBS =
+	SYSLIBS +=
 endif
 
-include ./Make/make_component
+include ./Make/make_common

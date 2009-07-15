@@ -3,6 +3,8 @@
 
 # MAKETYPE := Debug
 
+# TARGETTYPE := Lib
+
 CXX = g++
 
 ifeq ($(MAKETYPE), Debug)
@@ -18,4 +20,82 @@ ifeq ($(OS), Win)
 else
 	EXEFILEEXT :=
 	DLLFILEEXT := .so
+endif
+
+SRCDIR = ./Sources/$(PROJECT)
+
+OSSRCDIR = ./Sources/$(PROJECT)/$(OS)
+
+OBJDIR = ./Objects/$(MAKETYPE)/$(PROJECT)
+
+ifeq ($(TARGETTYPE), Lib)
+	TARGETDIR = ./Libs/$(MAKETYPE)
+
+	TARGET = lib$(PROJECT).a
+endif
+
+ifeq ($(TARGETTYPE), Dll)
+	TARGETDIR = ./Bin/$(MAKETYPE)
+
+	TARGET = $(PROJECT)$(DLLFILEEXT)
+
+	LIBSDIR += ./Libs/$(MAKETYPE)
+
+	LIBS += Common System
+endif
+
+ifeq ($(TARGETTYPE), Exe)
+	TARGETDIR = ./Bin/$(MAKETYPE)
+	TARGET = $(PROJECT)$(EXEFILEEXT)
+endif
+
+INCLUDE += ./Include $(SRCDIR)/$(OS)
+
+CPP = $(wildcard $(SRCDIR)/*.cpp)
+
+CPP += $(wildcard $(OSSRCDIR)/*.cpp)
+
+OBJ = $(CPP:.cpp=.o)
+
+CURCFG := Build: '$(PROJECT)' $(OS) $(MAKETYPE)
+
+%.o: %.cpp
+	$(CXX) \
+	$(CXXFLAGS) \
+	$(addprefix -I ,$(INCLUDE)) \
+	-c $^ \
+	-o $(OBJDIR)/$(subst /$(OS)/,Platform/,$(findstring /$(OS)/,$^))$(notdir $@)
+
+ifeq ($(TARGETTYPE), Lib)
+all: $(OBJ)
+	ar cr \
+	$(TARGETDIR)/$(TARGET) \
+	$(wildcard $(OBJDIR)/Platform/*.o) \
+	$(wildcard $(OBJDIR)/*.o)
+	@echo Success $(CURCFG)
+endif
+
+ifeq ($(TARGETTYPE), Dll)
+all: $(OBJ)
+	$(CXX) \
+	$(CXXFLAGS) -shared $(LINKCXXFLAGS) \
+	$(wildcard $(OBJDIR)/Platform/*.o) \
+	$(wildcard $(OBJDIR)/*.o) \
+	$(addprefix -L ,$(LIBSDIR)) \
+	$(addprefix -l ,$(LIBS)) \
+	$(addprefix -l ,$(SYSLIBS)) \
+	-o $(TARGETDIR)/$(TARGET)
+	@echo Success $(CURCFG)
+endif
+
+ifeq ($(TARGETTYPE), Exe)
+all: $(OBJ)
+	$(CXX) \
+	$(wildcard $(OBJDIR)/Platform/*.o) \
+	$(wildcard $(OBJDIR)/*.o)
+	$(addprefix -L ,$(LIBSDIR)) \
+	$(addprefix -l ,$(LIBS)) \
+	$(addprefix -l ,$(SYSLIBS)) \
+	-o $(TARGETDIR)/$(TARGET)
+	@echo Success $(CURCFG)
 endif
