@@ -130,13 +130,16 @@ namespace IFaces
     virtual RetCode SetRegistry(IRegistry *reg) = 0;
   };
 
+  struct IServiceManager;
+
   struct IService
     : public IBase
   {
     DECLARE_UUID(2ce86774-4ad9-4db6-ad48-ab65213c6d32)
     virtual RetCode Init() = 0;
     virtual void Done() = 0;
-    virtual void DestroyMe() = 0;
+    virtual RetCode SetClassFactory(IClassFactory *factory) = 0;
+    virtual RetCode SetServiceManager(IServiceManager *manager) = 0;
   };
 
   struct IServiceManager

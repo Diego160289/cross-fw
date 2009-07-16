@@ -33,3 +33,6 @@ del /Q Objects\Release\CmpRegClient\*
 
 del /Q Objects\Debug\ServiceManager\*
 del /Q Objects\Release\ServiceManager\*
+
+del /Q Objects\Debug\TestService\*
+del /Q Objects\Release\TestService\*

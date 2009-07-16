@@ -70,7 +70,7 @@ int main()
       "C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\TestReg.xml",
       "0eedde75-ce15-4eba-9026-3d5f94488c26",
       "74a12748-ee4a-4828-a502-6d2c05df637d",
-      ""
+      "95e2d527-0cbf-41be-91f6-9ad3fca30f41"
       );
     /*FWLoader Loader(
       "./Registry.so",

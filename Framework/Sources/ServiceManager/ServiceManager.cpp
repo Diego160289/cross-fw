@@ -30,7 +30,18 @@ RetCode IServiceManagerImpl::PostStopToService(const char *serviceId)
 
 RetCode IServiceManagerImpl::PostStopToServiceManager()
 {
-  return retFail;
+  Common::SyncObject<System::Mutex> Locker(IsRunMtx);
+  if (!IsRun)
+    return retFail;
+  try
+  {
+    RunEvent.Set();
+  }
+  catch (std::exception &)
+  {
+    return retFail;
+  }
+  return retOk;
 }
 
 RetCode IServiceManagerImpl::GetServicePool(const char *serviceId, IFaces::IEnum **services)
@@ -82,17 +93,22 @@ RetCode IServiceManagerImpl::Run(const char *startServiceId)
     Common::SyncObject<System::Mutex> Locker(IsRunMtx);
     if (IsRun)
       return retFail;
+    if (!InternalStartService(startServiceId).Get())
+      return retFail;
+    try
     {
-      Common::SyncObject<System::Mutex> Locker(ServicesMtx);
-      if (!InternalStartService(startServiceId).Get())
-        return retFail;
+      RunEvent.Reset();
+      IsRun = true;
+    }
+    catch (std::exception &)
+    {
+      return retFail;
     }
   }
   try
   {
-    RunEvent.Reset();
-    IsRun = true;
     while (!RunEvent.Wait());
+    StopAllServices();
     return retOk;
   }
   catch (std::exception &)
@@ -130,11 +146,8 @@ IServiceManagerImpl::IServicePtr IServiceManagerImpl::InternalStartService(const
         return IServicePtr();
     }
     Common::RefObjQIPtr<IFaces::IService> NewService(SrvObj);
-    if (!NewService.Get())
+    if (!NewService.Get() || !BuildService(NewService))
       return IServicePtr();
-
-    // TODO: build service
-
     if (NewService->Init() != retOk)
       return IServicePtr();
     {
@@ -151,4 +164,24 @@ IServiceManagerImpl::IServicePtr IServiceManagerImpl::InternalStartService(const
     return IServicePtr();
   }
   return IServicePtr();
+}
+
+bool IServiceManagerImpl::BuildService(IServicePtr service)
+{
+  if (service->SetClassFactory(Factory.Get()) != retOk)
+    return false;
+  Common::RefObjQIPtr<IFaces::IServiceManager> SrvMgr(this);
+  if (!SrvMgr.Get() || service->SetServiceManager(SrvMgr.Get()) != retOk)
+  {
+    service->SetClassFactory(0);
+    return false;
+  }
+
+  // TODO: установить все зависимости окружения сервиса
+
+  return true;
+}
+
+void IServiceManagerImpl::StopAllServices()
+{
 }

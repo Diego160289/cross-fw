@@ -66,6 +66,8 @@ private:
   ServiceMap Services;
 
   IServicePtr InternalStartService(const std::string &serviceId);
+  bool BuildService(IServicePtr service);
+  void StopAllServices();
 };
 
 #endif  // !__SERVICEMANAGER_H__
