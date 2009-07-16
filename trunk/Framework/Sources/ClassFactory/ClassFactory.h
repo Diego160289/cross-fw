@@ -1,5 +1,5 @@
-#ifndef __MESSAGEQUEUE_H__
-#define __MESSAGEQUEUE_H__
+#ifndef __CLASSFACTORY_H__
+#define __CLASSFACTORY_H__
 
 #include "IFacesTools.h"
 #include "Mutex.h"
@@ -56,4 +56,4 @@ private:
   ModulePool Modules;
 };
 
-#endif  // !__MESSAGEQUEUE_H__
+#endif  // !__CLASSFACTORY_H__

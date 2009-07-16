@@ -1,5 +1,5 @@
-#ifndef __TimerIMPL_H__
-#define __TimerIMPL_H__
+#ifndef __TIMERIMPL_H__
+#define __TIMERIMPL_H__
 
 #include "Timer.h"
 
@@ -27,4 +27,4 @@ namespace System
 
 }
 
-#endif  // !__TimerIMPL_H__
+#endif  // !__TIMERIMPL_H__

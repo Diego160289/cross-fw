@@ -1,5 +1,5 @@
-#ifndef __PULSEDTIMERIMPL_H__
-#define __PULSEDTIMERIMPL_H__
+#ifndef __TIMERIMPL_H__
+#define __TIMERIMPL_H__
 
 #include "Timer.h"
 
@@ -26,4 +26,4 @@ namespace System
 
 }
 
-#endif  // !__PULSEDTIMERIMPL_H__
+#endif  // !__TIMERIMPL_H__

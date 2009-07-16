@@ -12,6 +12,7 @@ make_libs:
 make_dlls: 
 	make TARGETTYPE=Dll -f ./Make/registry.mk
 	make TARGETTYPE=Dll -f ./Make/classfactory.mk
+	make TARGETTYPE=Dll -f ./Make/servicemanager.mk
 	make TARGETTYPE=Dll -f ./Make/tools.mk
 
 make_tools:

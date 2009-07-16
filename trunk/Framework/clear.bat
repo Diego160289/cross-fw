@@ -30,3 +30,6 @@ del /Q Objects\Release\ClassFactory\*
 
 del /Q Objects\Debug\CmpRegClient\*
 del /Q Objects\Release\CmpRegClient\*
+
+del /Q Objects\Debug\ServiceManager\*
+del /Q Objects\Release\ServiceManager\*
