@@ -14,9 +14,9 @@ class FWLoader
 {
 public:
   FWLoader(const char *registryModuleName, const char *registryClassId, const char *registryName,
-    const char *classFactoryId)
-    : RegistryModule(Common::ModuleHolder::DllHolderPtr(new System::DllHolder(registryModuleName)))
+    const char *classFactoryId, const char *serviceManagerId, const char *startServiceId)
   {
+    Common::ModuleHolder RegistryModule(Common::ModuleHolder::DllHolderPtr(new System::DllHolder(registryModuleName)));
     Common::RefObjQIPtr<IFaces::IRegistryCtrl> RegistryCtrl(RegistryModule.CreateObject(registryClassId));
     {
       Common::Wrappers::RegistryCtrl Ctrl(RegistryCtrl);
@@ -28,29 +28,35 @@ public:
     if (FactoryInfo->GetType() != Common::Wrappers::RegistryComponent::ComponentInfo::ctInProc)
       throw FWLoaderException("Can't load not inproc class factory");
     std::string FactoryModuleName = FactoryInfo->GetLocation() + "/" + FactoryInfo->GetModuleName();
-    ModuleHolderPtr NewfactoryModule(new Common::ModuleHolder(Common::ModuleHolder::DllHolderPtr(new System::DllHolder(FactoryModuleName.c_str()))));
-    Common::RefObjQIPtr<IFaces::IClassFactoryCtrl> FactoryCtrl(NewfactoryModule->CreateObject(classFactoryId));
+    Common::ModuleHolder FactoryModule(Common::ModuleHolder::DllHolderPtr(new System::DllHolder(FactoryModuleName.c_str())));
+    Common::RefObjQIPtr<IFaces::IClassFactoryCtrl> FactoryCtrl(FactoryModule.CreateObject(classFactoryId));
     if (!FactoryCtrl.Get())
       throw FWLoaderException("Can't get class factory control");
-    Common::RefObjQIPtr<IFaces::IClassFactory> NewFactory(FactoryCtrl);
-    if (!NewFactory.Get())
+    Common::RefObjQIPtr<IFaces::IClassFactory> Factory(FactoryCtrl);
+    if (!Factory.Get())
       throw FWLoaderException("Can't get class factory");
     if (FactoryCtrl->SetRegistry(Registry.Get()) != IFaces::retOk)
       throw FWLoaderException("Can't set registry into class factory");
-
-    ClassFactorModule.Swap(NewfactoryModule);
-    Factory = NewFactory;
+    Common::RefObjPtr<IFaces::IBase> SrvMgrObj;
+    if (Factory->CreateObject(serviceManagerId, SrvMgrObj.GetPPtr()) != IFaces::retOk)
+      throw FWLoaderException("Can't create Service manager object");
+    Common::RefObjQIPtr<IFaces::IServiceManagerCtrl> SrvMgrCtrl(SrvMgrObj);
+    if (!SrvMgrCtrl.Get())
+      throw FWLoaderException("Can't get service manager control");
+    Common::RefObjQIPtr<IFaces::IServiceManager> SrvMgr(SrvMgrObj);
+    if (!SrvMgr.Get())
+      throw FWLoaderException("Can't get service manager");
+    if (SrvMgrCtrl->SetRegistry(Registry.Get()) != IFaces::retOk)
+      throw FWLoaderException("Can't set registry into service manager control");
+    if (SrvMgrCtrl->SetClassFactory(Factory.Get()) != IFaces::retOk)
+      throw FWLoaderException("Can't set class factory into service manager control");
+    if (SrvMgrCtrl->Run(startServiceId) != IFaces::retOk)
+      throw FWLoaderException("Can't start service");
   }
   ~FWLoader()
   {
-    std::cout << "RegistryModule " << RegistryModule.GetModuleCounter() << std::endl;
-    std::cout << "ClassFactorModule " << ClassFactorModule->GetModuleCounter() << std::endl;
   }
 private:
-  Common::ModuleHolder RegistryModule;
-  typedef Common::SharedPtr<Common::ModuleHolder> ModuleHolderPtr;
-  ModuleHolderPtr ClassFactorModule;
-  Common::RefObjPtr<IFaces::IClassFactory> Factory;
 };
 
 
@@ -62,7 +68,9 @@ int main()
       "C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll",
       "cf7456c3-70c7-4a97-b8e4-f910cd2f823b",
       "C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\TestReg.xml",
-      "0eedde75-ce15-4eba-9026-3d5f94488c26"
+      "0eedde75-ce15-4eba-9026-3d5f94488c26",
+      "74a12748-ee4a-4828-a502-6d2c05df637d",
+      ""
       );
     /*FWLoader Loader(
       "./Registry.so",

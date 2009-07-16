@@ -48,7 +48,7 @@ namespace Common
     IBasePtr Ret;
     if (!Dll->GetProc<PFNCreateObject>("CreateObject")(classId, reinterpret_cast<void**>(Ret.GetPPtr())))
       throw ModuleHolderException("Can't create object");
-    return Ret;
+    return IBasePtr(Ret);
   }
 
   unsigned long ModuleHolder::GetModuleCounter() const

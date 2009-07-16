@@ -135,7 +135,8 @@ namespace IFaces
   {
     DECLARE_UUID(2ce86774-4ad9-4db6-ad48-ab65213c6d32)
     virtual RetCode Init() = 0;
-    virtual RetCode Done() = 0;
+    virtual void Done() = 0;
+    virtual void DestroyMe() = 0;
   };
 
   struct IServiceManager
@@ -147,7 +148,7 @@ namespace IFaces
     virtual RetCode StopService(const char *serviceId) = 0;
     virtual RetCode PostStopToService(const char *serviceId) = 0;
     virtual RetCode PostStopToServiceManager() = 0;
-    virtual RetCode GetService(const char *serviceId, IBase **service) = 0;
+    virtual RetCode GetServicePool(const char *serviceId, IEnum **services) = 0;
   };
 
   struct IServiceManagerCtrl
@@ -156,7 +157,7 @@ namespace IFaces
     DECLARE_UUID(fb6266b9-2fc8-4d1d-b15c-7d9da0134d3d)
     virtual RetCode SetRegistry(IRegistry *registry) = 0;
     virtual RetCode SetClassFactory(IClassFactory *factory) = 0;
-    virtual RetCode Run() = 0;
+    virtual RetCode Run(const char *startServiceId) = 0;
   };
 
   struct IMessageQueue
