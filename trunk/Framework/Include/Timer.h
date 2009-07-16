@@ -14,7 +14,7 @@ namespace System
     : private Common::NoCopyable
   {
   public:
-    Timer(Common::ICallbackPtr callback, unsigned period, unsigned startAfter);
+    Timer(Common::ICallbackPtr callback, unsigned period);
     ~Timer();
   private:
     Common::ICallbackPtr Callback;
