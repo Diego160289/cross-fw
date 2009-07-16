@@ -165,6 +165,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\Framework\Sources\System\Win\GenerateUUIDImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Framework\Sources\System\Win\GenerateUUIDImpl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Framework\Sources\System\Win\ManualEventImpl.cpp"
 				>
 			</File>
@@ -203,6 +211,10 @@
 		</File>
 		<File
 			RelativePath="..\..\..\Framework\Sources\System\File.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Framework\Sources\System\GenerateUUID.cpp"
 			>
 		</File>
 		<File
