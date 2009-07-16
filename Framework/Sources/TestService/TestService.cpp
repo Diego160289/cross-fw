@@ -9,8 +9,11 @@ ITestServiceImpl::ITestServiceImpl()
 {
 }
 
-RetCode ITestServiceImpl::Init() 
+RetCode ITestServiceImpl::Init(const char *instanceUUID,
+                               IFaces::IClassFactory *factory,
+                               IFaces::IServiceManager *manager)
 {
+  Manager = manager;
   try
   {
     Timer.Reset(new System::Timer(Common::CreateMemberCallback(*this, &ITestServiceImpl::OnTimer), 1000));
@@ -25,17 +28,6 @@ RetCode ITestServiceImpl::Init()
 void ITestServiceImpl::Done()
 {
   Manager.Release();
-}
-
-RetCode ITestServiceImpl::SetClassFactory(IFaces::IClassFactory *factory)
-{
-  return retOk;
-}
-
-RetCode ITestServiceImpl::SetServiceManager(IFaces::IServiceManager *manager)
-{
-  Manager = manager;
-  return retOk;
 }
 
 void ITestServiceImpl::OnTimer()

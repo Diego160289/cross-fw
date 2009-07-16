@@ -1,6 +1,7 @@
 #include "ServiceManager.h"
 #include "IEnumImpl.h"
 #include "RefObjQIPtr.h"
+#include "SystemUtils.h"
 
 
 IServiceManagerImpl::IServiceManagerImpl()
@@ -139,6 +140,7 @@ IServiceManagerImpl::IServicePtr IServiceManagerImpl::InternalStartService(const
 {
   try
   {
+    std::string InstanceUUID = System::GenerateUUID();
     Common::RefObjPtr<IFaces::IBase> SrvObj;
     {
       Common::SyncObject<System::Mutex> Locker(FactoryMtx);
@@ -146,9 +148,7 @@ IServiceManagerImpl::IServicePtr IServiceManagerImpl::InternalStartService(const
         return IServicePtr();
     }
     Common::RefObjQIPtr<IFaces::IService> NewService(SrvObj);
-    if (!NewService.Get() || !BuildService(NewService))
-      return IServicePtr();
-    if (NewService->Init() != retOk)
+    if (!NewService.Get() || !BuildService(NewService, InstanceUUID))
       return IServicePtr();
     {
       Common::SyncObject<System::Mutex> Locker(ServicesMtx);
@@ -166,16 +166,11 @@ IServiceManagerImpl::IServicePtr IServiceManagerImpl::InternalStartService(const
   return IServicePtr();
 }
 
-bool IServiceManagerImpl::BuildService(IServicePtr service)
+bool IServiceManagerImpl::BuildService(IServicePtr service, const std::string &instanceUUID)
 {
-  if (service->SetClassFactory(Factory.Get()) != retOk)
-    return false;
   Common::RefObjQIPtr<IFaces::IServiceManager> SrvMgr(this);
-  if (!SrvMgr.Get() || service->SetServiceManager(SrvMgr.Get()) != retOk)
-  {
-    service->SetClassFactory(0);
+  if (!SrvMgr.Get() || service->Init(instanceUUID.c_str(), Factory.Get(), SrvMgr.Get()) != retOk)
     return false;
-  }
 
   // TODO: установить все зависимости окружения сервиса
 
