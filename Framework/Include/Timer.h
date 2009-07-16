@@ -1,5 +1,5 @@
-#ifndef __PULSEDTIMER_H__
-#define __PULSEDTIMER_H__
+#ifndef __TIMER_H__
+#define __TIMER_H__
 
 #include "NoCopyable.h"
 #include "Exceptions.h"
@@ -24,4 +24,4 @@ namespace System
 
 }
 
-#endif  // !__PULSEDTIMER_H__
+#endif  // !__TIMER_H__

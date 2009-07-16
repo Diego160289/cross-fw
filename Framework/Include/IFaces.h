@@ -130,6 +130,35 @@ namespace IFaces
     virtual RetCode SetRegistry(IRegistry *reg) = 0;
   };
 
+  struct IService
+    : public IBase
+  {
+    DECLARE_UUID(2ce86774-4ad9-4db6-ad48-ab65213c6d32)
+    virtual RetCode Init() = 0;
+    virtual RetCode Done() = 0;
+  };
+
+  struct IServiceManager
+    : public IBase
+  {
+    DECLARE_UUID(cfa6a777-bcd2-4c46-aefb-082d192119d4)
+    virtual RetCode StartService(const char *serviceId, IBase **service) = 0;
+    virtual RetCode StartService(const char *serviceId) = 0;
+    virtual RetCode StopService(const char *serviceId) = 0;
+    virtual RetCode PostStopToService(const char *serviceId) = 0;
+    virtual RetCode PostStopToServiceManager() = 0;
+    virtual RetCode GetService(const char *serviceId, IBase **service) = 0;
+  };
+
+  struct IServiceManagerCtrl
+    : public IBase
+  {
+    DECLARE_UUID(fb6266b9-2fc8-4d1d-b15c-7d9da0134d3d)
+    virtual RetCode SetRegistry(IRegistry *registry) = 0;
+    virtual RetCode SetClassFactory(IClassFactory *factory) = 0;
+    virtual RetCode Run() = 0;
+  };
+
   struct IMessageQueue
     : public IBase
   {
