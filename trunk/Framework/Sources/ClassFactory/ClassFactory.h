@@ -49,8 +49,11 @@ private:
   Common::SharedPtr<System::PulsedLoop> CleanLoop;
   void Clean();
 
+public:
   typedef Common::SharedPtr<Common::ModuleHolder> ModuleHolderPtr;
   typedef std::map<std::string, ModuleHolderPtr> ModulePool;
+
+private:
   System::Mutex ModulesMtx;
   ModulePool Modules;
 };
