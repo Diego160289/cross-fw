@@ -17,7 +17,7 @@ namespace System
     : private Common::NoCopyable
   {
   public:
-    TimerImpl(Common::ICallback *callback, unsigned period, unsigned startAfter);
+    TimerImpl(Common::ICallback *callback, unsigned period);
     ~TimerImpl();
   private:
     HANDLE TimerQueue_;

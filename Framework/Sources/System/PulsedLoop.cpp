@@ -10,10 +10,10 @@ namespace System
     : private Common::NoCopyable
   {
   public:
-    PulsedLoopImpl(Common::ICallbackPtr callback, unsigned period, unsigned startAfter)
+    PulsedLoopImpl(Common::ICallbackPtr callback, unsigned period)
     {
       Loop.Reset(new ThreadLoop(callback));
-      Timer_.Reset(new Timer(Common::CreateMemberCallback(*this, &PulsedLoopImpl::Resume), period, startAfter));
+      Timer_.Reset(new Timer(Common::CreateMemberCallback(*this, &PulsedLoopImpl::Resume), period));
     }
   private:
     Common::SharedPtr<ThreadLoop> Loop;
@@ -24,8 +24,8 @@ namespace System
     }
   };
 
-  PulsedLoop::PulsedLoop(Common::ICallbackPtr callback, unsigned period, unsigned startAfter)
-    : Impl(new PulsedLoopImpl(callback, period, startAfter))
+  PulsedLoop::PulsedLoop(Common::ICallbackPtr callback, unsigned period)
+    : Impl(new PulsedLoopImpl(callback, period))
   {
   }
 

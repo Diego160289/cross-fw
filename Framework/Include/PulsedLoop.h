@@ -11,7 +11,7 @@ namespace System
     : Common::NoCopyable
   {
   public:
-    PulsedLoop(Common::ICallbackPtr callback, unsigned period, unsigned startAfter);
+    PulsedLoop(Common::ICallbackPtr callback, unsigned period);
     ~PulsedLoop();
   private:
     class PulsedLoopImpl;

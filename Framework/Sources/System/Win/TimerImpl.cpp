@@ -3,13 +3,13 @@
 namespace System
 {
 
-  Timer::TimerImpl::TimerImpl(Common::ICallback *callback, unsigned period, unsigned startAfter)
+  Timer::TimerImpl::TimerImpl(Common::ICallback *callback, unsigned period)
     : TimerQueue_(0)
     , Timer_(0)
   {
     if (!(TimerQueue_ = ::CreateTimerQueue()))
       throw TimerException("Can't create timer queue");
-    if (!::CreateTimerQueueTimer(&Timer_, TimerQueue_, &TimerImpl::TimerFunc, callback, startAfter, period, 0))
+    if (!::CreateTimerQueueTimer(&Timer_, TimerQueue_, &TimerImpl::TimerFunc, callback, period, period, 0))
     {
       ::DeleteTimerQueue(TimerQueue_);
       TimerQueue_ = NULL;

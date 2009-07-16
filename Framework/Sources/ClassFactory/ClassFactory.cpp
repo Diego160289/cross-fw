@@ -57,7 +57,7 @@ RetCode IClassFactoryImpl::SetRegistry(IFaces::IRegistry *reg)
 
 bool IClassFactoryImpl::FinalizeCreate()
 {
-  CleanLoop.Reset(new System::PulsedLoop(Common::CreateMemberCallback(*this, &IClassFactoryImpl::Clean), CleanTimeout, CleanTimeout));
+  CleanLoop.Reset(new System::PulsedLoop(Common::CreateMemberCallback(*this, &IClassFactoryImpl::Clean), CleanTimeout));
   return true;
 }
 

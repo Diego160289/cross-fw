@@ -5,7 +5,7 @@
 namespace System
 {
 
-  Timer::TimerImpl::TimerImpl(Common::ICallback *callback, unsigned period, unsigned startAfter)
+  Timer::TimerImpl::TimerImpl(Common::ICallback *callback, unsigned period)
     : TimerId(0)
   {
     memset(&SigEvent, 0, sizeof(SigEvent));
