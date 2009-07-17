@@ -1,5 +1,7 @@
 PROJECT := FWLoader
 
+LIBS += TinyXml
+
 ifeq ($(OS), Nix)
     SYSLIBS += dl
 else

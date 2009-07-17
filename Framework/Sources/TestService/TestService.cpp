@@ -16,7 +16,7 @@ RetCode ITestServiceImpl::Init(const char *instanceUUID,
   Manager = manager;
   try
   {
-    Timer.Reset(new System::Timer(Common::CreateMemberCallback(*this, &ITestServiceImpl::OnTimer), 1000));
+    Timer.Reset(new System::Timer(Common::CreateMemberCallback(*this, &ITestServiceImpl::OnTimer), 500));
   }
   catch (std::exception &)
   {
