@@ -518,6 +518,8 @@ namespace IFacesImpl
     IFaces::IVariant::VariantType GetType() const;
     bool IsEmpty() const;
     unsigned long GetDataSize() const;
+
+    IVariantPtr GetVariant();
   private:
     IVariantPtr Var;
   };

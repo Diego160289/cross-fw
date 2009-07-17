@@ -6,6 +6,7 @@
 #include "SyncObj.h"
 #include "RefObjPtr.h"
 #include "IVariantImpl.h"
+#include "Mutex.h"
 
 #include <string>
 
@@ -38,7 +39,7 @@ namespace IFacesImpl
 
     INamedVariableImpl()
       : Name("")
-      , Var(IFacesImpl::IVariantImpl<TSynObj>::CreateObject())
+      , Var(IVariantImpl<TSynObj>::CreateObject())
     {
     }
 
@@ -70,6 +71,31 @@ namespace IFacesImpl
   private:
     std::string Name;
     mutable Common::RefObjPtr<IFaces::IVariant> Var;
+  };
+
+  DECLARE_RUNTIME_EXCEPTION(INamedVariableHelper)
+
+  class INamedVariableHelper
+  {
+  public:
+    typedef Common::RefObjPtr<IFaces::INamedVariable> INamedVariablePtr;
+
+    INamedVariableHelper(INamedVariablePtr namedVar);
+    const std::string GetName() const;
+    const IVariantHelper GetValue() const;
+    void SetValue(Common::RefObjPtr<IFaces::IVariant> var);
+    template <typename T>
+    void SetValue(T var)
+    {
+      Common::RefObjPtr<IFaces::IVariant> Var = CreateVariant<System::Mutex>();
+      {
+        IVariantHelper Helper(Var);
+        Helper = var;
+      }
+      SetValue(Var);
+    }
+  private:
+    INamedVariablePtr NamedVar;
   };
 
   template <typename TSyn>

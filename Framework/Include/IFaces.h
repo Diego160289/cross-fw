@@ -89,7 +89,7 @@ namespace IFaces
     DECLARE_UUID(6a427591-c9b1-45f0-b676-b940479e14d8)
     virtual RetCode AddVariable(INamedVariable *namedVar) = 0;
     virtual RetCode RemoveVariable(const char *varName) = 0;
-    virtual RetCode GetVariable(const char *varName, IVariant **var) = 0;
+    virtual RetCode GetVariable(const char *varName, IVariant **var) const = 0;
     virtual RetCode EnumVariables(IEnum **vars) const= 0;
   };
 
@@ -136,8 +136,9 @@ namespace IFaces
     : public IBase
   {
     DECLARE_UUID(2ce86774-4ad9-4db6-ad48-ab65213c6d32)
-    virtual RetCode Init(const char *instanceUUID, IClassFactory *factory,
-      IServiceManager *manager) = 0;
+    virtual void SetInstanceUUID(const char *instanceUUID) = 0;
+    virtual RetCode SetParams(IVarMap *params) = 0;
+    virtual RetCode Init() = 0;
     virtual void Done() = 0;
   };
 
