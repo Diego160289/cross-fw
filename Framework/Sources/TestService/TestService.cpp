@@ -1,4 +1,7 @@
 #include "TestService.h"
+#include "ServiceParamNames.h"
+#include "IVarMapImpl.h"
+#include "RefObjQIPtr.h"
 
 
 #include <iostream>
@@ -9,11 +12,29 @@ ITestServiceImpl::ITestServiceImpl()
 {
 }
 
-RetCode ITestServiceImpl::Init(const char *instanceUUID,
-                               IFaces::IClassFactory *factory,
-                               IFaces::IServiceManager *manager)
+void ITestServiceImpl::SetInstanceUUID(const char *instanceUUID)
 {
-  Manager = manager;
+}
+
+RetCode ITestServiceImpl::SetParams(IFaces::IVarMap *params)
+{
+  try
+  {
+    IFacesImpl::IVarMapHelper::IVarMapPtr VarMap(params);
+    IFacesImpl::IVarMapHelper Params(VarMap);
+    return Common::RefObjQIPtr<IFaces::IServiceManager>(
+      (IFaces::IBase*)(Params.GetVariable(IFacesImpl::PrmServiceManager))
+      ).QueryInterface(Manager.GetPPtr());
+  }
+  catch (std::exception &)
+  {
+    return retFail;
+  }
+  return retOk;
+}
+
+RetCode ITestServiceImpl::Init()
+{
   try
   {
     Timer.Reset(new System::Timer(Common::CreateMemberCallback(*this, &ITestServiceImpl::OnTimer), 500));
