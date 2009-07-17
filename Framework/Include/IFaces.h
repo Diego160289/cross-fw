@@ -140,6 +140,7 @@ namespace IFaces
     virtual RetCode SetParams(IVarMap *params) = 0;
     virtual RetCode Init() = 0;
     virtual void Done() = 0;
+    virtual bool CanDone() const = 0;
   };
 
   struct IServiceManager
@@ -148,8 +149,10 @@ namespace IFaces
     DECLARE_UUID(cfa6a777-bcd2-4c46-aefb-082d192119d4)
     virtual RetCode StartService(const char *serviceId, IBase **service) = 0;
     virtual RetCode StartService(const char *serviceId) = 0;
-    virtual RetCode StopService(const char *serviceId) = 0;
-    virtual RetCode PostStopToService(const char *serviceId) = 0;
+    virtual RetCode StopService(const char *instanceUUID) = 0;
+    virtual RetCode PostStopToService(const char *instanceUUID) = 0;
+    virtual RetCode StopServiceGroup(const char *serviceId) = 0;
+    virtual RetCode PostStopToServiceGroup(const char *serviceId) = 0;
     virtual RetCode PostStopToServiceManager() = 0;
     virtual RetCode GetServicePool(const char *serviceId, IEnum **services) = 0;
   };

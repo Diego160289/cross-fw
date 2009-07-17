@@ -18,6 +18,11 @@ void ITestServiceImpl::SetInstanceUUID(const char *instanceUUID)
 
 RetCode ITestServiceImpl::SetParams(IFaces::IVarMap *params)
 {
+  if (!params)
+  {
+    Manager.Release();
+    return retOk;
+  }
   try
   {
     IFacesImpl::IVarMapHelper::IVarMapPtr VarMap(params);
@@ -54,6 +59,11 @@ void ITestServiceImpl::Done()
 void ITestServiceImpl::OnTimer()
 {
   std::cout << Ticks++ << std::endl;
-  if (Ticks == 5)
+  if (Ticks == 50 && Manager.Get())
     Manager->PostStopToServiceManager();
+}
+
+bool ITestServiceImpl::CanDone() const
+{
+  return false;
 }
