@@ -2,6 +2,8 @@
 #include "IEnumImpl.h"
 #include "RefObjQIPtr.h"
 #include "SystemUtils.h"
+#include "IVarMapImpl.h"
+#include "ServiceParamNames.h"
 
 
 IServiceManagerImpl::IServiceManagerImpl()
@@ -148,8 +150,11 @@ IServiceManagerImpl::IServicePtr IServiceManagerImpl::InternalStartService(const
         return IServicePtr();
     }
     Common::RefObjQIPtr<IFaces::IService> NewService(SrvObj);
-    if (!NewService.Get() || !BuildService(NewService, InstanceUUID))
+    if (!NewService.Get() || !BuildService(NewService, InstanceUUID) ||
+      NewService->Init() != retOk)
+    {
       return IServicePtr();
+    }
     {
       Common::SyncObject<System::Mutex> Locker(ServicesMtx);
       ServicePoolPtr &SrvPool = Services[serviceId];
@@ -168,12 +173,22 @@ IServiceManagerImpl::IServicePtr IServiceManagerImpl::InternalStartService(const
 
 bool IServiceManagerImpl::BuildService(IServicePtr service, const std::string &instanceUUID)
 {
-  Common::RefObjQIPtr<IFaces::IServiceManager> SrvMgr(this);
-  if (!SrvMgr.Get() || service->Init(instanceUUID.c_str(), Factory.Get(), SrvMgr.Get()) != retOk)
+  try
+  {
+    Common::RefObjPtr<IFaces::IVarMap> VarMap = IFacesImpl::CreateVarMap<System::Mutex>();
+    IFacesImpl::IVarMapHelper Params(VarMap);
+    Params.AddVariable(IFacesImpl::PrmClassFactorry, Common::RefObjQIPtr<IFaces::IBase>(Factory).Get());
+    Params.AddVariable(IFacesImpl::PrmServiceManager, Common::RefObjQIPtr<IFaces::IBase>(this).Get());
+    if (service->SetParams(VarMap.Get()) != retOk)
+      return false;
+    service->SetInstanceUUID(instanceUUID.c_str());
+
+    // TODO: установить все зависимости окружения сервиса
+  }
+  catch (std::exception &)
+  {
     return false;
-
-  // TODO: установить все зависимости окружения сервиса
-
+  }
   return true;
 }
 

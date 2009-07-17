@@ -29,8 +29,9 @@ public:
   ITestServiceImpl();
 
   // IService
-  virtual RetCode Init(const char *instanceUUID,
-    IFaces::IClassFactory *factory, IFaces::IServiceManager *manager);
+  virtual void SetInstanceUUID(const char *instanceUUID);
+  virtual RetCode SetParams(IFaces::IVarMap *params);
+  virtual RetCode Init();
   virtual void Done();
 
 private:
