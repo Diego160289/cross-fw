@@ -5,10 +5,12 @@
 #include "Mutex.h"
 #include "Pointers.h"
 #include "ManualEvent.h"
+#include "ThreadLoop.h"
+#include "PulsedLoop.h"
 
 #include <string>
-#include <vector>
 #include <map>
+#include <vector>
 
 using IFaces::RetCode;
 using IFaces::retFail;
@@ -34,8 +36,10 @@ public:
   // IServiceManager
   virtual RetCode StartService(const char *serviceId, IFaces::IBase **service);
   virtual RetCode StartService(const char *serviceId);
-  virtual RetCode StopService(const char *serviceId);
-  virtual RetCode PostStopToService(const char *serviceId);
+  virtual RetCode StopService(const char *instanceUUID);
+  virtual RetCode PostStopToService(const char *instanceUUID);
+  virtual RetCode StopServiceGroup(const char *serviceId);
+  virtual RetCode PostStopToServiceGroup(const char *serviceId);
   virtual RetCode PostStopToServiceManager();
   virtual RetCode GetServicePool(const char *serviceId, IFaces::IEnum **services);
 
@@ -48,26 +52,38 @@ public:
   virtual bool FinalizeCreate();
 
 private:
+  static const unsigned ServiceCleanerTimeout;
+
   System::Mutex RegistryMtx;
   Common::RefObjPtr<IFaces::IRegistry> Registry;
   System::Mutex FactoryMtx;
   Common::RefObjPtr<IFaces::IClassFactory> Factory;
 
   typedef Common::RefObjPtr<IFaces::IService> IServicePtr;
-  typedef std::vector<IServicePtr> ServicePool;
+  typedef std::map<std::string/*InstanceUUID*/, IServicePtr> ServicePool;
   typedef Common::SharedPtr<ServicePool> ServicePoolPtr;
-  typedef std::map<std::string, ServicePoolPtr> ServiceMap;
+  typedef std::map<std::string/*ServiceUUID*/, ServicePoolPtr> ServiceMap;
 
   System::Mutex IsRunMtx;
   volatile bool IsRun;
   System::ManualEvent RunEvent;
 
+  Common::SharedPtr<System::PulsedLoop> CleanThread;
+
   System::Mutex ServicesMtx;
   ServiceMap Services;
+
+  Common::SharedPtr<System::ThreadLoop> StopServiceThread;
+  System::Mutex StoppingServicesMtx;
+  typedef std::vector<IServicePtr> ServicesVector;
+  ServicesVector StoppingServices;
 
   IServicePtr InternalStartService(const std::string &serviceId);
   bool BuildService(IServicePtr service, const std::string &instanceUUID);
   void StopAllServices();
+  void DoneService(IServicePtr service);
+  void StoppingServicesFunc();
+  void ServiceCleanerFunc();
 };
 
 #endif  // !__SERVICEMANAGER_H__

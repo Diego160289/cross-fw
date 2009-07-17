@@ -33,6 +33,7 @@ public:
   virtual RetCode SetParams(IFaces::IVarMap *params);
   virtual RetCode Init();
   virtual void Done();
+  virtual bool CanDone() const;
 
 private:
 

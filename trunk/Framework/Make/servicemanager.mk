@@ -1,7 +1,7 @@
 PROJECT := ServiceManager
 
 ifeq ($(OS),Nix)
-	SYSLIBS += pthread
+	SYSLIBS += pthread rt
 else
 	SYSLIBS +=
 endif
