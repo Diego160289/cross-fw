@@ -327,4 +327,9 @@ namespace IFacesImpl
     return Var->GetValueSize();
   }
 
+  IVariantHelper::IVariantPtr IVariantHelper::GetVariant()
+  {
+    return Var;
+  }
+
 }
