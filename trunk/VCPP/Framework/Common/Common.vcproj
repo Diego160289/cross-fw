@@ -152,6 +152,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\Framework\Sources\Common\CommonUtils.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\Framework\Sources\Common\IEnumImpl.cpp"
 			>
 		</File>

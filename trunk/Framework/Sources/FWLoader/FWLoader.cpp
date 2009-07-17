@@ -7,29 +7,35 @@
 #include "RefObjPtr.h"
 #include "ComponentWrappers.h"
 
+#include "Xml/TinyXml/tinyxml.h"
+#include "Typedefs.h"
+#include "CommonUtils.h"
+
 DECLARE_RUNTIME_EXCEPTION(FWLoader)
 
 class FWLoader
   : private Common::NoCopyable
 {
 public:
-  FWLoader(const char *registryModuleName, const char *registryClassId, const char *registryName,
-    const char *classFactoryId, const char *serviceManagerId, const char *startServiceId)
+  FWLoader(Common::StringMapPtr params)
   {
-    Common::ModuleHolder RegistryModule(Common::ModuleHolder::DllHolderPtr(new System::DllHolder(registryModuleName)));
-    Common::RefObjQIPtr<IFaces::IRegistryCtrl> RegistryCtrl(RegistryModule.CreateObject(registryClassId));
+    Common::ModuleHolder RegistryModule(Common::ModuleHolder::DllHolderPtr(
+      new System::DllHolder(Common::GetValueSromStringMap("RegistryModuleName", *params.get()).c_str())));
+    Common::RefObjQIPtr<IFaces::IRegistryCtrl> RegistryCtrl(
+      RegistryModule.CreateObject(Common::GetValueSromStringMap("RegitryClassId", *params.get()).c_str()));
     {
       Common::Wrappers::RegistryCtrl Ctrl(RegistryCtrl);
-      Ctrl.Load(registryName);
+      Ctrl.Load(Common::GetValueSromStringMap("RegistryName", *params.get()).c_str());
     }
     Common::RefObjQIPtr<IFaces::IRegistry> Registry(RegistryCtrl);
     Common::Wrappers::RegistryComponent::ComponentInfoPtr FactoryInfo =
-      Common::Wrappers::RegistryComponent(Registry).GetComponentInfo(classFactoryId);
+      Common::Wrappers::RegistryComponent(Registry).GetComponentInfo(Common::GetValueSromStringMap("ClassFactoryId", *params.get()));
     if (FactoryInfo->GetType() != Common::Wrappers::RegistryComponent::ComponentInfo::ctInProc)
       throw FWLoaderException("Can't load not inproc class factory");
     std::string FactoryModuleName = FactoryInfo->GetLocation() + "/" + FactoryInfo->GetModuleName();
     Common::ModuleHolder FactoryModule(Common::ModuleHolder::DllHolderPtr(new System::DllHolder(FactoryModuleName.c_str())));
-    Common::RefObjQIPtr<IFaces::IClassFactoryCtrl> FactoryCtrl(FactoryModule.CreateObject(classFactoryId));
+    Common::RefObjQIPtr<IFaces::IClassFactoryCtrl> FactoryCtrl(FactoryModule.CreateObject(
+      Common::GetValueSromStringMap("ClassFactoryId", *params.get()).c_str()));
     if (!FactoryCtrl.Get())
       throw FWLoaderException("Can't get class factory control");
     Common::RefObjQIPtr<IFaces::IClassFactory> Factory(FactoryCtrl);
@@ -38,7 +44,7 @@ public:
     if (FactoryCtrl->SetRegistry(Registry.Get()) != IFaces::retOk)
       throw FWLoaderException("Can't set registry into class factory");
     Common::RefObjPtr<IFaces::IBase> SrvMgrObj;
-    if (Factory->CreateObject(serviceManagerId, SrvMgrObj.GetPPtr()) != IFaces::retOk)
+    if (Factory->CreateObject(Common::GetValueSromStringMap("ServiceManagerId", *params.get()).c_str(), SrvMgrObj.GetPPtr()) != IFaces::retOk)
       throw FWLoaderException("Can't create Service manager object");
     Common::RefObjQIPtr<IFaces::IServiceManagerCtrl> SrvMgrCtrl(SrvMgrObj);
     if (!SrvMgrCtrl.Get())
@@ -50,7 +56,7 @@ public:
       throw FWLoaderException("Can't set registry into service manager control");
     if (SrvMgrCtrl->SetClassFactory(Factory.Get()) != IFaces::retOk)
       throw FWLoaderException("Can't set class factory into service manager control");
-    if (SrvMgrCtrl->Run(startServiceId) != IFaces::retOk)
+    if (SrvMgrCtrl->Run(Common::GetValueSromStringMap("StartServiceId", *params.get()).c_str()) != IFaces::retOk)
       throw FWLoaderException("Can't start service");
   }
   ~FWLoader()
@@ -59,24 +65,48 @@ public:
 private:
 };
 
-
-int main()
+Common::StringMapPtr LoadConfig(const char *configFileName)
 {
+  TiXmlDocument Doc;
+  if (!Doc.LoadFile(configFileName, TIXML_ENCODING_UTF8))
+    throw std::runtime_error("Can't load config file");
+  const TiXmlElement *Config = Doc.FirstChildElement("Config");
+  if (!Config)
+    throw std::logic_error("Bad config file");
+  std::string Version;
+  if (Config->QueryValueAttribute("Version", &Version) != TIXML_SUCCESS)
+    throw std::logic_error("Can't get config version");
+  if (Version != "1.0")
+    throw std::logic_error("Unsupported version");
+  Common::StringMapPtr RetMap(new Common::StringMap);
+  for (const TiXmlNode *i = Config->FirstChild() ; i ; i = i->NextSibling())
+  {
+    std::string Name = i->ValueStr();
+    if (Name.empty())
+      throw std::logic_error("Bad config config file");
+    const TiXmlNode *ValNode = i->FirstChild();
+    if (!ValNode)
+      throw std::logic_error("Bad config config file");
+    std::string Value = ValNode->ValueStr();
+    if (Value.empty())
+      throw std::logic_error("Bad config config file");
+    (*RetMap.get())[Name] = Value;
+  }
+  return RetMap;
+}
+
+int main(int argc, char **argv)
+{
+  if (argc != 2)
+  {
+    std::cerr
+      << "Bad params\n"
+      << "FWLoader \"config file\"\n";
+    return 1;
+  }
   try
   {
-    FWLoader Loader(
-      "C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\Registry.dll",
-      "cf7456c3-70c7-4a97-b8e4-f910cd2f823b",
-      "C:\\Projects\\cross-fw\\VCPP\\Framework\\Bin\\Debug\\TestReg.xml",
-      "0eedde75-ce15-4eba-9026-3d5f94488c26",
-      "74a12748-ee4a-4828-a502-6d2c05df637d",
-      "95e2d527-0cbf-41be-91f6-9ad3fca30f41"
-      );
-    /*FWLoader Loader(
-      "./Registry.so",
-      "cf7456c3-70c7-4a97-b8e4-f910cd2f823b",
-      "./TestReg.xml", "0eedde75-ce15-4eba-9026-3d5f94488c26"
-      );*/
+    FWLoader(LoadConfig(argv[1]));
   }
   catch (std::exception &e)
   {

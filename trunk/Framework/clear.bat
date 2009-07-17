@@ -36,3 +36,9 @@ del /Q Objects\Release\ServiceManager\*
 
 del /Q Objects\Debug\TestService\*
 del /Q Objects\Release\TestService\*
+
+copy Bin\Config.xml Bin\Debug\Config.xml
+copy Bin\Config.xml Bin\Release\Config.xml
+
+copy Bin\Registry.xml Bin\Debug\Registry.xml
+copy Bin\Registry.xml Bin\Release\Registry.xml
