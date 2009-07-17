@@ -2,14 +2,13 @@
 
 #include "ModuleHolder.h"
 #include "IFaces.h"
-
 #include "RefObjQIPtr.h"
 #include "RefObjPtr.h"
 #include "ComponentWrappers.h"
-
 #include "Xml/TinyXml/tinyxml.h"
 #include "Typedefs.h"
 #include "CommonUtils.h"
+
 
 DECLARE_RUNTIME_EXCEPTION(FWLoader)
 
@@ -17,25 +16,25 @@ class FWLoader
   : private Common::NoCopyable
 {
 public:
-  FWLoader(Common::StringMapPtr params)
+  FWLoader(const Common::StringMap &params)
   {
     Common::ModuleHolder RegistryModule(Common::ModuleHolder::DllHolderPtr(
-      new System::DllHolder(Common::GetValueSromStringMap("RegistryModuleName", *params.get()).c_str())));
+      new System::DllHolder(Common::GetValueSromStringMap("RegistryModuleName", params).c_str())));
     Common::RefObjQIPtr<IFaces::IRegistryCtrl> RegistryCtrl(
-      RegistryModule.CreateObject(Common::GetValueSromStringMap("RegitryClassId", *params.get()).c_str()));
+      RegistryModule.CreateObject(Common::GetValueSromStringMap("RegitryClassId", params).c_str()));
     {
       Common::Wrappers::RegistryCtrl Ctrl(RegistryCtrl);
-      Ctrl.Load(Common::GetValueSromStringMap("RegistryName", *params.get()).c_str());
+      Ctrl.Load(Common::GetValueSromStringMap("RegistryName", params).c_str());
     }
     Common::RefObjQIPtr<IFaces::IRegistry> Registry(RegistryCtrl);
     Common::Wrappers::RegistryComponent::ComponentInfoPtr FactoryInfo =
-      Common::Wrappers::RegistryComponent(Registry).GetComponentInfo(Common::GetValueSromStringMap("ClassFactoryId", *params.get()));
+      Common::Wrappers::RegistryComponent(Registry).GetComponentInfo(Common::GetValueSromStringMap("ClassFactoryId", params));
     if (FactoryInfo->GetType() != Common::Wrappers::RegistryComponent::ComponentInfo::ctInProc)
       throw FWLoaderException("Can't load not inproc class factory");
     std::string FactoryModuleName = FactoryInfo->GetLocation() + "/" + FactoryInfo->GetModuleName();
     Common::ModuleHolder FactoryModule(Common::ModuleHolder::DllHolderPtr(new System::DllHolder(FactoryModuleName.c_str())));
     Common::RefObjQIPtr<IFaces::IClassFactoryCtrl> FactoryCtrl(FactoryModule.CreateObject(
-      Common::GetValueSromStringMap("ClassFactoryId", *params.get()).c_str()));
+      Common::GetValueSromStringMap("ClassFactoryId", params).c_str()));
     if (!FactoryCtrl.Get())
       throw FWLoaderException("Can't get class factory control");
     Common::RefObjQIPtr<IFaces::IClassFactory> Factory(FactoryCtrl);
@@ -44,7 +43,7 @@ public:
     if (FactoryCtrl->SetRegistry(Registry.Get()) != IFaces::retOk)
       throw FWLoaderException("Can't set registry into class factory");
     Common::RefObjPtr<IFaces::IBase> SrvMgrObj;
-    if (Factory->CreateObject(Common::GetValueSromStringMap("ServiceManagerId", *params.get()).c_str(), SrvMgrObj.GetPPtr()) != IFaces::retOk)
+    if (Factory->CreateObject(Common::GetValueSromStringMap("ServiceManagerId", params).c_str(), SrvMgrObj.GetPPtr()) != IFaces::retOk)
       throw FWLoaderException("Can't create Service manager object");
     Common::RefObjQIPtr<IFaces::IServiceManagerCtrl> SrvMgrCtrl(SrvMgrObj);
     if (!SrvMgrCtrl.Get())
@@ -56,7 +55,7 @@ public:
       throw FWLoaderException("Can't set registry into service manager control");
     if (SrvMgrCtrl->SetClassFactory(Factory.Get()) != IFaces::retOk)
       throw FWLoaderException("Can't set class factory into service manager control");
-    if (SrvMgrCtrl->Run(Common::GetValueSromStringMap("StartServiceId", *params.get()).c_str()) != IFaces::retOk)
+    if (SrvMgrCtrl->Run(Common::GetValueSromStringMap("StartServiceId", params).c_str()) != IFaces::retOk)
       throw FWLoaderException("Can't start service");
   }
   ~FWLoader()
@@ -106,7 +105,7 @@ int main(int argc, char **argv)
   }
   try
   {
-    FWLoader(LoadConfig(argv[1]));
+    FWLoader(*LoadConfig(argv[1]).get());
   }
   catch (std::exception &e)
   {
