@@ -160,7 +160,15 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\Framework\Sources\Common\INamedVariableImpl.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\Framework\Sources\Common\IVariantImpl.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Framework\Sources\Common\IVarMapImpl.cpp"
 			>
 		</File>
 		<File
