@@ -1,4 +1,4 @@
-#ll: make_bin
+all: make_bin
 
 make_bin: make_libs make_dlls make_tools
 	make TARGETTYPE=Exe -f ./Make/fwloader.mk

@@ -58,8 +58,8 @@ void ITestServiceImpl::Done()
 
 void ITestServiceImpl::OnTimer()
 {
-  std::cout << Ticks++ << std::endl;
-  if (Ticks == 50 && Manager.Get())
+  std::cout << "Tick: " << Ticks++ << std::endl;
+  if (Ticks == 5)
     Manager->PostStopToServiceManager();
 }
 

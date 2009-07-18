@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <functional>
 
+
 const unsigned IServiceManagerImpl::ServiceCleanerTimeout = 5000;
 
 IServiceManagerImpl::IServiceManagerImpl()
@@ -185,9 +186,11 @@ RetCode IServiceManagerImpl::Run(const char *startServiceId)
   if (!startServiceId)
     return retFail;
   {
-    Common::SyncObject<System::Mutex> Locker(IsRunMtx);
-    if (IsRun)
-      return retFail;
+    {
+      Common::SyncObject<System::Mutex> Locker(IsRunMtx);
+      if (IsRun)
+        return retFail;
+    }
     if (!InternalStartService(startServiceId).Get())
       return retFail;
     try
@@ -210,7 +213,7 @@ RetCode IServiceManagerImpl::Run(const char *startServiceId)
     {
       Common::SyncObject<System::Mutex> Locker(IsRunMtx);
       IsRun = false;
-    }
+    }    
     StopAllServices();
     return retOk;
   }
