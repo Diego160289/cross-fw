@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <functional>
 
-
 const unsigned IServiceManagerImpl::ServiceCleanerTimeout = 5000;
 
 IServiceManagerImpl::IServiceManagerImpl()
@@ -324,7 +323,7 @@ void IServiceManagerImpl::StoppingServicesFunc()
 {
   Common::SyncObject<System::Mutex> Locker(StoppingServicesMtx);
   std::for_each(StoppingServices.begin(), StoppingServices.end(),
-    std::bind1st(std::mem_fun1(&IServiceManagerImpl::DoneService), this));
+    std::bind1st(std::mem_fun(&IServiceManagerImpl::DoneService), this));
   StoppingServices.clear();
 }
 
