@@ -253,9 +253,11 @@ IServiceManagerImpl::IServicePtr IServiceManagerImpl::InternalStartService(const
         return IServicePtr();
     }
     Common::RefObjQIPtr<IFaces::IService> NewService(SrvObj);
-    if (!NewService.Get() || !BuildService(NewService, InstanceUUID) ||
-      NewService->Init() != retOk)
+    if (!NewService.Get() ||!BuildService(NewService, InstanceUUID))
+      return IServicePtr();;
+    if (NewService->Init() != retOk)
     {
+      UnbuildService(NewService);
       return IServicePtr();
     }
     {
@@ -283,7 +285,10 @@ bool IServiceManagerImpl::BuildService(IServicePtr service, const std::string &i
     Params.AddVariable(IFacesImpl::PrmClassFactorry, Common::RefObjQIPtr<IFaces::IBase>(Factory).Get());
     Params.AddVariable(IFacesImpl::PrmServiceManager, Common::RefObjQIPtr<IFaces::IBase>(this).Get());
     if (service->SetParams(VarMap.Get()) != retOk)
+    {
+      UnbuildService(service);
       return false;
+    }
     service->SetInstanceUUID(instanceUUID.c_str());
 
     // TODO: установить все зависимости окружения сервиса
@@ -293,6 +298,12 @@ bool IServiceManagerImpl::BuildService(IServicePtr service, const std::string &i
     return false;
   }
   return true;
+}
+
+void IServiceManagerImpl::UnbuildService(IServicePtr service)
+{
+  service->SetParams(0);
+  service->SetInstanceUUID(0);
 }
 
 void IServiceManagerImpl::StopAllServices()
@@ -308,8 +319,7 @@ void IServiceManagerImpl::StopAllServices()
 
 void IServiceManagerImpl::DoneService(IServicePtr service)
 {
-  service->SetParams(0);
-  service->SetInstanceUUID(0);
+  UnbuildService(service);
   service->Done();
 }
 

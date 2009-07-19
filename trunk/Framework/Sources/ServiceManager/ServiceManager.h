@@ -78,6 +78,7 @@ private:
 
   IServicePtr InternalStartService(const std::string &serviceId);
   bool BuildService(IServicePtr service, const std::string &instanceUUID);
+  void UnbuildService(IServicePtr service);
   void StopAllServices();
   void DoneService(IServicePtr service);
   void StoppingServicesFunc();

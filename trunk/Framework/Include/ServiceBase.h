@@ -5,6 +5,7 @@
 #include "Mutex.h"
 #include "ServiceParamNames.h"
 #include "RefObjQIPtr.h"
+#include "IVarMapImpl.h"
 
 #include <string>
 
@@ -48,7 +49,6 @@ namespace Common
         ServiceInstanceUUID = instanceUUID;
       else
         ServiceInstanceUUID.clear();
-      OnSetInstanceUUID(ServiceInstanceUUID);
     }
     virtual RetCode SetParams(IFaces::IVarMap *params)
     {
@@ -119,9 +119,6 @@ namespace Common
     }
 
   protected:
-    virtual void OnSetInstanceUUID(const std::string instanceUUID)
-    {
-    }
     virtual bool OnInit()
     {
       return true;
