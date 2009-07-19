@@ -30,5 +30,5 @@ void ITestServiceImpl::OnTimer()
 {
   std::cout << "Tick: " << Ticks++ << std::endl;
   if (Ticks == 5)
-    PostStopToServiceManager();
+    GetServiceManager()->PostStopToServiceManager();
 }
