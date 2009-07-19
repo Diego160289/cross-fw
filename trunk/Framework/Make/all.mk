@@ -15,6 +15,8 @@ make_dlls:
 	make TARGETTYPE=Dll -f ./Make/servicemanager.mk
 	make TARGETTYPE=Dll -f ./Make/tools.mk
 	make TARGETTYPE=Dll -f ./Make/testservice.mk
+	make TARGETTYPE=Dll -f ./Make/testservice1.mk
+	make TARGETTYPE=Dll -f ./Make/testservice2.mk
 
 make_tools:
 	make TARGETTYPE=Exe -f ./Make/cmpregclient.mk

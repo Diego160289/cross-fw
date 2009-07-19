@@ -22,13 +22,14 @@ namespace Common
 
   template
   <
-    typename TServiceCoClass
+    typename TServiceCoClass,
+    typename TIFacesList = NullType
   >
   class ServiceBase
     : public CoClassBase
         <
           TServiceCoClass,
-          TYPE_LIST_1(IFaces::IService),
+          TypeList<IFaces::IService, TIFacesList>,
           MultiObject,
           System::Mutex
         >
