@@ -64,8 +64,6 @@ private:
   typedef Common::SharedPtr<ServicePool> ServicePoolPtr;
   typedef std::map<std::string/*ServiceUUID*/, ServicePoolPtr> ServiceMap;
 
-  System::Mutex IsRunMtx;
-  volatile bool IsRun;
   System::ManualEvent RunEvent;
 
   Common::SharedPtr<System::PulsedLoop> CleanThread;

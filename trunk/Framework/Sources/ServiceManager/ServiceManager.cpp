@@ -12,7 +12,6 @@
 const unsigned IServiceManagerImpl::ServiceCleanerTimeout = 5000;
 
 IServiceManagerImpl::IServiceManagerImpl()
-  : IsRun(false)
 {
 }
 
@@ -125,9 +124,6 @@ RetCode IServiceManagerImpl::PostStopToServiceGroup(const char *serviceId)
 
 RetCode IServiceManagerImpl::PostStopToServiceManager()
 {
-  Common::SyncObject<System::Mutex> Locker(IsRunMtx);
-  if (!IsRun)
-    return retFail;
   try
   {
     RunEvent.Set();
@@ -183,42 +179,37 @@ RetCode IServiceManagerImpl::SetClassFactory(IFaces::IClassFactory *factory)
 
 RetCode IServiceManagerImpl::Run(const char *startServiceId)
 {
+  bool StartedFirstService = false;
+  RetCode Ret = retOk;
   if (!startServiceId)
     return retFail;
-  {
-    {
-      Common::SyncObject<System::Mutex> Locker(IsRunMtx);
-      if (IsRun)
-        return retFail;
-    }
-    if (!InternalStartService(startServiceId).Get())
-      return retFail;
-    try
-    {
-      RunEvent.Reset();
-      {
-        Common::SyncObject<System::Mutex> Locker(IsRunMtx);
-        if (!IsRun)
-          IsRun = true;
-      }
-    }
-    catch (std::exception &)
-    {
-      return retFail;
-    }
-  }
+  if (!(StartedFirstService = !!InternalStartService(startServiceId).Get()))
+    return retFail;
   try
   {
-    while (!RunEvent.Wait());
-    {
-      Common::SyncObject<System::Mutex> Locker(IsRunMtx);
-      IsRun = false;
-    }    
-    StopAllServices();
-    return retOk;
+    RunEvent.Reset();
   }
   catch (std::exception &)
   {
+    Ret = retFail;
+  }
+  try
+  {
+    if (Ret == retOk)
+    {
+      while (!RunEvent.Wait());
+
+      StopAllServices();
+      return retOk;
+    }
+    if (StartedFirstService)
+      StopAllServices();
+    return retFail;
+  }
+  catch (std::exception &)
+  {
+    if (StartedFirstService)
+      StopAllServices();
     return retFail;
   }
   return retFail;
