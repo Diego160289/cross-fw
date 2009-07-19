@@ -94,21 +94,19 @@ namespace Common
         return RefObjPtr<T>();
       return RefObjQIPtr<T>(Ret);
     }
-    bool PostStopToServiceManager()
+    RefObjPtr<IFaces::IServiceManager> GetServiceManager() const
     {
-      RefObjQIPtr<IFaces::IServiceManager> Manager = QueryParam(IFacesImpl::PrmServiceManager);
-      return !Manager.Get() ? false : Manager->PostStopToServiceManager() == retOk;
+      return RefObjQIPtr<IFaces::IServiceManager>(QueryParam(IFacesImpl::PrmServiceManager));
     }
   private:
     typedef RefObjPtr<IFaces::IVarMap> IVarMapPtr;
-    IVarMapPtr ParamsMap;
+    mutable IVarMapPtr ParamsMap;
     std::string ServiceInstanceUUID;
     volatile bool CanDoneService;
-    RefObjPtr<IFaces::IBase> QueryParam(const std::string &paramName)
+    RefObjPtr<IFaces::IBase> QueryParam(const std::string &paramName) const
     {
       try
       {
-        Common::SyncObject<TSynObj> Locker(this->GetSynObj());
         return RefObjPtr<IFaces::IBase>((IFaces::IBase*)(IFacesImpl::IVarMapHelper(ParamsMap).GetVariable(paramName)));
       }
       catch (std::exception &)

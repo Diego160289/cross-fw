@@ -352,7 +352,7 @@ void IServiceManagerImpl::ServiceCleanerFunc()
             GroupStoppingServiceKeys.push_back(j->first);
           }
         }
-        for (Common::StringVector::const_iterator j = GroupStoppingServiceKeys.begin() ; j != GroupStoppingServiceKeys.end() ; ++i)
+        for (Common::StringVector::const_iterator j = GroupStoppingServiceKeys.begin() ; j != GroupStoppingServiceKeys.end() ; ++j)
           ServiceGroup->erase(*j);
         if (ServiceGroup->empty())
           StoppingServiceKeys.push_back(i->first);
