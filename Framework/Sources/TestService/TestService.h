@@ -7,7 +7,11 @@
 #include "ServiceBase.h"
 
 class ITestServiceImpl
-  : public Common::ServiceBase<ITestServiceImpl>
+  : public Common::ServiceBase
+      <
+        ITestServiceImpl,
+        TYPE_LIST_1(IFaces::ITestService)
+      >
 {
 public:
   DECLARE_UUID(95e2d527-0cbf-41be-91f6-9ad3fca30f41)
@@ -15,6 +19,10 @@ public:
   ITestServiceImpl();
 
   virtual bool OnInit();
+  virtual void OnDone();
+
+  // ITestService
+  virtual void Test();
 
 private:
 

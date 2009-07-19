@@ -28,7 +28,29 @@ bool ITestServiceImpl::OnInit()
 
 void ITestServiceImpl::OnTimer()
 {
-  std::cout << "Tick: " << Ticks++ << std::endl;
+  std::cout << "ITestServiceImpl ----->  Tick: " << Ticks++ << std::endl;
+  if (Ticks == 10)
+    MarkToDoneService();
   if (Ticks == 5)
-    GetServiceManager()->PostStopToServiceManager();
+  {
+    std::cout
+      << (GetServiceManager()->StartService("725d19bb-e6bc-4a42-986d-721f0fb1c5d6") == IFaces::retOk ? "TestService1 started" : "TestService1 can't started")
+      << std::endl;
+  }
+  if (Ticks == 7)
+  {
+    std::cout
+      << (GetServiceManager()->StartService("12457697-5839-4bb4-926a-8b5e37abcd6c") == IFaces::retOk ? "TestService2 started" : "TestService1 can't started")
+      << std::endl;
+  }
+}
+
+void ITestServiceImpl::Test()
+{
+  std::cout << "ITestServiceImpl::Test()" << std::endl;
+}
+
+void ITestServiceImpl::OnDone()
+{
+  std::cout << "Done ITestServiceImpl" << std::endl;
 }

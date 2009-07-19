@@ -185,6 +185,27 @@ namespace IFaces
     virtual bool EnumMessageQueues(IEnum **messageQuques) = 0;
   };
 
+
+  // TODO: удалить/ это для теста
+  struct ITestService
+    : public IBase
+  {
+    DECLARE_UUID(ede23db2-b813-4360-8aa5-d43d8c3c40aa)
+    virtual void Test() = 0;
+  };
+  struct ITestService1
+    : public IBase
+  {
+    DECLARE_UUID(71a5fec2-7afe-4199-8f14-71189770b4a3)
+    virtual void Test() = 0;
+  };
+  struct ITestService2
+    : public IBase
+  {
+    DECLARE_UUID(9c152f52-60ab-44ca-9c54-62cccc496c37)
+    virtual void Test() = 0;
+  };
+
 }
 
 #endif	// !__IFACES_H__
