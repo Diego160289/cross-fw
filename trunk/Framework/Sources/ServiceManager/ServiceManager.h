@@ -35,7 +35,7 @@ public:
 
   // IServiceManager
   virtual unsigned long StartService(const char *serviceId, IFaces::IBase **service);
-  virtual RetCode StartService(const char *serviceId);
+  virtual unsigned long StartService(const char *serviceId);
   virtual RetCode StopService(unsigned long instanceId);
   virtual RetCode PostStopToService(unsigned long instanceId);
   virtual RetCode StopServiceGroup(const char *serviceId);
@@ -60,15 +60,16 @@ private:
   Common::RefObjPtr<IFaces::IClassFactory> Factory;
 
   typedef Common::RefObjPtr<IFaces::IService> IServicePtr;
-  typedef std::map<std::string/*InstanceUUID*/, IServicePtr> ServicePool;
+  typedef std::map<unsigned long/*Instance Id*/, IServicePtr> ServicePool;
   typedef Common::SharedPtr<ServicePool> ServicePoolPtr;
-  typedef std::map<std::string/*ServiceUUID*/, ServicePoolPtr> ServiceMap;
+  typedef std::map<std::string/*Service UUID*/, ServicePoolPtr> ServiceMap;
 
   System::ManualEvent RunEvent;
 
   Common::SharedPtr<System::PulsedLoop> CleanThread;
 
   System::Mutex ServicesMtx;
+  unsigned long InstanceId;
   ServiceMap Services;
 
   Common::SharedPtr<System::ThreadLoop> StopServiceThread;
@@ -76,8 +77,8 @@ private:
   typedef std::vector<IServicePtr> ServicesVector;
   ServicesVector StoppingServices;
 
-  IServicePtr InternalStartService(const std::string &serviceId);
-  bool BuildService(IServicePtr service, const std::string &instanceUUID);
+  IServicePtr InternalStartService(const std::string &serviceId, unsigned long *instanceId);
+  bool BuildService(IServicePtr service);
   void UnbuildService(IServicePtr service);
   void StopAllServices();
   void DoneService(IServicePtr service);
