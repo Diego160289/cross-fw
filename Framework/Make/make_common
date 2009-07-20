@@ -1,9 +1,9 @@
 
-# OS := Win
+# OS := Win | Nix
 
-# MAKETYPE := Debug
+# MAKETYPE := Debug | Release
 
-# TARGETTYPE := Lib
+# TARGETTYPE := Lib | Dll | Exe
 
 CXX = g++
 
