@@ -6,6 +6,7 @@ make_bin: make_libs make_dlls make_tools
 make_libs:
 	make TARGETTYPE=Lib -f ./Make/common.mk
 	make TARGETTYPE=Lib -f ./Make/system.mk
+	make TARGETTYPE=Lib -f ./Make/uuidlib.mk
 	make TARGETTYPE=Lib -f ./Make/tinyxml.mk
 	make TARGETTYPE=Lib -f ./Make/registry.mk
 

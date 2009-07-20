@@ -7,7 +7,7 @@
 
 CXX = g++
 
-CC = g++
+CC = cc
 
 ifeq ($(MAKETYPE), Debug)
 	CXXFLAGS = -O0 -g3 -Wall -D_DEBUG \
