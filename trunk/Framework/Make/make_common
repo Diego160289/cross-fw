@@ -7,11 +7,18 @@
 
 CXX = g++
 
+CC = g++
+
 ifeq ($(MAKETYPE), Debug)
 	CXXFLAGS = -O0 -g3 -Wall -D_DEBUG \
 		-fpermissive -fmessage-length=0
+
+	CFLAGS = -O0 -g3 -Wall -D_DEBUG \
+		-fmessage-length=0
 else
 	CXXFLAGS = -O3 -Wall -fpermissive -fmessage-length=0
+	
+	CXXFLAGS = -O3 -Wall -fmessage-length=0
 endif
 
 ifeq ($(OS), Win)
@@ -71,17 +78,30 @@ CURCFG := Build: '$(PROJECT)' $(OS) $(MAKETYPE)
 	-c $^ \
 	-o $(OBJDIR)/$(subst /$(OS)/,Platform/,$(findstring /$(OS)/,$^))$(notdir $@)
 
+C = $(wildcard $(SRCDIR)/*.c)
+
+C += $(wildcard $(OSSRCDIR)/*.c)
+
+OBJC = $(C:.c=.o)
+
+%.o: %.c
+	$(CC) \
+	$(CFLAGS) \
+	$(addprefix -I ,$(INCLUDE)) \
+	-c $^ \
+	-o $(OBJDIR)/$(subst /$(OS)/,Platform/,$(findstring /$(OS)/,$^))$(notdir $@)
+
 ifeq ($(TARGETTYPE), Lib)
-all: $(OBJ)
+all: $(OBJ) $(OBJC)
 	ar cr \
 	$(TARGETDIR)/$(TARGET) \
 	$(wildcard $(OBJDIR)/Platform/*.o) \
-	$(wildcard $(OBJDIR)/*.o)
+	$(wildcard $(OBJDIR)/*.o) 
 	@echo Success $(CURCFG)
 endif
 
 ifeq ($(TARGETTYPE), Dll)
-all: $(OBJ)
+all: $(OBJ) $(OBJC)
 	$(CXX) \
 	$(CXXFLAGS) -shared $(LINKCXXFLAGS) \
 	$(wildcard $(OBJDIR)/Platform/*.o) \
@@ -94,7 +114,7 @@ all: $(OBJ)
 endif
 
 ifeq ($(TARGETTYPE), Exe)
-all: $(OBJ)
+all: $(OBJ) $(OBJC)
 	$(CXX) \
 	$(CXXFLAGS) $(LINKCXXFLAGS) \
 	$(wildcard $(OBJDIR)/Platform/*.o) \

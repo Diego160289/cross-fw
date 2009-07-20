@@ -1,4 +1,4 @@
-PROJECT := System
+PROJECT := UuidLib
 
 ifeq ($(OS), Nix)
     INCLUDE += ./Include/Nix
