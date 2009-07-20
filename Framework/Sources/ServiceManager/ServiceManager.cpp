@@ -1,7 +1,6 @@
 #include "ServiceManager.h"
 #include "IEnumImpl.h"
 #include "RefObjQIPtr.h"
-#include "SystemUtils.h"
 #include "IVarMapImpl.h"
 #include "ServiceParamNames.h"
 
@@ -12,31 +11,43 @@
 const unsigned IServiceManagerImpl::ServiceCleanerTimeout = 5000;
 
 IServiceManagerImpl::IServiceManagerImpl()
+  : InstanceId(1)
 {
 }
 
-RetCode IServiceManagerImpl::StartService(const char *serviceId, IFaces::IBase **service)
+unsigned long IServiceManagerImpl::StartService(const char *serviceId, IFaces::IBase **service)
 {
   if (!serviceId)
     return retBadParam;
-  return InternalStartService(serviceId).QueryInterface(service);
+  unsigned long NewInstanceId = 0;
+  IServicePtr NewService = InternalStartService(serviceId, &NewInstanceId);
+  if (!NewService.Get())
+    return 0;
+  if (NewService.QueryInterface(service) != retOk)
+  {
+    DoneService(NewService);
+    return 0;
+  }
+  return NewInstanceId;
 }
 
-RetCode IServiceManagerImpl::StartService(const char *serviceId)
+unsigned long IServiceManagerImpl::StartService(const char *serviceId)
 {
   if (!serviceId)
     return retBadParam;
-  return InternalStartService(serviceId).Get() ? retOk : retFail;
+  unsigned long NewInstanceId = 0;
+  IServicePtr NewService = InternalStartService(serviceId, &NewInstanceId);
+  return !NewService.Get() ? 0 : NewInstanceId;
 }
 
-RetCode IServiceManagerImpl::StopService(const char *instanceUUID)
+RetCode IServiceManagerImpl::StopService(unsigned long instanceId)
 {
-  if (!instanceUUID)
+  if (!instanceId)
     return retBadParam;
   Common::SyncObject<System::Mutex> Locker(ServicesMtx);
   for (ServiceMap::iterator i = Services.begin() ; i != Services.end() ; ++i)
   {
-    ServicePool::iterator InstanceIter = i->second->find(instanceUUID);
+    ServicePool::iterator InstanceIter = i->second->find(instanceId);
     if (InstanceIter == i->second->end())
       continue;
     DoneService(InstanceIter->second);
@@ -46,16 +57,16 @@ RetCode IServiceManagerImpl::StopService(const char *instanceUUID)
   return retFail;
 }
 
-RetCode IServiceManagerImpl::PostStopToService(const char *instanceUUID)
+RetCode IServiceManagerImpl::PostStopToService(unsigned long instanceId)
 {
   ServicesVector StoppingServicesPool;
-  if (!instanceUUID)
+  if (!instanceId)
     return retBadParam;
   {
     Common::SyncObject<System::Mutex> Locker(ServicesMtx);
     for (ServiceMap::iterator i = Services.begin() ; i != Services.end() ; ++i)
     {
-      ServicePool::iterator InstanceIter = i->second->find(instanceUUID);
+      ServicePool::iterator InstanceIter = i->second->find(instanceId);
       if (InstanceIter == i->second->end())
         continue;
       StoppingServicesPool.push_back(InstanceIter->second);
@@ -183,7 +194,8 @@ RetCode IServiceManagerImpl::Run(const char *startServiceId)
   RetCode Ret = retOk;
   if (!startServiceId)
     return retFail;
-  if (!(StartedFirstService = !!InternalStartService(startServiceId).Get()))
+  unsigned long NewInstanceId = 0;
+  if (!(StartedFirstService = !!InternalStartService(startServiceId, &NewInstanceId).Get()))
     return retFail;
   try
   {
@@ -241,11 +253,10 @@ bool IServiceManagerImpl::FinalizeCreate()
   return true;
 }
 
-IServiceManagerImpl::IServicePtr IServiceManagerImpl::InternalStartService(const std::string &serviceId)
+IServiceManagerImpl::IServicePtr IServiceManagerImpl::InternalStartService(const std::string &serviceId, unsigned long *instanceId)
 {
   try
   {
-    std::string InstanceUUID = System::GenerateUUID();
     Common::RefObjPtr<IFaces::IBase> SrvObj;
     {
       Common::SyncObject<System::Mutex> Locker(FactoryMtx);
@@ -253,7 +264,7 @@ IServiceManagerImpl::IServicePtr IServiceManagerImpl::InternalStartService(const
         return IServicePtr();
     }
     Common::RefObjQIPtr<IFaces::IService> NewService(SrvObj);
-    if (!NewService.Get() ||!BuildService(NewService, InstanceUUID))
+    if (!NewService.Get() ||!BuildService(NewService))
       return IServicePtr();;
     if (NewService->Init() != retOk)
     {
@@ -265,7 +276,7 @@ IServiceManagerImpl::IServicePtr IServiceManagerImpl::InternalStartService(const
       ServicePoolPtr &SrvPool = Services[serviceId];
       if (!SrvPool.Get())
         SrvPool.Reset(new ServicePool);
-      (*SrvPool.Get())[InstanceUUID] = NewService;
+      (*SrvPool.Get())[(*instanceId = ++InstanceId)] = NewService;
     }
     return NewService;
   }
@@ -276,7 +287,7 @@ IServiceManagerImpl::IServicePtr IServiceManagerImpl::InternalStartService(const
   return IServicePtr();
 }
 
-bool IServiceManagerImpl::BuildService(IServicePtr service, const std::string &instanceUUID)
+bool IServiceManagerImpl::BuildService(IServicePtr service)
 {
   try
   {
@@ -289,9 +300,8 @@ bool IServiceManagerImpl::BuildService(IServicePtr service, const std::string &i
       UnbuildService(service);
       return false;
     }
-    service->SetInstanceUUID(instanceUUID.c_str());
 
-    // TODO: установить все зависимости окружения сервиса
+    // TODO: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
   }
   catch (std::exception &)
   {
@@ -303,7 +313,6 @@ bool IServiceManagerImpl::BuildService(IServicePtr service, const std::string &i
 void IServiceManagerImpl::UnbuildService(IServicePtr service)
 {
   service->SetParams(0);
-  service->SetInstanceUUID(0);
 }
 
 void IServiceManagerImpl::StopAllServices()
@@ -342,7 +351,7 @@ void IServiceManagerImpl::ServiceCleanerFunc()
       for (ServiceMap::iterator i = Services.begin() ; i != Services.end() ; ++i)
       {
         ServicesVector GroupStoppingServices;
-        Common::StringVector GroupStoppingServiceKeys;
+        std::vector<unsigned long> GroupStoppingServiceKeys;
         ServicePoolPtr ServiceGroup = i->second;
         for (ServicePool::iterator j = ServiceGroup->begin() ; j != ServiceGroup->end() ; ++j)
         {
@@ -352,7 +361,7 @@ void IServiceManagerImpl::ServiceCleanerFunc()
             GroupStoppingServiceKeys.push_back(j->first);
           }
         }
-        for (Common::StringVector::const_iterator j = GroupStoppingServiceKeys.begin() ; j != GroupStoppingServiceKeys.end() ; ++j)
+        for (std::vector<unsigned long>::const_iterator j = GroupStoppingServiceKeys.begin() ; j != GroupStoppingServiceKeys.end() ; ++j)
           ServiceGroup->erase(*j);
         if (ServiceGroup->empty())
           StoppingServiceKeys.push_back(i->first);
