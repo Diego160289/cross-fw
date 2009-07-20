@@ -7,8 +7,6 @@
 #include "RefObjQIPtr.h"
 #include "IVarMapImpl.h"
 
-#include <string>
-
 
 namespace Common
 {
@@ -43,14 +41,6 @@ namespace Common
     }
 
     // IService
-    virtual void SetInstanceUUID(const char *instanceUUID)
-    {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
-      if (instanceUUID)
-        ServiceInstanceUUID = instanceUUID;
-      else
-        ServiceInstanceUUID.clear();
-    }
     virtual RetCode SetParams(IFaces::IVarMap *params)
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
@@ -74,11 +64,6 @@ namespace Common
       return CanDoneService;
     }
 
-    const std::string GetInstanceUUID() const
-    {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
-      return ServiceInstanceUUID;
-    }
     void MarkToDoneService()
     {
       Common::SyncObject<TSynObj> Locker(this->GetSynObj());
@@ -102,7 +87,6 @@ namespace Common
   private:
     typedef RefObjPtr<IFaces::IVarMap> IVarMapPtr;
     mutable IVarMapPtr ParamsMap;
-    std::string ServiceInstanceUUID;
     volatile bool CanDoneService;
     RefObjPtr<IFaces::IBase> QueryParam(const std::string &paramName) const
     {

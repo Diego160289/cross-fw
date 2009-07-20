@@ -34,10 +34,10 @@ public:
   IServiceManagerImpl();
 
   // IServiceManager
-  virtual RetCode StartService(const char *serviceId, IFaces::IBase **service);
+  virtual unsigned long StartService(const char *serviceId, IFaces::IBase **service);
   virtual RetCode StartService(const char *serviceId);
-  virtual RetCode StopService(const char *instanceUUID);
-  virtual RetCode PostStopToService(const char *instanceUUID);
+  virtual RetCode StopService(unsigned long instanceId);
+  virtual RetCode PostStopToService(unsigned long instanceId);
   virtual RetCode StopServiceGroup(const char *serviceId);
   virtual RetCode PostStopToServiceGroup(const char *serviceId);
   virtual RetCode PostStopToServiceManager();
