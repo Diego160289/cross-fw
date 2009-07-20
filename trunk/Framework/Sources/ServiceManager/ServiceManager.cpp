@@ -11,7 +11,7 @@
 const unsigned IServiceManagerImpl::ServiceCleanerTimeout = 5000;
 
 IServiceManagerImpl::IServiceManagerImpl()
-  : InstanceId(1)
+  : InstanceId(0)
 {
 }
 
