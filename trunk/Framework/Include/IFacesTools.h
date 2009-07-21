@@ -67,6 +67,18 @@ namespace Common
     }
   };
 
+  template <typename TList>
+  class InheritedFromTList
+    : public TList::Head
+    , public InheritedFromTList<typename TList::Tail>
+  {
+  };
+
+  template <>
+  class InheritedFromTList<NullType>
+  {
+  };
+
   template <typename T, typename TSynObj>
   class MultiObject
   {
@@ -145,6 +157,7 @@ namespace Common
     typename TSynObj = System::MutexStub
   >
   class CoClassRoot
+    : private NoCopyable
   {
   public:
     CoClassRoot()
@@ -182,14 +195,15 @@ namespace Common
     typename TCoClass,
     typename TIFacesList,
     template <typename, typename> class TCreateStrategy = MultiObject,
-    typename TSynObj = System::MutexStub
+    typename TSynObj = System::MutexStub,
+    typename TIFaceImplList = NullType
   >
   class CoClassBase
     : public InheritedFromIFacesList<TIFacesList>
-    , public InheritedFromIFacesList<TYPE_LIST_1(IFaces::IBase)>
+    , virtual public InheritedFromIFacesList<TYPE_LIST_1(IFaces::IBase)>
+    , public InheritedFromTList<TIFaceImplList>
     , virtual public CoClassRoot<TSynObj>
     , virtual public TCreateStrategy<TCoClass, TSynObj>
-    , private NoCopyable
   {
   public:
     typedef TypeList<IFaces::IBase, TIFacesList> ExportIFacesList;
@@ -245,6 +259,11 @@ namespace Common
           }
         }
       }
+      else
+        if (ExistsIFace<TIFaceImplList>(ifaceId))
+        {
+          return retFail;
+        }
       return retNoInterface;
     }
   private:
