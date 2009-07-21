@@ -10,6 +10,7 @@ class ITestService2Impl
   : public Common::ServiceBase
       <
         ITestService2Impl,
+        Common::MultiObject,
         TYPE_LIST_1(IFaces::ITestService2)
       >
 {
