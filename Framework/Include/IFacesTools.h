@@ -202,19 +202,19 @@ namespace Common
     }
     virtual unsigned long AddRef()
     {
-      SyncObject<TSynObj> Locker(GetSynObj());
+      SyncObject<TSynObj> Locker(this->GetSynObj());
       return InternalAddRef();
     }
     virtual unsigned long Release()
     {
       unsigned long NewCounter = 0;
       {
-        SyncObject<TSynObj> Locker(GetSynObj());
-        NewCounter = DecCounter();
+        SyncObject<TSynObj> Locker(this->GetSynObj());
+        NewCounter = this->DecCounter();
       }
       if (!NewCounter)
       {
-        if (SuccessfulCreated())
+        if (this->SuccessfulCreated())
           BeforeDestroy();
         delete this;
         TTithCreateStrategy::FinalizeDestroy();
@@ -223,7 +223,7 @@ namespace Common
     }
     virtual  RetCode QueryInterface(const char *ifaceId, void **iface)
     {
-      SyncObject<TSynObj> Locker(GetSynObj());
+      SyncObject<TSynObj> Locker(this->GetSynObj());
       if (ExistsIFace<ExportIFacesList>(ifaceId))
       {
         TCoClass *CoClassPtr = dynamic_cast<TCoClass *>(this);
@@ -251,7 +251,7 @@ namespace Common
     friend class TCreateStrategy<TCoClass, TSynObj>;
     unsigned long InternalAddRef()
     {
-      return IncCounter();
+      return this->IncCounter();
     }
   protected:
     virtual bool FinalizeCreate()
