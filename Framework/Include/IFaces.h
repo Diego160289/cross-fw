@@ -90,7 +90,7 @@ namespace IFaces
     virtual RetCode AddVariable(INamedVariable *namedVar) = 0;
     virtual RetCode RemoveVariable(const char *varName) = 0;
     virtual RetCode GetVariable(const char *varName, IVariant **var) const = 0;
-    virtual RetCode EnumVariables(IEnum **vars) const= 0;
+    virtual RetCode EnumVariables(IEnum **vars) const = 0;
   };
 
   struct IRegistryCtrl
@@ -163,6 +163,45 @@ namespace IFaces
     virtual RetCode SetRegistry(IRegistry *registry) = 0;
     virtual RetCode SetClassFactory(IClassFactory *factory) = 0;
     virtual RetCode Run(const char *startServiceId) = 0;
+  };
+
+  struct IInputStream
+    : public IBase
+  {
+    DECLARE_UUID(2b9ae082-b59a-4d6a-a229-5e41d472c92d)
+  };
+
+  struct IOutputStream
+    : public IBase
+  {
+    DECLARE_UUID(db609d41-e4bd-42fb-9d3a-fd0d91cac762)
+  };
+
+  struct IInputOutputStream
+    : public IInputStream
+    , public IOutputStream
+  {
+    DECLARE_UUID(08ddafa0-d75d-479f-8e2a-2197924da760)
+  };
+
+  struct IProperties
+    : public IBase
+  {
+    DECLARE_UUID(1b209ba5-2071-465a-adda-ea6b4721c4be)
+    virtual RetCode AddProperty(INamedVariable *prop) = 0;
+    virtual RetCode RemoveProperty(const char *propName) = 0;
+    virtual RetCode GetValue(const char *propName, IVariant **value) const = 0;
+    virtual RetCode SetValue(const char *propName, IVariant *value) = 0;
+    virtual RetCode EnumProperties(IEnum **props) const = 0;
+  };
+
+  struct IPersistsProperties
+    : public IProperties
+  {
+    DECLARE_UUID(9f8dc2a8-c0ec-4753-934c-536e493ef6ff)
+    virtual RetCode Load(IInputStream *stream) = 0;
+    virtual RetCode Save(IOutputStream *stream) = 0;
+    virtual const char* GetStreamName() const = 0;
   };
 
   struct IMessageQueue
