@@ -18,18 +18,6 @@ namespace Common
   using IFaces::retBadParam;
   using IFaces::retNotImpl;
 
-  template <typename TList>
-  struct InheritedFromTList
-    : public TList::Head
-    , public InheritedFromTList<typename TList::Tail>
-  {
-  };
-
-  template <>
-  struct InheritedFromTList<NullType>
-  {
-  };
-
   template
   <
     typename TServiceCoClass,
@@ -43,7 +31,8 @@ namespace Common
           TServiceCoClass,
           TypeList<IFaces::IService, TIFacesList>,
           TCreateStrategy,
-          System::Mutex
+          System::Mutex,
+          TIFaceImplList
         >
     //, public InheritedFromTList<TIFaceImplList>
   {
