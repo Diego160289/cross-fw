@@ -5,12 +5,15 @@
 #include "Pointers.h"
 
 #include "ServiceBase.h"
+#include "PropertiesImpl.h"
 
 class ITestServiceImpl
   : public Common::ServiceBase
       <
         ITestServiceImpl,
-        TYPE_LIST_1(IFaces::ITestService)
+        Common::MultiObject,
+        TYPE_LIST_1(IFaces::ITestService),
+        TYPE_LIST_1(IFacesImpl::IPersistsPropertiesImpl<System::Mutex>)
       >
 {
 public:

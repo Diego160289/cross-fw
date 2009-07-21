@@ -76,7 +76,7 @@ namespace Common
     static RefObjPtr<T> CreateObject()
     {
       TCoClassTypePtr Ret(new T);
-      return (Ret->IsSuccessfulCreated = Ret->FinalizeCreate()) ?
+      return (Ret->SuccessfulCreated() = Ret->FinalizeCreate()) ?
         Ret : RefObjPtr<T>();
     }
   protected:
@@ -98,7 +98,7 @@ namespace Common
       if (!Ret.Get())
       {
         Ret = new T;
-        if (!(Ret->IsSuccessfulCreated = Ret->FinalizeCreate()))
+        if (!(Ret->SuccessfulCreated() = Ret->FinalizeCreate()))
           Ret.Release();
       }
       return Ret;
@@ -121,8 +121,8 @@ namespace Common
     }
   };
 
-  template <typename, typename, template <typename, typename> class, typename>
-  class CoClassBase;
+  template <typename>
+  class CoClassRoot;
 
   class ModuleCounter
   {
@@ -130,14 +130,51 @@ namespace Common
     static unsigned long GetModuleCounter();
     ~ModuleCounter();
   private:
-    template <typename, typename, template <typename, typename> class, typename>
-    friend class CoClassBase;
+    template <typename>
+    friend class CoClassRoot;
     static ModuleCounter& GetInstance();
     ModuleCounter();
     void Inc();
     void Dec();
     class CounterImpl;
     CounterImpl *Counter;
+  };
+
+  template
+  <
+    typename TSynObj = System::MutexStub
+  >
+  class CoClassRoot
+  {
+  public:
+    CoClassRoot()
+      : Counter(0)
+      , IsSuccessfulCreated(false)
+    {
+    }
+  private:
+    mutable TSynObj SynObj;
+    unsigned long Counter;
+    bool IsSuccessfulCreated;
+  protected:
+    unsigned long IncCounter()
+    {
+      ModuleCounter::GetInstance().Inc();
+      return ++Counter;
+    }
+    unsigned long DecCounter()
+    {
+      ModuleCounter::GetInstance().Dec();
+      return --Counter;
+    }
+    bool& SuccessfulCreated()
+    {
+      return IsSuccessfulCreated;
+    }
+    TSynObj& GetSynObj() const
+    {
+      return SynObj;
+    }
   };
 
   template
@@ -150,6 +187,7 @@ namespace Common
   class CoClassBase
     : public InheritedFromIFacesList<TIFacesList>
     , public InheritedFromIFacesList<TYPE_LIST_1(IFaces::IBase)>
+    , virtual public CoClassRoot<TSynObj>
     , virtual public TCreateStrategy<TCoClass, TSynObj>
     , private NoCopyable
   {
@@ -160,8 +198,6 @@ namespace Common
     typedef TSynObj TThisSynObj;
     typedef TCreateStrategy<TCoClass, TSynObj> TTithCreateStrategy;
     CoClassBase()
-      : Counter(0)
-      , IsSuccessfulCreated(false)
     {
     }
     virtual unsigned long AddRef()
@@ -174,12 +210,11 @@ namespace Common
       unsigned long NewCounter = 0;
       {
         SyncObject<TSynObj> Locker(GetSynObj());
-        ModuleCounter::GetInstance().Dec();
-        NewCounter = --Counter;
+        NewCounter = DecCounter();
       }
       if (!NewCounter)
       {
-        if (IsSuccessfulCreated)
+        if (SuccessfulCreated())
           BeforeDestroy();
         delete this;
         TTithCreateStrategy::FinalizeDestroy();
@@ -213,20 +248,12 @@ namespace Common
       return retNoInterface;
     }
   private:
-    mutable TSynObj SynObj;
-    unsigned long Counter;
-    bool IsSuccessfulCreated;
     friend class TCreateStrategy<TCoClass, TSynObj>;
     unsigned long InternalAddRef()
     {
-      ModuleCounter::GetInstance().Inc();
-      return ++Counter;
+      return IncCounter();
     }
   protected:
-    TSynObj& GetSynObj() const
-    {
-      return SynObj;
-    }
     virtual bool FinalizeCreate()
     {
       return true;
