@@ -30,7 +30,7 @@ void ITestServiceImpl::OnTimer()
 {
   Common::RefObjQIPtr<IFaces::IPersistsProperties> ps(this);
   std::cout << "ITestServiceImpl ----->  Tick: " << Ticks++ << std::endl;
-  if (Ticks == 10)
+  if (Ticks == 10 && !CanDone())
     MarkToDoneService();
   if (Ticks == 5)
   {

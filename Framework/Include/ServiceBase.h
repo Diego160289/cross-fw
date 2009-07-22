@@ -34,7 +34,6 @@ namespace Common
           System::Mutex,
           TIFaceImplList
         >
-    //, public InheritedFromTList<TIFaceImplList>
   {
   public:
     typedef System::Mutex TSynObj;
