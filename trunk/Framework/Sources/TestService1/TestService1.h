@@ -20,6 +20,10 @@ public:
   ITestService1Impl();
 
   virtual bool OnInit();
+  virtual void OnDone();
+
+  bool FinalizeCreate();
+  void BeforeDestroy();
 
   // ITestService1
   virtual void Test();

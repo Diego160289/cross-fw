@@ -12,13 +12,6 @@ namespace System
 
   ManualEvent::ManualEventImpl::~ManualEventImpl()
   {
-    try
-    {
-      Set();
-    }
-    catch (std::exception &)
-    {
-    }
     ::CloseHandle(EventHandle);
   }
 

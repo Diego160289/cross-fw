@@ -40,12 +40,20 @@ namespace Common
   class InheritedBase
     : public TBase<TList>
   {
+  public:
+    virtual ~InheritedBase()
+    {
+    }
   };
 
   template <template <typename> class TBase>
   class InheritedBase<TBase, NullType>
-    : public TBase<NullType>
+    : virtual public TBase<NullType>
   {
+  public:
+    virtual ~InheritedBase()
+    {
+    }
   };
 
   template <typename TList>
@@ -54,6 +62,9 @@ namespace Common
     , public InheritedBase<InheritedFromIFacesList, typename TList::Tail>
   {
   public:
+    virtual ~InheritedFromIFacesList()
+    {
+    }
     void CastTo(const char *ifaceId, void **iface)
     {
       typedef typename TList::Head CurBase;
@@ -73,6 +84,9 @@ namespace Common
   class InheritedFromIFacesList<NullType>
   {
   public:
+    virtual ~InheritedFromIFacesList()
+    {
+    }
     void CastTo(const char *, void **iface)
     {
       *iface = 0;
@@ -84,11 +98,19 @@ namespace Common
     : public TList::Head
     , public InheritedBase<InheritedFromTList, typename TList::Tail>
   {
+  public:
+    virtual ~InheritedFromTList()
+    {
+    }
   };
 
   template <>
   class InheritedFromTList<NullType>
   {
+  public:
+    virtual ~InheritedFromTList()
+    {
+    }
   };
 
   template <typename T, typename TSynObj>
@@ -170,11 +192,15 @@ namespace Common
   >
   class CoClassRoot
     : private NoCopyable
+    , public InheritedFromIFacesList<TYPE_LIST_1(IFaces::IBase)>
   {
   public:
     CoClassRoot()
       : Counter(0)
       , IsSuccessfulCreated(false)
+    {
+    }
+    virtual ~CoClassRoot()
     {
     }
   private:
@@ -192,6 +218,25 @@ namespace Common
       ModuleCounter::GetInstance().Dec();
       return --Counter;
     }
+    unsigned long InternalAddRef()
+    {
+      return IncCounter();
+    }
+    unsigned long InternalRelease()
+    {
+      unsigned long NewCounter = 0;
+      {
+        SyncObject<TSynObj> Locker(GetSynObj());
+        NewCounter = DecCounter();
+      }
+      if (!NewCounter)
+      {
+        if (SuccessfulCreated())
+          BeforeDestroy();
+        delete this;
+      }
+      return NewCounter;
+    }
     bool& SuccessfulCreated()
     {
       return IsSuccessfulCreated;
@@ -199,6 +244,13 @@ namespace Common
     TSynObj& GetSynObj() const
     {
       return SynObj;
+    }
+    virtual bool FinalizeCreate()
+    {
+      return true;
+    }
+    virtual void BeforeDestroy()
+    {
     }
   };
 
@@ -212,7 +264,6 @@ namespace Common
   >
   class CoClassBase
     : public InheritedFromIFacesList<TIFacesList>
-    , virtual public InheritedFromIFacesList<TYPE_LIST_1(IFaces::IBase)>
     , public InheritedFromTList<TIFaceImplList>
     , virtual public CoClassRoot<TSynObj>
     , virtual public TCreateStrategy<TCoClass, TSynObj>
@@ -226,6 +277,9 @@ namespace Common
     CoClassBase()
     {
     }
+    virtual ~CoClassBase()
+    {
+    }
     virtual unsigned long AddRef()
     {
       SyncObject<TSynObj> Locker(this->GetSynObj());
@@ -233,18 +287,9 @@ namespace Common
     }
     virtual unsigned long Release()
     {
-      unsigned long NewCounter = 0;
-      {
-        SyncObject<TSynObj> Locker(this->GetSynObj());
-        NewCounter = this->DecCounter();
-      }
+      unsigned long NewCounter = InternalRelease();
       if (!NewCounter)
-      {
-        if (this->SuccessfulCreated())
-          BeforeDestroy();
-        delete this;
         TTithCreateStrategy::FinalizeDestroy();
-      }
       return NewCounter;
     }
     virtual  RetCode QueryInterface(const char *ifaceId, void **iface)
@@ -280,18 +325,7 @@ namespace Common
     }
   private:
     friend class TCreateStrategy<TCoClass, TSynObj>;
-    unsigned long InternalAddRef()
-    {
-      return this->IncCounter();
-    }
   protected:
-    virtual bool FinalizeCreate()
-    {
-      return true;
-    }
-    virtual void BeforeDestroy()
-    {
-    }
   };
 
   template <typename TCoClassList>

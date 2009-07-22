@@ -26,6 +26,12 @@ bool ITestService2Impl::OnInit()
   return true;
 }
 
+void ITestService2Impl::OnDone()
+{
+  std::cout << "ITestService2Impl::OnDone" << std::endl;
+  Timer.Release();
+}
+
 void ITestService2Impl::OnTimer()
 {
   std::cout << "    ITestService2Impl ----->  Tick: " << Ticks++ << std::endl;
@@ -36,4 +42,15 @@ void ITestService2Impl::OnTimer()
 void ITestService2Impl::Test()
 {
   std::cout << "ITestService2Impl::Test()" << std::endl;
+}
+
+bool ITestService2Impl::FinalizeCreate()
+{
+  std::cout << "ITestService2Impl::FinalizeCreate()" << std::endl;
+  return true;
+}
+
+void ITestService2Impl::BeforeDestroy()
+{
+  std::cout << "ITestService2Impl::BeforeDestroy()" << std::endl;
 }
