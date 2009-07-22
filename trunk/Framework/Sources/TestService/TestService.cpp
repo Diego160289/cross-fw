@@ -15,8 +15,8 @@ bool ITestServiceImpl::OnInit()
 {
   try
   {
-    if (!CreateObject<IFaces::IRegistry>("cf7456c3-70c7-4a97-b8e4-f910cd2f823b").Get())
-      return false;
+    /*if (!CreateObject<IFaces::IRegistry>("cf7456c3-70c7-4a97-b8e4-f910cd2f823b").Get())
+      return false;*/
     Timer.Reset(new System::Timer(Common::CreateMemberCallback(*this, &ITestServiceImpl::OnTimer), 500));
   }
   catch (std::exception &)
@@ -39,6 +39,7 @@ void ITestServiceImpl::OnTimer()
   std::cout << "ITestServiceImpl ----->  Tick: " << Ticks++ << std::endl;
   if (Ticks >= 10 && !CanDone())
     MarkToDoneService();
+
   if (Ticks == 5)
   {
     std::cout

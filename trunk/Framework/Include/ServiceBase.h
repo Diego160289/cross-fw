@@ -95,7 +95,7 @@ namespace Common
     {
       try
       {
-        return RefObjPtr<IFaces::IBase>((IFaces::IBase*)(IFacesImpl::IVarMapHelper(ParamsMap).GetVariable(paramName)));
+        return ((RefObjPtr<IFaces::IBase>)(IFacesImpl::IVarMapHelper(ParamsMap).GetVariable(paramName)));
       }
       catch (std::exception &)
       {

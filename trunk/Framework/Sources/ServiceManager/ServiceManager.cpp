@@ -233,16 +233,7 @@ RetCode IServiceManagerImpl::Run(const char *startServiceId)
 
 void IServiceManagerImpl::BeforeDestroy()
 {
-  StopServiceThread.Release();
-  CleanThread.Release();
-  {
-    Common::SyncObject<System::Mutex> Locker(FactoryMtx);
-    Factory.Release();
-  }
-  {
-    Common::SyncObject<System::Mutex> Locker(RegistryMtx);
-    Registry.Release();
-  }
+  StopManager();
 }
 
 bool IServiceManagerImpl::FinalizeCreate()
@@ -321,6 +312,17 @@ void IServiceManagerImpl::UnbuildService(IServicePtr service)
 
 void IServiceManagerImpl::StopManager()
 {
+  CleanThread.Release();
+  StopServiceThread.Release();
+  {
+    Common::SyncObject<System::Mutex> Locker(FactoryMtx);
+    Factory.Release();
+  }
+  {
+    Common::SyncObject<System::Mutex> Locker(RegistryMtx);
+    Registry.Release();
+  }
+
   {
     Common::SyncObject<System::Mutex> Locker(ServicesMtx);
     for (ServiceMap::iterator i = Services.begin() ; i != Services.end() ; ++i)
@@ -330,6 +332,7 @@ void IServiceManagerImpl::StopManager()
     }
     Services.clear();
   }
+  
   StoppingServicesFunc();
 }
 

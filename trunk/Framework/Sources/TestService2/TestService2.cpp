@@ -15,8 +15,8 @@ bool ITestService2Impl::OnInit()
 {
   try
   {
-    if (!CreateObject<IFaces::IRegistry>("cf7456c3-70c7-4a97-b8e4-f910cd2f823b").Get())
-      return false;
+    /*if (!CreateObject<IFaces::IRegistry>("cf7456c3-70c7-4a97-b8e4-f910cd2f823b").Get())
+      return false;*/
     Timer.Reset(new System::Timer(Common::CreateMemberCallback(*this, &ITestService2Impl::OnTimer), 500));
   }
   catch (std::exception &)

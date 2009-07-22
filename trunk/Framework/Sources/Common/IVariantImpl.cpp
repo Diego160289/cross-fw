@@ -129,16 +129,16 @@ namespace IFacesImpl
     return Value;
   }
 
-  IVariantHelper::operator IFaces::IBase* () const
+  IVariantHelper::operator Common::RefObjPtr<IFaces::IBase> () const
   {
     if (Var->IsEmpty())
       throw IVariantHelperException("Empty variant");
     if (Var->GetType() != IFaces::IVariant::vtIBase)
       throw IVariantHelperException("Bad cast");
-    IFaces::IBase *Value = 0;
+    Common::RefObjPtr<IFaces::IBase> Value;
     if (Var->GetValueSize() != sizeof(Value))
       throw IVariantHelperException("Bad value");
-    if (Var->GetValue(reinterpret_cast<void**>(&Value)) != retOk)
+    if (Var->GetValue(reinterpret_cast<void**>(Value.GetPPtr())) != retOk)
       throw IVariantHelperException("Can't get value");
     return Value;
   }
