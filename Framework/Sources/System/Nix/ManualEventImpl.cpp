@@ -18,13 +18,6 @@ namespace System
 
   ManualEvent::ManualEventImpl::~ManualEventImpl()
   {
-    try
-    {
-      Set();
-    }
-    catch (std::exception &)
-    {
-    }
     pthread_mutex_destroy(&Mtx);
     pthread_cond_destroy(&CondVar);
   }

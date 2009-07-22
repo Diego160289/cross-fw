@@ -55,8 +55,8 @@ public:
       throw FWLoaderException("Can't set registry into service manager control");
     if (SrvMgrCtrl->SetClassFactory(Factory.Get()) != IFaces::retOk)
       throw FWLoaderException("Can't set class factory into service manager control");
-    if (SrvMgrCtrl->Run(Common::GetValueSromStringMap("StartServiceId", params).c_str()) != IFaces::retOk)
-      throw FWLoaderException("Can't start service");
+    /*if (SrvMgrCtrl->Run(Common::GetValueSromStringMap("StartServiceId", params).c_str()) != IFaces::retOk)
+      throw FWLoaderException("Can't start service");*/
   }
   ~FWLoader()
   {

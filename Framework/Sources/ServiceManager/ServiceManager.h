@@ -32,6 +32,7 @@ public:
   DECLARE_UUID(74a12748-ee4a-4828-a502-6d2c05df637d)
 
   IServiceManagerImpl();
+  virtual ~IServiceManagerImpl();
 
   // IServiceManager
   virtual unsigned long StartService(const char *serviceId, IFaces::IBase **service);
@@ -66,13 +67,13 @@ private:
 
   System::ManualEvent RunEvent;
 
+  Common::SharedPtr<System::ThreadLoop> StopServiceThread;
   Common::SharedPtr<System::PulsedLoop> CleanThread;
 
   System::Mutex ServicesMtx;
   unsigned long InstanceId;
   ServiceMap Services;
 
-  Common::SharedPtr<System::ThreadLoop> StopServiceThread;
   System::Mutex StoppingServicesMtx;
   typedef std::vector<IServicePtr> ServicesVector;
   ServicesVector StoppingServices;
@@ -80,7 +81,7 @@ private:
   IServicePtr InternalStartService(const std::string &serviceId, unsigned long *instanceId);
   bool BuildService(IServicePtr service);
   void UnbuildService(IServicePtr service);
-  void StopAllServices();
+  void StopManager();
   void DoneService(IServicePtr service);
   void StoppingServicesFunc();
   void ServiceCleanerFunc();

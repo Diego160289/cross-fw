@@ -27,6 +27,9 @@ public:
   // ITestService
   virtual void Test();
 
+  bool FinalizeCreate();
+  void BeforeDestroy();
+
 private:
 
   Common::SharedPtr<System::Timer> Timer;

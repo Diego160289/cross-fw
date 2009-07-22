@@ -26,11 +26,18 @@ bool ITestServiceImpl::OnInit()
   return true;
 }
 
+void ITestServiceImpl::OnDone()
+{
+  std::cout << "Done ITestServiceImpl" << std::endl;
+  std::cout << "ITestServiceImpl::OnDone" << std::endl;
+  Timer.Release();
+}
+
 void ITestServiceImpl::OnTimer()
 {
   Common::RefObjQIPtr<IFaces::IPersistsProperties> ps(this);
   std::cout << "ITestServiceImpl ----->  Tick: " << Ticks++ << std::endl;
-  if (Ticks == 10 && !CanDone())
+  if (Ticks >= 10 && !CanDone())
     MarkToDoneService();
   if (Ticks == 5)
   {
@@ -51,7 +58,13 @@ void ITestServiceImpl::Test()
   std::cout << "ITestServiceImpl::Test()" << std::endl;
 }
 
-void ITestServiceImpl::OnDone()
+bool ITestServiceImpl::FinalizeCreate()
 {
-  std::cout << "Done ITestServiceImpl" << std::endl;
+  std::cout << "ITestServiceImpl::FinalizeCreate()" << std::endl;
+  return true;
+}
+
+void ITestServiceImpl::BeforeDestroy()
+{
+  std::cout << "ITestServiceImpl::BeforeDestroy()" << std::endl;
 }
