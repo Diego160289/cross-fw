@@ -29,7 +29,7 @@ bool ITestService2Impl::OnInit()
 void ITestService2Impl::OnTimer()
 {
   std::cout << "    ITestService2Impl ----->  Tick: " << Ticks++ << std::endl;
-  if (Ticks == 15)
+  if (Ticks >= 15 && !CanDone())
     MarkToDoneService();
 }
 

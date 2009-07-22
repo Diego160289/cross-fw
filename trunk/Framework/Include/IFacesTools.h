@@ -44,7 +44,7 @@ namespace Common
 
   template <template <typename> class TBase>
   class InheritedBase<TBase, NullType>
-    : virtual public TBase<NullType>
+    : public TBase<NullType>
   {
   };
 

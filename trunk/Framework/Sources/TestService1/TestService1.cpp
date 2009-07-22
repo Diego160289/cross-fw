@@ -27,7 +27,7 @@ bool ITestService1Impl::OnInit()
 void ITestService1Impl::OnTimer()
 {
   std::cout << "  ITestService1Impl ----->  Tick: " << Ticks++ << std::endl;
-  if (Ticks == 25)
+  if (Ticks >= 25 && !CanDone())
     MarkToDoneService();
 }
 
