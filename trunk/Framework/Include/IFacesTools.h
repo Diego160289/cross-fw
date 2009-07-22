@@ -36,10 +36,22 @@ namespace Common
     return false;
   }
 
+  template <template <typename> class TBase, typename TList>
+  class InheritedBase
+    : public TBase<TList>
+  {
+  };
+
+  template <template <typename> class TBase>
+  class InheritedBase<TBase, NullType>
+    : virtual public TBase<NullType>
+  {
+  };
+
   template <typename TList>
   class InheritedFromIFacesList
     : public TList::Head
-    , public InheritedFromIFacesList<typename TList::Tail>
+    , public InheritedBase<InheritedFromIFacesList, typename TList::Tail>
   {
   public:
     void CastTo(const char *ifaceId, void **iface)
@@ -70,7 +82,7 @@ namespace Common
   template <typename TList>
   class InheritedFromTList
     : public TList::Head
-    , public InheritedFromTList<typename TList::Tail>
+    , public InheritedBase<InheritedFromTList, typename TList::Tail>
   {
   };
 
