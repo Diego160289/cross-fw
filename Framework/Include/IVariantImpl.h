@@ -501,7 +501,7 @@ namespace IFacesImpl
 
     operator const bool () const;
     operator const void* () const;
-    operator IFaces::IBase* () const;
+    operator Common::RefObjPtr<IFaces::IBase> () const;
     operator const char () const;
     operator const unsigned char () const;
     operator const short () const;
