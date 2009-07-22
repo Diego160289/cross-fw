@@ -36,30 +36,11 @@ namespace Common
     return false;
   }
 
-  template <template <typename> class TBase, typename TList>
-  class InheritedBase
-    : public TBase<TList>
-  {
-  public:
-    virtual ~InheritedBase()
-    {
-    }
-  };
-
-  template <template <typename> class TBase>
-  class InheritedBase<TBase, NullType>
-    : virtual public TBase<NullType>
-  {
-  public:
-    virtual ~InheritedBase()
-    {
-    }
-  };
 
   template <typename TList>
   class InheritedFromIFacesList
     : public TList::Head
-    , public InheritedBase<InheritedFromIFacesList, typename TList::Tail>
+    , public InheritedFromIFacesList<typename TList::Tail>
   {
   public:
     virtual ~InheritedFromIFacesList()
@@ -90,26 +71,6 @@ namespace Common
     void CastTo(const char *, void **iface)
     {
       *iface = 0;
-    }
-  };
-
-  template <typename TList>
-  class InheritedFromTList
-    : public TList::Head
-    , public InheritedBase<InheritedFromTList, typename TList::Tail>
-  {
-  public:
-    virtual ~InheritedFromTList()
-    {
-    }
-  };
-
-  template <>
-  class InheritedFromTList<NullType>
-  {
-  public:
-    virtual ~InheritedFromTList()
-    {
     }
   };
 
@@ -259,12 +220,10 @@ namespace Common
     typename TCoClass,
     typename TIFacesList,
     template <typename, typename> class TCreateStrategy = MultiObject,
-    typename TSynObj = System::MutexStub,
-    typename TIFaceImplList = NullType
+    typename TSynObj = System::MutexStub
   >
   class CoClassBase
     : public InheritedFromIFacesList<TIFacesList>
-    , public InheritedFromTList<TIFaceImplList>
     , virtual public CoClassRoot<TSynObj>
     , virtual public TCreateStrategy<TCoClass, TSynObj>
   {
@@ -283,11 +242,11 @@ namespace Common
     virtual unsigned long AddRef()
     {
       SyncObject<TSynObj> Locker(this->GetSynObj());
-      return InternalAddRef();
+      return this->InternalAddRef();
     }
     virtual unsigned long Release()
     {
-      unsigned long NewCounter = InternalRelease();
+      unsigned long NewCounter = this->InternalRelease();
       if (!NewCounter)
         TTithCreateStrategy::FinalizeDestroy();
       return NewCounter;
@@ -303,7 +262,7 @@ namespace Common
         CoClassPtr->InheritedInterfaces::CastTo(ifaceId, iface);
         if (*iface)
         {
-          InternalAddRef();
+          this->InternalAddRef();
           return retOk;
         }
         else
@@ -311,16 +270,11 @@ namespace Common
           CoClassPtr->InheritedBaseInterface::CastTo(ifaceId, iface);
           if (*iface)
           {
-            InternalAddRef();
+            this->InternalAddRef();
             return retOk;
           }
         }
       }
-      else
-        if (ExistsIFace<TIFaceImplList>(ifaceId))
-        {
-          return retFail;
-        }
       return retNoInterface;
     }
   private:
