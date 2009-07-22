@@ -5,7 +5,7 @@
 
 void ShowHelp()
 {
-  std::cout << 
+  std::cout <<
     "ComponentRegostry Client\n"
     "CmpRegClient key [ param ]\n"
     "  key: create remove reg unreg print\n"
@@ -21,7 +21,7 @@ void ShowHelp()
     "      CmpRegClient enum \"full registry file name\"\n";
 }
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
   if (argc < 3)
   {

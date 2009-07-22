@@ -194,7 +194,7 @@ namespace Common
     const char RegistryComponent::ComponentInfo::Type_OutProc[] = "OutProc";
     const char RegistryComponent::ComponentInfo::Type_Remote[] = "Remote";
 
-      RegistryComponent::ComponentInfo::ComponentInfo()
+    RegistryComponent::ComponentInfo::ComponentInfo()
       : Type(ctUnknown)
     {
     }
@@ -256,7 +256,7 @@ namespace Common
     {
       ModuleName = name;
     }
-    
+
     const std::string& RegistryComponent::ComponentInfo::GetModuleName() const
     {
       return ModuleName;

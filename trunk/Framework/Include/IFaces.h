@@ -177,11 +177,13 @@ namespace IFaces
     DECLARE_UUID(db609d41-e4bd-42fb-9d3a-fd0d91cac762)
   };
 
-  struct IInputOutputStream
-    : public IInputStream
-    , public IOutputStream
+  struct ISerialization
+    : public IBase
   {
-    DECLARE_UUID(08ddafa0-d75d-479f-8e2a-2197924da760)
+    DECLARE_UUID(d96e9ec2-8ab8-409c-a8cc-0a8785cc76ef)
+    virtual RetCode Load(IInputStream *stream) = 0;
+    virtual RetCode Save(IOutputStream *stream) = 0;
+    virtual const char* GetStreamName() const = 0;
   };
 
   struct IProperties
@@ -197,11 +199,15 @@ namespace IFaces
 
   struct IPersistsProperties
     : public IProperties
+    , public ISerialization
   {
     DECLARE_UUID(9f8dc2a8-c0ec-4753-934c-536e493ef6ff)
-    virtual RetCode Load(IInputStream *stream) = 0;
-    virtual RetCode Save(IOutputStream *stream) = 0;
-    virtual const char* GetStreamName() const = 0;
+  };
+
+  struct ILogObject
+    : public IBase
+  {
+    DECLARE_UUID(29578a3f-8f5e-4613-b3a9-37d05caf2c0a)
   };
 
   struct IMessageQueue

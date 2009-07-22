@@ -6,16 +6,19 @@
 
 #include "ServiceBase.h"
 #include "PropertiesImpl.h"
+#include "ILogObjectImpl.h"
+
 
 class ITestServiceImpl
   : public Common::ServiceBase
       <
         ITestServiceImpl,
         Common::MultiObject,
-        TYPE_LIST_1(IFaces::ITestService),
-        TYPE_LIST_1(IFacesImpl::IPersistsPropertiesImpl<System::Mutex>)
+        TYPE_LIST_1(IFaces::ITestService)
       >
-{
+//  , public IFacesImpl::IPersistsPropertiesImpl<System::Mutex>
+//  , public IFacesImpl::ILogObjectImpl<System::Mutex>
+{ 
 public:
   DECLARE_UUID(95e2d527-0cbf-41be-91f6-9ad3fca30f41)
 

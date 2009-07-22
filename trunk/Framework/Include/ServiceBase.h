@@ -22,8 +22,7 @@ namespace Common
   <
     typename TServiceCoClass,
     template <typename, typename> class TCreateStrategy = MultiObject,
-    typename TIFacesList = NullType,
-    typename TIFaceImplList = NullType
+    typename TIFacesList = NullType
   >
   class ServiceBase
     : public CoClassBase
@@ -31,8 +30,7 @@ namespace Common
           TServiceCoClass,
           TypeList<IFaces::IService, TIFacesList>,
           TCreateStrategy,
-          System::Mutex,
-          TIFaceImplList
+          System::Mutex
         >
   {
   public:
