@@ -38,7 +38,7 @@ namespace IFacesImpl
   {
     Common::ISyncObject Locker(GetSynObj());
     Common::RefObjPtr<IEnumImpl> NewInst =
-      Common::IBaseImpl<IEnumImpl>::Create(GetSynObj());
+      Common::IBaseImpl<IEnumImpl>::CreateWithSyn(GetSynObj());
     NewInst->Items = Items;
     if (!(NewInst->IsModified = IsModified))
     {
