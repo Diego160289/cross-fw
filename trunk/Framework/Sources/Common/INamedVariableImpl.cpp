@@ -3,6 +3,38 @@
 
 namespace IFacesImpl
 {
+  INamedVariableImpl::INamedVariableImpl()
+    : Name("")
+  {
+  }
+
+  void INamedVariableImpl::SetName(const char *name)
+  {
+    Common::ISyncObject Locker(GetSynObj());
+    Name = name;
+  }
+
+  const char* INamedVariableImpl::GetName() const
+  {
+    Common::ISyncObject Locker(GetSynObj());
+    return Name.c_str();
+  }
+
+  RetCode INamedVariableImpl::Get(IFaces::IVariant **var) const
+  {
+    Common::ISyncObject Locker(GetSynObj());
+    return Var.QueryInterface(var);
+  }
+
+  RetCode INamedVariableImpl::Set(IFaces::IVariant *var)
+  {
+    Common::ISyncObject Locker(GetSynObj());
+    if (!var)
+      return retFail;
+    Var = var;
+    return retOk;
+  }
+
 
   INamedVariableHelper::INamedVariableHelper(INamedVariablePtr namedVar)
     : NamedVar(namedVar)
