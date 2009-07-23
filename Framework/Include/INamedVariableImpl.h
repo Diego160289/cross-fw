@@ -3,7 +3,6 @@
 
 #include "IFaces.h"
 #include "IFacesTools.h"
-#include "SyncObj.h"
 #include "RefObjPtr.h"
 #include "IVariantImpl.h"
 #include "Mutex.h"
@@ -28,36 +27,14 @@ namespace IFacesImpl
   public:
     DECLARE_UUID(249cae34-efba-46b3-aebe-ad72e0ba97ab)
 
-    INamedVariableImpl()
-      : Name("")
-    {
-    }
+    INamedVariableImpl();
 
-    void SetName(const char *name)
-    {
-      Common::ISyncObject Locker(GetSynObj());
-      Name = name;
-    }
+    void SetName(const char *name);
 
     //INamedVariable
-    virtual const char* GetName() const
-    {
-      Common::ISyncObject Locker(GetSynObj());
-      return Name.c_str();
-    }
-    virtual RetCode Get(IFaces::IVariant **var) const
-    {
-      Common::ISyncObject Locker(GetSynObj());
-      return Var.QueryInterface(var);
-    }
-    virtual RetCode Set(IFaces::IVariant *var)
-    {
-      Common::ISyncObject Locker(GetSynObj());
-      if (!var)
-        return retFail;
-      Var = var;
-      return retOk;
-    }
+    virtual const char* GetName() const;
+    virtual RetCode Get(IFaces::IVariant **var) const;
+    virtual RetCode Set(IFaces::IVariant *var);
   private:
     std::string Name;
     mutable Common::RefObjPtr<IFaces::IVariant> Var;

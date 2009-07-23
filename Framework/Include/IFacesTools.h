@@ -9,6 +9,8 @@
 #include "MutexStub.h"
 #include "IsBaseOf.h"
 
+#include <stdexcept>
+
 
 namespace Common
 {
@@ -56,7 +58,7 @@ namespace Common
     }
     virtual void Lock() = 0;
     virtual void Unlock() = 0;
-    virtual AutoPtr<ISynObj> Clone() const = 0;
+    virtual SharedPtr<ISynObj> Clone() const = 0;
   };
 
   template <typename TSynObj>
@@ -85,9 +87,9 @@ namespace Common
       {
       }
     }
-    virtual AutoPtr<ISynObj> Clone() const
+    virtual SharedPtr<ISynObj> Clone() const
     {
-      AutoPtr<ISynObj> Ret(new ISynObjImpl<TSynObj>);
+      SharedPtr<ISynObj> Ret(new ISynObjImpl<TSynObj>);
       return Ret;
     }
   private:
@@ -185,7 +187,7 @@ namespace Common
       }
       InternalAddRef();
       return retOk;
-    }    
+    }
 
     virtual ISynObj& GetSynObj() const
     {
@@ -225,7 +227,7 @@ namespace Common
     }
 
   private:
-    typedef AutoPtr<ISynObj> ISynObjPtr;
+    typedef SharedPtr<ISynObj> ISynObjPtr;
     mutable ISynObjPtr SynObj;
 
     typedef InheritedFromIFacesList<TYPE_LIST_1(IFaces::IBase)> TIBaseList;
@@ -254,7 +256,7 @@ namespace Common
       if (!NewCounter)
       {
         if (IsSuccessfulCreated)
-          BeforeDestroy();
+          this->BeforeDestroy();
         delete this;
       }
       ModuleCounter::GetInstance().Dec();
@@ -299,7 +301,8 @@ namespace Common
       if (*ClassId || *CurClassId)
         return ObjectCreator<TSynObj, typename TCoClassList::Tail>::CreateObject(classId);
       RefObjPtr<IFaces::IBase> Ret;
-      RefObjPtr<IBaseImpl<CurCoClass> > NewObj = IBaseImpl<CurCoClass>::Create<TSynObj>();
+      typedef IBaseImpl<CurCoClass> CurCoClassImpl;
+      RefObjPtr<CurCoClassImpl> NewObj = CurCoClassImpl::Create(ISynObjImpl<TSynObj>());
       if (NewObj.Get() &&
         NewObj->QueryInterface(IFaces::IBase::GetUUID(),
           reinterpret_cast<void**>(Ret.GetPPtr())) != retOk)

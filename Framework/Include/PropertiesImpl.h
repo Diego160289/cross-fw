@@ -69,7 +69,7 @@ namespace IFacesImpl
 
     IPropertiesImpl()
     {
-      InitSynObj(&GetSynObj());
+      //InitSynObj(&GetSynObj());
     }
   };
 
@@ -85,7 +85,7 @@ namespace IFacesImpl
 
     IPersistsPropertiesImpl()
     {
-      InitSynObj(&GetSynObj());
+      //InitSynObj(&GetSynObj());
     }
 
     // IPersistsProperties

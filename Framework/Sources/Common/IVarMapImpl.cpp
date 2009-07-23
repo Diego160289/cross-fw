@@ -4,6 +4,91 @@
 namespace IFacesImpl
 {
 
+  IVarMapImpl::IVarMapImpl()
+  {
+  }
+
+  IVarMapImpl::~IVarMapImpl()
+  {
+  }
+
+  RetCode IVarMapImpl::AddVariable(IFaces::INamedVariable *namedVar)
+  {
+    Common::ISyncObject Locker(GetSynObj());
+    try
+    {
+      std::string Name = INamedVariableHelper(INamedVariablePtr(namedVar)).GetName();
+      for (VarPool::const_iterator i = Vars.begin() ; i != Vars.end() ; ++i)
+      {
+        if (INamedVariableHelper(*i).GetName() == Name)
+          return retFail;
+      }
+      Vars.push_back(INamedVariablePtr(namedVar));
+    }
+    catch (std::exception &)
+    {
+      return retFail;
+    }
+    return retOk;
+  }
+
+  RetCode IVarMapImpl::RemoveVariable(const char *varName)
+  {
+    Common::ISyncObject Locker(GetSynObj());
+    try
+    {
+      for (VarPool::iterator i = Vars.begin() ; i != Vars.end() ; ++i)
+      {
+        if (INamedVariableHelper(*i).GetName() == varName)
+        {
+          Vars.erase(i);
+          return retOk;
+        }
+      }
+    }
+    catch (std::exception &)
+    {
+      return retFail;
+    }
+    return retFail;
+  }
+
+  RetCode IVarMapImpl::GetVariable(const char *varName, IFaces::IVariant **var) const
+  {
+    Common::ISyncObject Locker(GetSynObj());
+    try
+    {
+      for (VarPool::const_iterator i = Vars.begin() ; i != Vars.end() ; ++i)
+      {
+        if (INamedVariableHelper(*i).GetName() == varName)
+          return (*i)->Get(var);
+      }
+    }
+    catch (std::exception &)
+    {
+      return retFail;
+    }
+    return retFail;
+  }
+
+  RetCode IVarMapImpl::EnumVariables(IFaces::IEnum **vars) const
+  {
+    Common::ISyncObject Locker(GetSynObj());
+    try
+    {
+      Common::RefObjPtr<IEnumImpl> NewEnum = CreateEnum<System::Mutex>();
+      for (VarPool::const_iterator i = Vars.begin() ; i != Vars.end() ; ++i)
+        NewEnum->AddItem(*i);
+      return NewEnum.QueryInterface(vars);
+    }
+    catch (std::exception &)
+    {
+      return retFail;
+    }
+    return retOk;
+  }
+
+
   IVarMapHelper::IVarMapHelper(IVarMapPtr varMap)
     : VarMap(varMap)
   {
