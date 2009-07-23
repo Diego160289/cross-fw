@@ -7,6 +7,7 @@
 #include "SyncObj.h"
 #include "Pointers.h"
 #include "MutexStub.h"
+#include "IsBaseOf.h"
 
 
 namespace Common
@@ -113,12 +114,51 @@ namespace Common
     }
   };
 
+  inline bool IsEqualUUID(const char *classId1, const char *classId2)
+  {
+      while (*classId1 && *classId2 && *classId1++ == *classId2++);
+      return !(*classId1 || *classId2);
+  }
+
+  template
+  <
+    typename T,
+    typename TList
+  >
+  struct QueryIFaceFromInherited
+  {
+    static void *Query(const char *ifaceId, T *coClass)
+    {
+      typedef typename TList::Head CurType;
+      if (!IsBaseOf<ICoClassBase, CurType>::IsBase)
+      {
+        if (IsEqualUUID(ifaceId, CurType::GetUUID()))
+          return static_cast<CurType*>(coClass);
+        return QueryIFaceFromInherited<T, typename TList::Tail>::Query(ifaceId, coClass);
+      }
+      return 0;
+    }
+  };
+
+  template
+    <
+      typename T
+    >
+  struct QueryIFaceFromInherited<T, NullType>
+  {
+    static void *Query(const char *, T *)
+    {
+      return 0;
+    }
+  };
+
   template
     <
       typename T
     >
   class IBaseImpl
     : public T
+    , public InheritedFromIFacesList<TYPE_LIST_1(IFaces::IBase)>
   {
   public:
     typedef T TCoClassType;
@@ -134,7 +174,19 @@ namespace Common
     }
     virtual  RetCode QueryInterface(const char *ifaceId, void **iface)
     {
-      return retNoInterface;
+      ISyncObject Locker(GetSynObj());
+      if (IsEqualUUID(ifaceId, IFaces::IBase::GetUUID()))
+      {
+        typedef InheritedFromIFacesList<TYPE_LIST_1(IFaces::IBase)> TIBaseList;
+        *iface = static_cast<TIBaseList*>(this);
+      }
+      else
+      {
+        if (!(*iface = QueryIFaceFromInherited<T, typename T::TExportList>::Query(ifaceId, static_cast<T*>(this))))
+          return retNoInterface;
+      }
+      InternalAddRef();
+      return retOk;
     }    
 
     virtual ISynObj& GetSynObj() const
@@ -207,13 +259,14 @@ namespace Common
 
   template
   <
-    typename TIFacesList
+    typename TBaseClassesList
   >
   class CoClassBase
     : virtual public ICoClassBase
-    , public InheritedFromIFacesList<TIFacesList>
+    , public InheritedFromIFacesList<TBaseClassesList>
   {
   public:
+    typedef TBaseClassesList TExportList;
   };
 
 
