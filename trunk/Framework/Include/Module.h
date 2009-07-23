@@ -11,15 +11,15 @@ namespace Common
   public:
     static unsigned GetCoClassCount()
     {
-      return TypeListLength<TCoClassList>::Len;
+      return 0;//TypeListLength<TCoClassList>::Len;
     }
     static const char* GetCoClassId(unsigned index)
     {
-      return ExtractorCoClassId<0, TCoClassList>::Extract(index);
+      return 0;//ExtractorCoClassId<0, TCoClassList>::Extract(index);
     }
     static RefObjPtr<IFaces::IBase> CreateObject(const char *classId)
     {
-      return ObjectCreator<TCoClassList>::CreateObject(classId);
+      return RefObjPtr<IFaces::IBase>();//ObjectCreator<TCoClassList>::CreateObject(classId);
     }
   private:
     Module();

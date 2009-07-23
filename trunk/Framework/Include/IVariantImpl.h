@@ -21,23 +21,14 @@ namespace IFacesImpl
   using IFaces::retFalse;
   using IFaces::retFail;
 
-  template
-  <
-    typename TSynObj = System::MutexStub
-  >
   class IVariantImpl
     : public Common::CoClassBase
         <
-          IVariantImpl<TSynObj>,
-          TYPE_LIST_1(IFaces::IVariant),
-          Common::MultiObject, TSynObj
+          TYPE_LIST_1(IFaces::IVariant)
         >
   {
   public:
     DECLARE_UUID(0b9550da-6466-4fd4-9a43-40901551f727)
-
-    typedef IVariantImpl<TSynObj> ThisType;
-    typedef Common::RefObjPtr<ThisType> ThisTypePtr;
 
     IVariantImpl()
     {
@@ -49,7 +40,7 @@ namespace IFacesImpl
     // IVariant
     virtual RetCode SetValue(IFaces::IVariant::VariantType type, const void *value)
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       switch (type)
       {
       case IFaces::IVariant::vtUnknown :
@@ -104,13 +95,13 @@ namespace IFacesImpl
     }
     virtual RetCode SetBinaryValue(const void *value, unsigned long bytes)
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       Holder.Reset(new IVariantHolderBinary(value, bytes));
       return retOk;
     }
     virtual RetCode GetValue(void **value) const
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       if (!Holder.Get())
         return retFail;
       Holder->GetData(value);
@@ -118,28 +109,28 @@ namespace IFacesImpl
     }
     virtual unsigned long GetValueSize() const
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       return !Holder.Get() ? 0 : Holder->GetSize();
     }
     virtual bool IsEmpty() const
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       return !Holder.Get();
     }
     virtual IFaces::IVariant::VariantType GetType() const
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       return Holder.Get() ? Holder->GetType() : IFaces::IVariant::vtUnknown;
     }
     virtual RetCode Clear()
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       Holder.Release();
       return retOk;
     }
     virtual const char* PackToBase64() const
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       return !Holder.Get() ? 0 : Holder->ToBase64();
     }
     virtual RetCode FromBase64Pack(const char *pkg)
@@ -287,7 +278,7 @@ namespace IFacesImpl
       }
       if (!NewHolder.Get())
         return retFail;
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       Holder = NewHolder;
       return retOk;
     }
@@ -467,10 +458,10 @@ namespace IFacesImpl
   };
 
   template <typename TSyn>
-  typename IVariantImpl<TSyn>::ThisTypePtr
+  typename Common::RefObjPtr<IVariantImpl>
   CreateVariant()
   {
-    return IVariantImpl<TSyn>::CreateObject();
+    return Common::IBaseImpl<IVariantImpl>::Create<TSyn>();
   }
 
   DECLARE_RUNTIME_EXCEPTION(IVariantHelper)

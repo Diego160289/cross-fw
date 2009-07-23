@@ -160,7 +160,8 @@ RetCode IServiceManagerImpl::GetServicePool(const char *serviceId, IFaces::IEnum
     ServiceMap::iterator Iter = Services.find(serviceId);
     if (Iter == Services.end())
       return retFalse;
-    IFacesImpl::IEnumImpl<System::Mutex>::ThisTypePtr ServiceEnum = IFacesImpl::CreateEnum<System::Mutex>();
+    Common::RefObjPtr<IFacesImpl::IEnumImpl> ServiceEnum =
+      IFacesImpl::CreateEnum<System::Mutex>();
     ServicePoolPtr SrvPool = Iter->second;
     for (ServicePool::iterator i = SrvPool->begin() ; i != SrvPool->end() ; ++i)
     {
@@ -289,7 +290,7 @@ bool IServiceManagerImpl::BuildService(IServicePtr service)
     Common::RefObjPtr<IFaces::IVarMap> VarMap = IFacesImpl::CreateVarMap<System::Mutex>();
     IFacesImpl::IVarMapHelper Params(VarMap);
     Params.AddVariable(IFacesImpl::PrmClassFactorry, Common::RefObjQIPtr<IFaces::IBase>(Factory).Get());
-    Params.AddVariable(IFacesImpl::PrmServiceManager, Common::RefObjQIPtr<IFaces::IBase>(this).Get());
+//    Params.AddVariable(IFacesImpl::PrmServiceManager, Common::RefObjQIPtr<IFaces::IBase>(this).Get());
     if (service->SetParams(VarMap.Get()) != retOk)
     {
       UnbuildService(service);

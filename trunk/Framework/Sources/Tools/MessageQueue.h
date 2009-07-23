@@ -7,10 +7,7 @@
 class IMessageQueueManagerImpl
   : public Common::CoClassBase
       <
-        IMessageQueueManagerImpl,
-        TYPE_LIST_1(IFaces::IMessageQueueManager),
-        Common::MultiObject,
-        System::Mutex
+        TYPE_LIST_1(IFaces::IMessageQueueManager)
       >
 {
 public:

@@ -9,13 +9,11 @@ namespace IFacesImpl
   using IFaces::retOk;
   using IFaces::retFail;
 
-  template
-  <
-    template <typename, typename > class TCreateStrategy = Common::MultiObject,
-    typename TSynObj = System::MutexStub
-  >
   class IErrorInfoImpl
-    : public Common::CoClassBase<IErrorInfoImpl<TCreateStrategy, TSynObj> , TYPE_LIST_1(IFaces::IErrorInfo), TCreateStrategy, TSynObj>
+    : public Common::CoClassBase
+        <
+          TYPE_LIST_1(IFaces::IErrorInfo)
+        >
   {
   public:
     DECLARE_UUID(631e8a5c-9e5f-4ea3-b115-f88d84119923)

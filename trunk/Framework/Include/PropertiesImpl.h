@@ -16,8 +16,7 @@ namespace IFacesImpl
 
   template
   <
-    typename TBaseIFace = IFaces::IProperties,
-    typename TSynObj = System::MutexStub
+    typename TBaseIFace = IFaces::IProperties
   >
   class IProperties
     : public TBaseIFace
@@ -51,25 +50,18 @@ namespace IFacesImpl
     }
 
   private:
-    TSynObj *SynObj;
+    Common::ISynObj *SynObj;
   protected:
-    void InitSynObj(TSynObj *synObj)
+    void InitSynObj(Common::ISynObj *synObj)
     {
       SynObj = synObj;
     }
   };
 
-  template
-  <
-    typename TSynObj = System::MutexStub
-  >
   class IPropertiesImpl
     : public Common::CoClassBase
         <
-          IPropertiesImpl<TSynObj>,
-          Common::TypeList<IProperties<IFaces::IProperties, TSynObj>, Common::NullType>,
-          Common::MultiObject,
-          TSynObj
+          TYPE_LIST_1(IProperties<IFaces::IProperties>)
         >
   {
   public:
@@ -77,31 +69,24 @@ namespace IFacesImpl
 
     IPropertiesImpl()
     {
-      InitSynObj(&this->GetSynObj());
+      InitSynObj(&GetSynObj());
     }
-
-    typedef IPropertiesImpl<TSynObj> ThisType;
-    typedef Common::RefObjPtr<ThisType> ThisTypePtr;
   };
 
 
-  template
-  <
-    typename TSynObj = System::MutexStub
-  >
   class IPersistsPropertiesImpl
     : public Common::CoClassBase
         <
-          IPersistsPropertiesImpl<TSynObj>,
-          Common::TypeList<IProperties<IFaces::IPersistsProperties, TSynObj>, Common::NullType>,
-          Common::MultiObject, TSynObj
+          TYPE_LIST_1(IProperties<IFaces::IPersistsProperties>)
         >
   {
   public:
     DECLARE_UUID(672066ad-3284-474c-bb0b-9bd3ea7302f9)
 
-    typedef IPersistsPropertiesImpl<TSynObj> ThisType;
-    typedef Common::RefObjPtr<ThisType> ThisTypePtr;
+    IPersistsPropertiesImpl()
+    {
+      InitSynObj(&GetSynObj());
+    }
 
     // IPersistsProperties
     virtual RetCode Load(IFaces::IInputStream *stream)
