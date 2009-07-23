@@ -157,7 +157,11 @@ namespace Common
     }
     static TBaseImplPtr Create(const ISynObj &synObj)
     {
-      return TBaseImplPtr(new TBaseImpl(synObj.Clone()));
+      TBaseImplPtr Object(new TBaseImpl(synObj.Clone()));
+      if (!Object->FinalizeCreate())
+        return TBaseImplPtr();
+      Object->IsSuccessfulCreated = true;
+      return Object;
     }
 
   private:
