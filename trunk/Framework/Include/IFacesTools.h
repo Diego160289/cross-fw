@@ -284,6 +284,20 @@ namespace Common
 
   template
     <
+      typename TCoClass,
+      typename TSynObj
+    >
+  Common::RefObjPtr<Common::IBaseImpl<TCoClass> >
+  CreateNewInstance()
+  {
+    SharedPtr<ISynObj> NewSyn(new ISynObjImpl<TSynObj>);
+    Common::RefObjPtr<Common::IBaseImpl<TCoClass> > Ret =
+      Common::IBaseImpl<TCoClass>::CreateWithSyn(*NewSyn.Get());
+    return Ret;
+  }
+
+  template
+    <
       typename TSynObj,
       typename TCoClassList
     >
@@ -303,7 +317,7 @@ namespace Common
       RefObjPtr<IFaces::IBase> Ret;
       typedef IBaseImpl<CurCoClass> CurCoClassImpl;
       RefObjPtr<CurCoClassImpl> NewObj =
-        CurCoClassImpl::Create<TSynObj>();
+        CreateNewInstance<CurCoClass, TSynObj>();
       if (NewObj.Get() &&
         NewObj->QueryInterface(IFaces::IBase::GetUUID(),
           reinterpret_cast<void**>(Ret.GetPPtr())) != retOk)
