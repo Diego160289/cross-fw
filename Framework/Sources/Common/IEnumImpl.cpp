@@ -15,7 +15,7 @@ namespace IFacesImpl
 
   RetCode IEnumImpl::First()
   {
-    Common::ISyncObject Locker(this->GetSynObj());
+    Common::ISyncObject Locker(GetSynObj());
     IsModified = false;
     CurIter = Items.begin();
     return retOk;
@@ -23,7 +23,7 @@ namespace IFacesImpl
 
   RetCode IEnumImpl::Next(IFaces::IBase **item)
   {
-    Common::ISyncObject Locker(this->GetSynObj());
+    Common::ISyncObject Locker(GetSynObj());
     if (IsModified)
       return retFail;
     if (CurIter == Items.end())
