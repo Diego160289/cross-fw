@@ -290,7 +290,7 @@ bool IServiceManagerImpl::BuildService(IServicePtr service)
     Common::RefObjPtr<IFaces::IVarMap> VarMap = IFacesImpl::CreateVarMap<System::Mutex>();
     IFacesImpl::IVarMapHelper Params(VarMap);
     Params.AddVariable(IFacesImpl::PrmClassFactorry, Common::RefObjQIPtr<IFaces::IBase>(Factory).Get());
-//    Params.AddVariable(IFacesImpl::PrmServiceManager, Common::RefObjQIPtr<IFaces::IBase>(this).Get());
+    Params.AddVariable(IFacesImpl::PrmServiceManager, GetThisIBase().Get());
     if (service->SetParams(VarMap.Get()) != retOk)
     {
       UnbuildService(service);

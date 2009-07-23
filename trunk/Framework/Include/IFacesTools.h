@@ -105,6 +105,7 @@ namespace Common
     }
 
     virtual ISynObj& GetSynObj() const = 0;
+    virtual RefObjPtr<IFaces::IBase> GetThisIBase() const = 0;
     virtual bool FinalizeCreate()
     {
       return true;
@@ -176,10 +177,7 @@ namespace Common
     {
       ISyncObject Locker(GetSynObj());
       if (IsEqualUUID(ifaceId, IFaces::IBase::GetUUID()))
-      {
-        typedef InheritedFromIFacesList<TYPE_LIST_1(IFaces::IBase)> TIBaseList;
         *iface = static_cast<TIBaseList*>(this);
-      }
       else
       {
         if (!(*iface = QueryIFaceFromInherited<T, typename T::TExportList>::Query(ifaceId, static_cast<T*>(this))))
@@ -193,7 +191,17 @@ namespace Common
     {
       return *SynObj.Get();
     }
-
+    virtual RefObjPtr<IFaces::IBase> GetThisIBase() const
+    {
+      IFaces::IBase *ThisIBasePtr = static_cast<IFaces::IBase*>
+        (
+          const_cast<TIBaseList*>
+          (
+            static_cast<const TIBaseList*>(this)
+          )
+        );
+      return RefObjPtr<IFaces::IBase>(ThisIBasePtr);
+    }
 
     typedef IBaseImpl<T> TBaseImpl;
     typedef RefObjPtr<TBaseImpl> TBaseImplPtr;
@@ -219,6 +227,8 @@ namespace Common
   private:
     typedef AutoPtr<ISynObj> ISynObjPtr;
     mutable ISynObjPtr SynObj;
+
+    typedef InheritedFromIFacesList<TYPE_LIST_1(IFaces::IBase)> TIBaseList;
 
     unsigned long Counter;
     bool IsSuccessfulCreated;
