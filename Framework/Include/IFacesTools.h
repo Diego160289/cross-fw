@@ -217,7 +217,7 @@ namespace Common
       Object->IsSuccessfulCreated = true;
       return Object;
     }
-    static TBaseImplPtr Create(const ISynObj &synObj)
+    static TBaseImplPtr CreateWithSyn(const ISynObj &synObj)
     {
       TBaseImplPtr Object(new TBaseImpl(synObj.Clone()));
       if (!Object->FinalizeCreate())
@@ -302,7 +302,8 @@ namespace Common
         return ObjectCreator<TSynObj, typename TCoClassList::Tail>::CreateObject(classId);
       RefObjPtr<IFaces::IBase> Ret;
       typedef IBaseImpl<CurCoClass> CurCoClassImpl;
-      RefObjPtr<CurCoClassImpl> NewObj = CurCoClassImpl::Create(ISynObjImpl<TSynObj>());
+      RefObjPtr<CurCoClassImpl> NewObj =
+        CurCoClassImpl::Create<TSynObj>();
       if (NewObj.Get() &&
         NewObj->QueryInterface(IFaces::IBase::GetUUID(),
           reinterpret_cast<void**>(Ret.GetPPtr())) != retOk)
