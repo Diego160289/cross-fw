@@ -2,6 +2,7 @@
 #include "../Registry/Registry.h"
 #include "ComponentWrappers.h"
 #include "ModuleHolder.h"
+#include "RefObjQIPtr.h"
 
 void ShowHelp()
 {
@@ -30,16 +31,18 @@ int main(int argc, char *argv[])
   }
   try
   {
-    Common::RefObjPtr<IRegistryImpl> Reg = IRegistryImpl::CreateObject();
+    Common::RefObjQIPtr<IFaces::IRegistry> Reg =
+      Common::IBaseImpl<IRegistryImpl>::Create<System::Mutex>();
+    Common::RefObjQIPtr<IFaces::IRegistryCtrl> RegCtrl(Reg);
     if (!strcmp(argv[1], "create"))
-      Common::Wrappers::RegistryCtrl(Reg).Create(argv[2]);
+      Common::Wrappers::RegistryCtrl(RegCtrl).Create(argv[2]);
     else
     if (!strcmp(argv[1], "remove"))
-      Common::Wrappers::RegistryCtrl(Reg).Remove(argv[2]);
+      Common::Wrappers::RegistryCtrl(RegCtrl).Remove(argv[2]);
     else
     if (!strcmp(argv[1], "reg"))
     {
-      Common::Wrappers::RegistryCtrl(Reg).Load(argv[2]);
+      Common::Wrappers::RegistryCtrl(RegCtrl).Load(argv[2]);
       if (argc < 4)
       {
         std::cerr << "Bad param" << std::endl;
@@ -88,13 +91,13 @@ int main(int argc, char *argv[])
         ShowHelp();
         return 1;
       }
-      Common::Wrappers::RegistryCtrl(Reg).Load(argv[2]);
+      Common::Wrappers::RegistryCtrl(RegCtrl).Load(argv[2]);
       Common::Wrappers::RegistryComponent(Reg).RemoveModule(argv[3]);
     }
     else
     if (!strcmp(argv[1], "print"))
     {
-      Common::Wrappers::RegistryCtrl(Reg).Load(argv[2]);
+      Common::Wrappers::RegistryCtrl(RegCtrl).Load(argv[2]);
       Common::Wrappers::RegistryComponent::ComponentInfoPoolPtr Components =
         Common::Wrappers::RegistryComponent(Reg).GetAllComponentsInfo();
       for (Common::Wrappers::RegistryComponent::ComponentInfoPool::const_iterator i = Components->begin() ; i != Components->end() ; ++i)
