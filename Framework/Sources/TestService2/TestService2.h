@@ -5,13 +5,18 @@
 #include "Pointers.h"
 
 #include "ServiceBase.h"
+#include "ILogObjectImpl.h"
+
+
 
 class ITestService2Impl
   : public Common::ServiceBase
       <
-        ITestService2Impl,
-        Common::MultiObject,
-        TYPE_LIST_1(IFaces::ITestService2)
+        TYPE_LIST_2
+          (
+            IFaces::ITestService2,
+            IFacesImpl::ILogObjectImpl
+          )
       >
 {
 public:

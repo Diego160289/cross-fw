@@ -19,50 +19,40 @@ namespace IFacesImpl
   using IFaces::retFalse;
   using IFaces::retFail;
 
-  template
-  <
-    typename TSynObj = System::MutexStub
-  >
   class INamedVariableImpl
     : public Common::CoClassBase
         <
-          INamedVariableImpl<TSynObj>,
-          TYPE_LIST_1(IFaces::INamedVariable),
-          Common::MultiObject, TSynObj
+          TYPE_LIST_1(IFaces::INamedVariable)
         >
   {
   public:
     DECLARE_UUID(249cae34-efba-46b3-aebe-ad72e0ba97ab)
 
-    typedef INamedVariableImpl<TSynObj> ThisType;
-    typedef Common::RefObjPtr<ThisType> ThisTypePtr;
-
     INamedVariableImpl()
       : Name("")
-      , Var(IVariantImpl<TSynObj>::CreateObject())
     {
     }
 
     void SetName(const char *name)
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       Name = name;
     }
 
     //INamedVariable
     virtual const char* GetName() const
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       return Name.c_str();
     }
     virtual RetCode Get(IFaces::IVariant **var) const
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       return Var.QueryInterface(var);
     }
     virtual RetCode Set(IFaces::IVariant *var)
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       if (!var)
         return retFail;
       Var = var;
@@ -99,21 +89,21 @@ namespace IFacesImpl
   };
 
   template <typename TSyn>
-  typename INamedVariableImpl<TSyn>::ThisTypePtr
+  Common::RefObjPtr<INamedVariableImpl>
   CreateNamedVariable(const char *name)
   {
-    typename INamedVariableImpl<TSyn>::ThisTypePtr Ret =
-      INamedVariableImpl<TSyn>::CreateObject();
+    Common::RefObjPtr<INamedVariableImpl> Ret =
+      Common::IBaseImpl<INamedVariableImpl>::Create<TSyn>();
     Ret->SetName(name);
     return Ret;
   }
 
   template <typename TSyn>
-  typename INamedVariableImpl<TSyn>::ThisTypePtr
+  Common::RefObjPtr<INamedVariableImpl>
   CreateNamedVariable(const char *name, IFaces::IVariant *var)
   {
-    typename INamedVariableImpl<TSyn>::ThisTypePtr Ret =
-      INamedVariableImpl<TSyn>::CreateObject();
+    Common::RefObjPtr<INamedVariableImpl> Ret =
+      Common::IBaseImpl<INamedVariableImpl>::Create<TSyn>();
     Ret->SetName(name);
     Ret->Set(var);
     return Ret;

@@ -20,21 +20,15 @@ namespace Common
 
   template
   <
-    typename TServiceCoClass,
-    template <typename, typename> class TCreateStrategy = MultiObject,
     typename TIFacesList = NullType
   >
   class ServiceBase
     : public CoClassBase
         <
-          TServiceCoClass,
-          TypeList<IFaces::IService, TIFacesList>,
-          TCreateStrategy,
-          System::Mutex
+          TYPE_LIST_1(IFaces::IService)
         >
   {
   public:
-    typedef System::Mutex TSynObj;
 
     ServiceBase()
       : CanDoneService(false)
@@ -44,30 +38,30 @@ namespace Common
     // IService
     virtual RetCode SetParams(IFaces::IVarMap *params)
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       ParamsMap = params;
       return retOk;
     }
     virtual RetCode Init()
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       return OnInit() ? retOk : retFail;
     }
     virtual void Done()
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       OnDone();
       ParamsMap.Release();
     }
     virtual bool CanDone() const
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       return CanDoneService;
     }
 
     void MarkToDoneService()
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       CanDoneService = true;
     }
     template <typename T>

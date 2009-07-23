@@ -17,23 +17,15 @@ namespace IFacesImpl
   using IFaces::retFalse;
   using IFaces::retFail;
 
-  template
-  <
-    typename TSynObj = System::MutexStub
-  >
   class IVarMapImpl
     : public Common::CoClassBase
         <
-          IVarMapImpl<TSynObj>,
-          TYPE_LIST_1(IFaces::IVarMap),
-          Common::MultiObject, TSynObj
+          TYPE_LIST_1(IFaces::IVarMap)
         >
   {
   public:
     DECLARE_UUID(6ccdffd6-0ef7-4b5f-af12-d1b1a400c3f9)
 
-    typedef IVarMapImpl<TSynObj> ThisType;
-    typedef Common::RefObjPtr<ThisType> ThisTypePtr;
 
     IVarMapImpl()
     {
@@ -45,7 +37,7 @@ namespace IFacesImpl
     // IVarMap
     virtual RetCode AddVariable(IFaces::INamedVariable *namedVar)
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       try
       {
         std::string Name = INamedVariableHelper(INamedVariablePtr(namedVar)).GetName();
@@ -64,7 +56,7 @@ namespace IFacesImpl
     }
     virtual RetCode RemoveVariable(const char *varName)
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       try
       {
         for (VarPool::iterator i = Vars.begin() ; i != Vars.end() ; ++i)
@@ -84,7 +76,7 @@ namespace IFacesImpl
     }
     virtual RetCode GetVariable(const char *varName, IFaces::IVariant **var) const
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       try
       {
         for (VarPool::const_iterator i = Vars.begin() ; i != Vars.end() ; ++i)
@@ -101,10 +93,10 @@ namespace IFacesImpl
     }
     virtual RetCode EnumVariables(IFaces::IEnum **vars) const
     {
-      Common::SyncObject<TSynObj> Locker(this->GetSynObj());
+      Common::ISyncObject Locker(GetSynObj());
       try
       {
-        IEnumImpl<System::Mutex>::ThisTypePtr NewEnum = CreateEnum<System::Mutex>();
+        Common::RefObjPtr<IEnumImpl> NewEnum = CreateEnum<System::Mutex>();
         for (VarPool::const_iterator i = Vars.begin() ; i != Vars.end() ; ++i)
           NewEnum->AddItem(*i);
         return NewEnum.QueryInterface(vars);
@@ -149,10 +141,10 @@ namespace IFacesImpl
   };
 
   template <typename TSyn>
-  typename IVarMapImpl<TSyn>::ThisTypePtr
+  Common::RefObjPtr<IVarMapImpl>
   CreateVarMap()
   {
-    return IVarMapImpl<TSyn>::CreateObject();
+    return Common::IBaseImpl<IVarMapImpl>::Create<TSyn>();
   }
 
 }

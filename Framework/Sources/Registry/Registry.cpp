@@ -40,7 +40,7 @@ RetCode IRegistryImpl::Create(const char *registryPath)
     return retFail;
   if (!NewDocument->SaveFile(registryPath))
     return retFail;
-  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  Common::ISyncObject Locker(GetSynObj());
   if ((Document.Get() && InternalUnload() != retOk) ||
       InternalLoad(registryPath) != retOk)
   {
@@ -51,7 +51,7 @@ RetCode IRegistryImpl::Create(const char *registryPath)
 
 RetCode IRegistryImpl::Remove(const char *registryPath)
 {
-  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  Common::ISyncObject Locker(GetSynObj());
   Document.Release();
   IsModifiedState = false;
   try
@@ -189,19 +189,19 @@ RetCode IRegistryImpl::InternalUnload()
 
 RetCode IRegistryImpl::Load(const char *registryPath)
 {
-  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  Common::ISyncObject Locker(GetSynObj());
   return InternalLoad(registryPath);
 }
 
 bool IRegistryImpl::IsLoaded() const
 {
-  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  Common::ISyncObject Locker(GetSynObj());
   return !!Document.Get();
 }
 
 RetCode IRegistryImpl::Unload()
 {
-  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  Common::ISyncObject Locker(GetSynObj());
   return InternalUnload();
 }
 
@@ -212,7 +212,7 @@ const char* IRegistryImpl::GetCtrlVersion() const
 
 RetCode IRegistryImpl::CreateKey(const char *pathKey)
 {
-  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  Common::ISyncObject Locker(GetSynObj());
   TiXmlNode *Keys = OpenKeys(Document.Get());
   if (!Keys)
     return retFail;
@@ -248,7 +248,7 @@ RetCode IRegistryImpl::CreateKey(const char *pathKey)
 
 RetCode IRegistryImpl::RemoveKey(const char *pathKey)
 {
-  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  Common::ISyncObject Locker(GetSynObj());
   TiXmlNode *Keys = OpenKeys(Document.Get());
   if (!Keys)
     return retFail;
@@ -276,13 +276,14 @@ RetCode IRegistryImpl::RemoveKey(const char *pathKey)
 
 RetCode IRegistryImpl::GetValue(const char *pathKey, IFaces::IVariant **value)
 {
-  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  Common::ISyncObject Locker(GetSynObj());
   const TiXmlNode *Key = OpenKey(Document.Get(), pathKey);
   if (!Key)
     return retFail;
   try
   {
-    Common::RefObjPtr<IFaces::IVariant> Var = IFacesImpl::IVariantImpl<System::Mutex>::CreateObject();
+    Common::RefObjPtr<IFaces::IVariant> Var =
+      Common::IBaseImpl<IFacesImpl::IVariantImpl>::Create<System::Mutex>();
     const TiXmlNode *KeyValue = Key->FirstChild();
     if (KeyValue)
     {
@@ -304,7 +305,7 @@ RetCode IRegistryImpl::GetValue(const char *pathKey, IFaces::IVariant **value)
 
 RetCode IRegistryImpl::SetValue(const char *pathKey, IFaces::IVariant *value)
 {
-  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  Common::ISyncObject Locker(GetSynObj());
   TiXmlNode *Key = OpenKey(Document.Get(), pathKey);
   if (!Key)
     return retFail;
@@ -347,7 +348,7 @@ namespace
     return KeyPair[1];
   }
 
-  typedef IFacesImpl::IEnumImpl<System::Mutex>::ThisTypePtr EnumImplPtr;
+  typedef Common::RefObjPtr<IFacesImpl::IEnumImpl> EnumImplPtr;
 
   bool EnumKeys(const TiXmlNode *node, EnumImplPtr keys)
   {
@@ -408,7 +409,7 @@ namespace
 RetCode IRegistryImpl::EnumKey(const char *pathKey, IFaces::IEnum **keys)
 try
 {
-  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  Common::ISyncObject Locker(GetSynObj());
   const TiXmlNode *Key = OpenKey(Document.Get(), pathKey);
   if (!Key)
     return retFail;
@@ -438,7 +439,7 @@ void IRegistryImpl::BeforeDestroy()
 
 void IRegistryImpl::SaveRegistry()
 {
-  Common::SyncObject<System::Mutex> Locker(GetSynObj());
+  Common::ISyncObject Locker(GetSynObj());
   Save();
 }
 

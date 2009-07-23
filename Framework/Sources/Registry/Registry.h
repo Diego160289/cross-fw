@@ -16,10 +16,7 @@ using IFaces::retFalse;
 class IRegistryImpl
   : public Common::CoClassBase
       <
-        IRegistryImpl,
-        TYPE_LIST_2(IFaces::IRegistryCtrl, IFaces::IRegistry),
-        Common::MultiObject,
-        System::Mutex
+        TYPE_LIST_2(IFaces::IRegistryCtrl, IFaces::IRegistry)
       >
 {
 public:

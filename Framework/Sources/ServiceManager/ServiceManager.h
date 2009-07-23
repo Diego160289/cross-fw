@@ -22,10 +22,7 @@ using IFaces::retNotImpl;
 class IServiceManagerImpl
   : public Common::CoClassBase
       <
-        IServiceManagerImpl,
-        TYPE_LIST_2(IFaces::IServiceManager, IFaces::IServiceManagerCtrl),
-        Common::MultiObject,
-        System::Mutex
+        TYPE_LIST_2(IFaces::IServiceManager, IFaces::IServiceManagerCtrl)
       >
 {
 public:

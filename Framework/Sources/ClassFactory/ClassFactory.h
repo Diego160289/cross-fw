@@ -21,10 +21,7 @@ using IFaces::retNotImpl;
 class IClassFactoryImpl
   : public Common::CoClassBase
       <
-        IClassFactoryImpl,
-        TYPE_LIST_2(IFaces::IClassFactory, IFaces::IClassFactoryCtrl),
-        Common::MultiObject,
-        System::Mutex
+        TYPE_LIST_2(IFaces::IClassFactory, IFaces::IClassFactoryCtrl)
       >
 {
 public:
