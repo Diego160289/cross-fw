@@ -5,21 +5,25 @@
 
 namespace Common
 {
-  template <typename TCoClassList>
+  template
+    <
+      typename TCoClassList,
+      typename TSynObj
+    >
   class Module
   {
   public:
     static unsigned GetCoClassCount()
     {
-      return 0;//TypeListLength<TCoClassList>::Len;
+      return TypeListLength<TCoClassList>::Len;
     }
     static const char* GetCoClassId(unsigned index)
     {
-      return 0;//ExtractorCoClassId<0, TCoClassList>::Extract(index);
+      return ExtractorCoClassId<0, TCoClassList>::Extract(index);
     }
     static RefObjPtr<IFaces::IBase> CreateObject(const char *classId)
     {
-      return RefObjPtr<IFaces::IBase>();//ObjectCreator<TCoClassList>::CreateObject(classId);
+      return ObjectCreator<TSynObj, TCoClassList>::CreateObject(classId);
     }
   private:
     Module();
@@ -57,8 +61,8 @@ namespace Common
   #define EXPORT_FUNCTION extern "C"
 #endif
 
-#define DECLARE_MODULE_ENTRY_POINT(module_name_, module_guid_, module_coclasslist_) \
-  typedef Common::Module<module_coclasslist_> ModuleType; \
+#define DECLARE_MODULE_ENTRY_POINT(module_name_, module_guid_, module_syn_obj_, module_coclasslist_) \
+  typedef Common::Module<module_coclasslist_, module_syn_obj_> ModuleType; \
   EXPORT_FUNCTION const char* GetModuleName() \
   { \
     return module_name_; \

@@ -5,6 +5,7 @@
 #include "TypeList.h"
 #include "RefObjPtr.h"
 #include "SyncObj.h"
+#include "Pointers.h"
 #include "MutexStub.h"
 
 
@@ -29,6 +30,24 @@ namespace Common
   {
   };
 
+  template <typename T>
+  class IBaseImpl;
+
+  class ModuleCounter
+  {
+  public:
+    static unsigned long GetModuleCounter();
+    ~ModuleCounter();
+  private:
+    template <typename T> friend class IBaseImpl;
+    static ModuleCounter& GetInstance();
+    ModuleCounter();
+    void Inc();
+    void Dec();
+    class CounterImpl;
+    CounterImpl *Counter;
+  };
+
   struct ISynObj
   {
     virtual ~ISynObj()
@@ -36,8 +55,43 @@ namespace Common
     }
     virtual void Lock() = 0;
     virtual void Unlock() = 0;
+    virtual AutoPtr<ISynObj> Clone() const = 0;
   };
 
+  template <typename TSynObj>
+  class ISynObjImpl
+    : private NoCopyable
+    , public ISynObj
+  {
+  public:
+    virtual void Lock()
+    {
+      try
+      {
+        SynObj.Lock();
+      }
+      catch (std::exception &)
+      {
+      }
+    }
+    virtual void Unlock()
+    {
+      try
+      {
+        SynObj.Unlock();
+      }
+      catch (std::exception &)
+      {
+      }
+    }
+    virtual AutoPtr<ISynObj> Clone() const
+    {
+      AutoPtr<ISynObj> Ret(new ISynObjImpl<TSynObj>);
+      return Ret;
+    }
+  private:
+    TSynObj SynObj;
+  };
 
   typedef SyncObject<ISynObj> ISyncObject;
 
@@ -45,7 +99,18 @@ namespace Common
     : private NoCopyable
   {
   protected:
+    virtual ~ICoClassBase()
+    {
+    }
+
     virtual ISynObj& GetSynObj() const = 0;
+    virtual bool FinalizeCreate()
+    {
+      return true;
+    }
+    virtual void BeforeDestroy()
+    {
+    }
   };
 
   template
@@ -54,16 +119,18 @@ namespace Common
     >
   class IBaseImpl
     : public T
-    , virtual public ICoClassBase
   {
   public:
+    typedef T TCoClassType;
+
     virtual unsigned long AddRef()
     {
-      return 0;
+      ISyncObject Locker(GetSynObj());
+      return InternalAddRef();
     }
     virtual unsigned long Release()
     {
-      return 0;
+      return InternalRelease();
     }
     virtual  RetCode QueryInterface(const char *ifaceId, void **iface)
     {
@@ -72,7 +139,7 @@ namespace Common
 
     virtual ISynObj& GetSynObj() const
     {
-      return *((ISynObj*)0);
+      return *SynObj.Get();
     }
 
 
@@ -82,32 +149,57 @@ namespace Common
     template <typename TSynObj>
     static TBaseImplPtr Create()
     {
-      return TBaseImplPtr(new TBaseImpl);
+      TBaseImplPtr Object(new TBaseImpl(ISynObjPtr(new ISynObjImpl<TSynObj>)));
+      if (!Object->FinalizeCreate())
+        return TBaseImplPtr();
+      Object->IsSuccessfulCreated = true;
+      return Object;
     }
-
     static TBaseImplPtr Create(const ISynObj &synObj)
     {
-      return TBaseImplPtr(new TBaseImpl);
+      return TBaseImplPtr(new TBaseImpl(synObj.Clone()));
     }
 
   private:
-    // mutable TSynObj SynObj;
-  };
+    typedef AutoPtr<ISynObj> ISynObjPtr;
+    mutable ISynObjPtr SynObj;
 
-  class ModuleCounter
-  {
-  public:
-    static unsigned long GetModuleCounter();
-    ~ModuleCounter();
-  private:
-    static ModuleCounter& GetInstance();
-    ModuleCounter();
-    void Inc();
-    void Dec();
-    class CounterImpl;
-    CounterImpl *Counter;
-  };
+    unsigned long Counter;
+    bool IsSuccessfulCreated;
 
+    IBaseImpl(ISynObjPtr synObj)
+      : SynObj(synObj)
+      , Counter(0)
+      , IsSuccessfulCreated(false)
+    {
+    }
+    unsigned long InternalAddRef()
+    {
+      ModuleCounter::GetInstance().Inc();
+      return ++Counter;
+    }
+    unsigned long InternalRelease()
+    {
+      unsigned long NewCounter = 0;
+      {
+        ISyncObject Locker(GetSynObj());
+        NewCounter = --Counter;
+      }
+      if (!NewCounter)
+      {
+        if (IsSuccessfulCreated)
+          BeforeDestroy();
+        delete this;
+      }
+      ModuleCounter::GetInstance().Dec();
+      return NewCounter;
+    }
+
+  protected:
+    virtual ~IBaseImpl()
+    {
+    }
+  };
 
   template
   <
@@ -120,6 +212,49 @@ namespace Common
   public:
   };
 
+
+  template
+    <
+      typename TSynObj,
+      typename TCoClassList
+    >
+  struct ObjectCreator
+  {
+    static RefObjPtr<IFaces::IBase>
+    CreateObject(const char *classId)
+    {
+      if (!TypeListLength<TCoClassList>::Len)
+        return RefObjPtr<IFaces::IBase>(0);
+      const char *ClassId = classId;
+      typedef typename TCoClassList::Head CurCoClass;
+      const char *CurClassId = CurCoClass::GetUUID();
+      while (*ClassId && *CurClassId && *ClassId++ == *CurClassId++);
+      if (*ClassId || *CurClassId)
+        return ObjectCreator<TSynObj, typename TCoClassList::Tail>::CreateObject(classId);
+      RefObjPtr<IFaces::IBase> Ret;
+      RefObjPtr<IBaseImpl<CurCoClass> > NewObj = IBaseImpl<CurCoClass>::Create<TSynObj>();
+      if (NewObj.Get() &&
+        NewObj->QueryInterface(IFaces::IBase::GetUUID(),
+          reinterpret_cast<void**>(Ret.GetPPtr())) != retOk)
+      {
+        return RefObjPtr<IFaces::IBase>();
+      }
+      return Ret;
+    }
+  };
+
+  template
+    <
+      typename TSynObj
+    >
+  struct ObjectCreator<TSynObj, NullType>
+  {
+    static RefObjPtr<IFaces::IBase>
+    CreateObject(const char *)
+    {
+      return RefObjPtr<IFaces::IBase>(0);
+    }
+  };
 }
 
 #endif	// !__IFACESTOOLS_H__
