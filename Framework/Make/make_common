@@ -18,7 +18,7 @@ ifeq ($(MAKETYPE), Debug)
 else
 	CXXFLAGS = -O3 -Wall -fpermissive -fmessage-length=0
 	
-	CXXFLAGS = -O3 -Wall -fmessage-length=0
+	CFLAGS = -O3 -Wall -fmessage-length=0
 endif
 
 ifeq ($(OS), Win)
