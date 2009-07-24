@@ -38,30 +38,30 @@ namespace Common
     // IService
     virtual RetCode SetParams(IFaces::IVarMap *params)
     {
-      Common::ISyncObject Locker(GetSynObj());
+      Common::ISyncObject Locker(this->GetSynObj());
       ParamsMap = params;
       return retOk;
     }
     virtual RetCode Init()
     {
-      Common::ISyncObject Locker(GetSynObj());
+      Common::ISyncObject Locker(this->GetSynObj());
       return OnInit() ? retOk : retFail;
     }
     virtual void Done()
     {
-      Common::ISyncObject Locker(GetSynObj());
+      Common::ISyncObject Locker(this->GetSynObj());
       OnDone();
       ParamsMap.Release();
     }
     virtual bool CanDone() const
     {
-      Common::ISyncObject Locker(GetSynObj());
+      Common::ISyncObject Locker(this->GetSynObj());
       return CanDoneService;
     }
 
     void MarkToDoneService()
     {
-      Common::ISyncObject Locker(GetSynObj());
+      Common::ISyncObject Locker(this->GetSynObj());
       CanDoneService = true;
     }
     template <typename T>

@@ -28,8 +28,9 @@ namespace Common
   {
   };
 
-  template <>
-  class InheritedFromIFacesList<NullType>
+  template <typename TList>
+  class InheritedFromIFacesList<TYPE_LIST_1(TList)>
+    : public TList
   {
   };
 
