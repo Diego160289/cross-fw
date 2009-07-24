@@ -35,7 +35,7 @@ void ITestServiceImpl::OnDone()
 
 void ITestServiceImpl::OnTimer()
 {
-  //Common::RefObjQIPtr<IFaces::IPersistsProperties> ps(this);
+  Common::RefObjQIPtr<IFaces::ILogObject> Log(GetThisIBase());
   std::cout << "ITestServiceImpl ----->  Tick: " << Ticks++ << std::endl;
   if (Ticks >= 10 && !CanDone())
     MarkToDoneService();

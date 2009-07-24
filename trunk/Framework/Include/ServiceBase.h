@@ -25,7 +25,7 @@ namespace Common
   class ServiceBase
     : public CoClassBase
         <
-          TYPE_LIST_1(IFaces::IService)
+          TypeList<IFaces::IService, TIFacesList>
         >
   {
   public:
