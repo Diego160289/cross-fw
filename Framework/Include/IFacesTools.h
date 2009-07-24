@@ -33,6 +33,7 @@ namespace Common
   {
   };
 
+
   template <typename T>
   class IBaseImpl;
 
@@ -123,6 +124,12 @@ namespace Common
       return !(*classId1 || *classId2);
   }
 
+
+  template <bool>
+  struct BoolType
+  {
+  };
+
   template
   <
     typename T,
@@ -130,16 +137,22 @@ namespace Common
   >
   struct QueryIFaceFromInherited
   {
-    static void *Query(const char *ifaceId, T *coClass)
+    static void* Query(const char *ifaceId, T *coClass, BoolType<false>)
     {
       typedef typename TList::Head CurType;
-      if (!IsBaseOf<ICoClassBase, CurType>::IsBase)
-      {
-        if (IsEqualUUID(ifaceId, CurType::GetUUID()))
-          return static_cast<CurType*>(coClass);
-        return QueryIFaceFromInherited<T, typename TList::Tail>::Query(ifaceId, coClass);
-      }
-      return 0;
+      if (IsEqualUUID(ifaceId, CurType::GetUUID()))
+        return static_cast<CurType*>(coClass);
+      return QueryIFaceFromInherited<T, typename TList::Tail>::Query(
+        ifaceId, coClass, BoolType<!!IsBaseOf<ICoClassBase, CurType>::IsBase>()
+        );
+    }
+    static void* Query(const char *ifaceId, T *coClass, BoolType<true>)
+    {
+      typedef typename TList::Head CurType;
+      typedef typename CurType::TExportList CoClassBaseList;
+      return QueryIFaceFromInherited<T, CoClassBaseList>::Query(
+        ifaceId, coClass, BoolType<false>()
+        );
     }
   };
 
@@ -149,10 +162,19 @@ namespace Common
     >
   struct QueryIFaceFromInherited<T, NullType>
   {
-    static void *Query(const char *, T *)
+    static void *Query(const char *, T *, BoolType<false>)
     {
       return 0;
     }
+    static void *Query(const char *, T *, BoolType<true>)
+    {
+      return 0;
+    }
+  };
+
+  class IBaseStub
+    : public IFaces::IBase
+  {
   };
 
   template
@@ -161,7 +183,7 @@ namespace Common
     >
   class IBaseImpl
     : public T
-    , public InheritedFromIFacesList<TYPE_LIST_1(IFaces::IBase)>
+    , public IBaseStub
   {
   public:
     typedef T TCoClassType;
@@ -179,10 +201,12 @@ namespace Common
     {
       ISyncObject Locker(GetSynObj());
       if (IsEqualUUID(ifaceId, IFaces::IBase::GetUUID()))
-        *iface = static_cast<TIBaseList*>(this);
+        *iface = static_cast<IBaseStub*>(this);
       else
       {
-        if (!(*iface = QueryIFaceFromInherited<T, typename T::TExportList>::Query(ifaceId, static_cast<T*>(this))))
+        if (!(*iface = QueryIFaceFromInherited<T, typename T::TExportList>::Query(
+          ifaceId, static_cast<T*>(this), BoolType<false>()
+          )))
           return retNoInterface;
       }
       InternalAddRef();
@@ -197,9 +221,9 @@ namespace Common
     {
       IFaces::IBase *ThisIBasePtr = static_cast<IFaces::IBase*>
         (
-          const_cast<TIBaseList*>
+          const_cast<IBaseStub*>
           (
-            static_cast<const TIBaseList*>(this)
+            static_cast<const IBaseStub*>(this)
           )
         );
       return RefObjPtr<IFaces::IBase>(ThisIBasePtr);
@@ -229,8 +253,6 @@ namespace Common
   private:
     typedef SharedPtr<ISynObj> ISynObjPtr;
     mutable ISynObjPtr SynObj;
-
-    typedef InheritedFromIFacesList<TYPE_LIST_1(IFaces::IBase)> TIBaseList;
 
     unsigned long Counter;
     bool IsSuccessfulCreated;

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Config Version = "1.0">
   <RegistryModuleName>
-    <![CDATA[/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.so]]>
+    <![CDATA[./Registry.dll]]>
   </RegistryModuleName>
   <RegitryClassId>
     <![CDATA[cf7456c3-70c7-4a97-b8e4-f910cd2f823b]]>
   </RegitryClassId>
   <RegistryName>
-    <![CDATA[/home/dmitry/cross-fw/Framework/Bin/Debug/Registry.xml]]>
+    <![CDATA[./Registry.xml]]>
   </RegistryName>
   <ClassFactoryId>
     <![CDATA[0eedde75-ce15-4eba-9026-3d5f94488c26]]>
