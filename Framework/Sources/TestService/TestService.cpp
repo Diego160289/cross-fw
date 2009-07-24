@@ -13,6 +13,9 @@ ITestServiceImpl::ITestServiceImpl()
 
 bool ITestServiceImpl::OnInit()
 {
+  Common::RefObjQIPtr<IFaces::ILogObject> Log(GetThisIBase());
+  if (Log.Get())
+    std::cout << "Success get log" << std::endl;
   try
   {
     /*if (!CreateObject<IFaces::IRegistry>("cf7456c3-70c7-4a97-b8e4-f910cd2f823b").Get())
@@ -35,7 +38,6 @@ void ITestServiceImpl::OnDone()
 
 void ITestServiceImpl::OnTimer()
 {
-  Common::RefObjQIPtr<IFaces::ILogObject> Log(GetThisIBase());
   std::cout << "ITestServiceImpl ----->  Tick: " << Ticks++ << std::endl;
   if (Ticks >= 10 && !CanDone())
     MarkToDoneService();
