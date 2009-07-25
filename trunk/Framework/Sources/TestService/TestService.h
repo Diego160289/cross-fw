@@ -7,16 +7,18 @@
 #include "ServiceBase.h"
 #include "PropertiesImpl.h"
 #include "ILogObjectImpl.h"
+#include "IEnvironmentImpl.h"
 
 
 class ITestServiceImpl
   : public Common::ServiceBase
       <
-        TYPE_LIST_3
+        TYPE_LIST_4
           (
             IFaces::ITestService,
+            IFacesImpl::ILogObjectImpl,
             IFacesImpl::IPersistsPropertiesImpl,
-            IFacesImpl::ILogObjectImpl
+            IFacesImpl::IEnvironmentImpl/*Ex<IFaces::IConfig>*/
           )
       >
 {

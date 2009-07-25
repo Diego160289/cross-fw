@@ -210,6 +210,23 @@ namespace IFaces
     DECLARE_UUID(29578a3f-8f5e-4613-b3a9-37d05caf2c0a)
   };
 
+  struct IEnvironment
+    : public IBase
+  {
+    DECLARE_UUID(4e3ef6a3-bd77-4ff9-a33f-bc9ff342bedf)
+    virtual RetCode EnumEnvironmentIFacesId(IEnum **ifaceIds) const = 0;
+    virtual RetCode GetInterface(const char *ifaceId, IBase **iface) const = 0;
+    virtual RetCode SetInterface(const char *ifaceId, IBase *iface) = 0;
+  };
+
+  struct IConfig
+    : public IBase
+  {
+    DECLARE_UUID(a06ead08-0c89-4aed-aafd-885786434ae9)
+    virtual RetCode GetValue(const char* name, IVariant **value) const = 0;
+    virtual RetCode EnumValues(IEnum **values) const = 0;
+  };
+
   struct IMessageQueue
     : public IBase
   {

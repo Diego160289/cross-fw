@@ -287,6 +287,11 @@ bool IServiceManagerImpl::BuildService(IServicePtr service)
 {
   try
   {
+    Common::RefObjQIPtr<IFaces::IEnvironment> ServiceEnvironment(service);
+    if (ServiceEnvironment.Get())
+    {
+      int k = 0;
+    }
     Common::RefObjPtr<IFaces::IVarMap> VarMap = IFacesImpl::CreateVarMap<System::Mutex>();
     IFacesImpl::IVarMapHelper Params(VarMap);
     Params.AddVariable(IFacesImpl::PrmClassFactorry, Common::RefObjQIPtr<IFaces::IBase>(Factory).Get());
