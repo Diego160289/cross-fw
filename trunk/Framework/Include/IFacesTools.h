@@ -253,22 +253,6 @@ namespace Common
       return retOk;
     }
 
-    virtual ISynObj& GetSynObj() const
-    {
-      return *SynObj.Get();
-    }
-    virtual RefObjPtr<IFaces::IBase> GetThisIBase() const
-    {
-      IFaces::IBase *ThisIBasePtr = static_cast<IFaces::IBase*>
-        (
-          const_cast<IBaseStub*>
-          (
-            static_cast<const IBaseStub*>(this)
-          )
-        );
-      return RefObjPtr<IFaces::IBase>(ThisIBasePtr);
-    }
-
     typedef IBaseImpl<T> TBaseImpl;
     typedef RefObjPtr<TBaseImpl> TBaseImplPtr;
 
@@ -303,6 +287,9 @@ namespace Common
       , IsSuccessfulCreated(false)
     {
     }
+    virtual ~IBaseImpl()
+    {
+    }
     unsigned long InternalAddRef()
     {
       ModuleCounter::GetInstance().Inc();
@@ -326,8 +313,20 @@ namespace Common
     }
 
   protected:
-    virtual ~IBaseImpl()
+    virtual ISynObj& GetSynObj() const
     {
+      return *SynObj.Get();
+    }
+    virtual RefObjPtr<IFaces::IBase> GetThisIBase() const
+    {
+      IFaces::IBase *ThisIBasePtr = static_cast<IFaces::IBase*>
+        (
+          const_cast<IBaseStub*>
+          (
+            static_cast<const IBaseStub*>(this)
+          )
+        );
+      return RefObjPtr<IFaces::IBase>(ThisIBasePtr);
     }
   };
 
