@@ -13,13 +13,13 @@
 class ITestServiceImpl
   : public Common::ServiceBase
       <
-        TYPE_LIST_4
-          (
-            IFaces::ITestService,
-            IFacesImpl::ILogObjectImpl,
-            IFacesImpl::IPersistsPropertiesImpl,
-            IFacesImpl::IEnvironmentImpl/*Ex<IFaces::IConfig>*/
-          )
+      Common::TypeListAdapter
+        <
+          IFaces::ITestService,
+          IFacesImpl::IPersistsPropertiesImpl,
+          IFacesImpl::ILogObjectImpl,
+          IFacesImpl::IEnvironmentImplEx<IFaces::IConfig>
+        >
       >
 {
 

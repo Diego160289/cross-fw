@@ -132,28 +132,6 @@ namespace Common
   };
 
   template
-    <
-      typename TFirst,
-      typename TSecond,
-      bool First
-    >
-  struct SelectType
-  {
-    typedef TFirst Type;
-  };
-
-  template
-  <
-    typename TFirst,
-    typename TSecond
-  >
-  struct SelectType<TFirst, TSecond, false>
-  {
-    typedef TSecond Type;
-  };
-
-
-  template
   <
     typename T,
     typename TList
