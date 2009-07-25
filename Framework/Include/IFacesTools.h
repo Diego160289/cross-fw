@@ -168,7 +168,7 @@ namespace Common
       void *Ret = QueryIFaceFromInherited
                     <
                       T,
-                      SelectType
+                      typename SelectType
                         <
                           CurType,
                           typename TList::Tail,
@@ -184,7 +184,7 @@ namespace Common
     }
     static void* QueryImpl(const char *ifaceId, T *coClass, BoolType<true>)
     {
-      return QueryIFaceFromInherited<T, TList::TExportList>::Query(ifaceId, coClass);
+      return QueryIFaceFromInherited<T, typename TList::TExportList>::Query(ifaceId, coClass);
     }
     static void* QueryImpl(const char *ifaceId, T *coClass, BoolType<false>)
     {
