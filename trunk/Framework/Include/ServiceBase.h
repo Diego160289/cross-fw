@@ -44,13 +44,12 @@ namespace Common
     }
     virtual RetCode Init()
     {
-      Common::ISyncObject Locker(this->GetSynObj());
       return OnInit() ? retOk : retFail;
     }
     virtual void Done()
     {
-      Common::ISyncObject Locker(this->GetSynObj());
       OnDone();
+      Common::ISyncObject Locker(this->GetSynObj());
       ParamsMap.Release();
     }
     virtual bool CanDone() const
@@ -61,7 +60,6 @@ namespace Common
 
     void MarkToDoneService()
     {
-      Common::ISyncObject Locker(this->GetSynObj());
       CanDoneService = true;
     }
     template <typename T>
