@@ -50,6 +50,8 @@ namespace IFacesImpl
   void IEnumImpl::AddItem(IBasePtr item)
   {
     Common::ISyncObject Locker(this->GetSynObj());
+    if (!item.Get())
+      throw IEnumHelperException("Empty item");
     Items.push_back(item);
     IsModified = true;
   }

@@ -132,36 +132,63 @@ namespace Common
   };
 
   template
+    <
+      typename TFirst,
+      typename TSecond,
+      bool First
+    >
+  struct SelectType
+  {
+    typedef TFirst Type;
+  };
+
+  template
+  <
+    typename TFirst,
+    typename TSecond
+  >
+  struct SelectType<TFirst, TSecond, false>
+  {
+    typedef TSecond Type;
+  };
+
+
+  template
   <
     typename T,
     typename TList
   >
   struct QueryIFaceFromInherited
   {
-    static void* Query(const char *ifaceId, T *coClass,
-                        bool expandCoClassList,
-                        BoolType<false>)
+    static void* Query(const char *ifaceId, T *coClass)
     {
       typedef typename TList::Head CurType;
       if (IsEqualUUID(ifaceId, CurType::GetUUID()))
         return static_cast<CurType*>(coClass);
-      if (expandCoClassList)
-      {
-        return QueryIFaceFromInherited<T, typename TList::Tail>::Query(
-          ifaceId, coClass, true, BoolType<!!IsBaseOf<ICoClassBase, CurType>::IsBase>()
-          );
-      }
-      return 0;
-    }
-    static void* Query(const char *ifaceId, T *coClass,
-                        bool expandCoClassList,
-                        BoolType<true>)
-    {
-      typedef typename TList::Head CurType;
-      typedef typename CurType::TExportList CoClassBaseList;
-      return QueryIFaceFromInherited<T, CoClassBaseList>::Query(
-        ifaceId, coClass, false, BoolType<false>()
+      void *Ret = QueryIFaceFromInherited
+                    <
+                      T,
+                      SelectType
+                        <
+                          CurType,
+                          typename TList::Tail,
+                          IsBaseOf<ICoClassBase, CurType>::IsBase
+                        >::Type
+                    >::QueryImpl
+        (
+          ifaceId, coClass, BoolType<IsBaseOf<ICoClassBase, CurType>::IsBase>()
         );
+      if (Ret)
+        return Ret;
+      return QueryIFaceFromInherited<T, typename TList::Tail>::Query(ifaceId, coClass);
+    }
+    static void* QueryImpl(const char *ifaceId, T *coClass, BoolType<true>)
+    {
+      return QueryIFaceFromInherited<T, TList::TExportList>::Query(ifaceId, coClass);
+    }
+    static void* QueryImpl(const char *ifaceId, T *coClass, BoolType<false>)
+    {
+      return QueryIFaceFromInherited<T, TList>::Query(ifaceId, coClass);
     }
   };
 
@@ -171,11 +198,15 @@ namespace Common
     >
   struct QueryIFaceFromInherited<T, NullType>
   {
-    static void *Query(const char *, T *, bool, BoolType<false>)
+    static void *Query(const char *, T *)
     {
       return 0;
     }
-    static void *Query(const char *, T *, bool, BoolType<true>)
+    static void *QueryImpl(const char *, T *, BoolType<false>)
+    {
+      return 0;
+    }
+    static void *QueryImpl(const char *, T *, BoolType<true>)
     {
       return 0;
     }
@@ -214,7 +245,7 @@ namespace Common
       else
       {
         if (!(*iface = QueryIFaceFromInherited<T, typename T::TExportList>::Query(
-          ifaceId, static_cast<T*>(this), true, BoolType<false>()
+          ifaceId, static_cast<T*>(this)
           )))
           return retNoInterface;
       }

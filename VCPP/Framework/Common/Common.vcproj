@@ -162,6 +162,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\Framework\Sources\Common\IEnvironmentImpl.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\Framework\Sources\Common\INamedVariableImpl.cpp"
 			>
 		</File>
