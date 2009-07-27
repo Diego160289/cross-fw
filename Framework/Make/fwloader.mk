@@ -3,7 +3,7 @@ PROJECT := FWLoader
 LIBS += TinyXml
 
 ifeq ($(OS), Nix)
-    SYSLIBS += dl
+    SYSLIBS += dl pthread
 else
     SYSLIBS +=
 endif

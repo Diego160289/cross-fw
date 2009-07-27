@@ -13,6 +13,7 @@ ITestServiceImpl::ITestServiceImpl()
 
 bool ITestServiceImpl::OnInit()
 {
+  Common::ISyncObject Locker(GetSynObj());
   Common::RefObjQIPtr<IFaces::ILogObject> Log(GetThisIBase());
   if (Log.Get())
     std::cout << "Success get log" << std::endl;
