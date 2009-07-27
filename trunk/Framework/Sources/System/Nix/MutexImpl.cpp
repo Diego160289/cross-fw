@@ -5,8 +5,16 @@ namespace System
 {
   Mutex::MutexImpl::MutexImpl()
   {
-    if (pthread_mutex_init(&MutexHandle, 0))
+    if (pthread_mutexattr_settype(&MutexAttr, PTHREAD_MUTEX_RECURSIVE_NP) ||
+        pthread_mutex_init(&MutexHandle, &MutexAttr))
+    {
       throw MutexException("Can't create mutex");
+    }
+    if (pthread_mutexattr_destroy(&MutexAttr))
+    {
+      pthread_mutex_destroy(&MutexHandle);
+      throw MutexException("Can't create mutex");
+    }
   }
 
   Mutex::MutexImpl::~MutexImpl()

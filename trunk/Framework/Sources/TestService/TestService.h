@@ -18,7 +18,15 @@ class ITestServiceImpl
           IFaces::ITestService,
           IFacesImpl::IPersistsPropertiesImpl,
           IFacesImpl::ILogObjectImpl,
-          IFacesImpl::IEnvironmentImplEx<IFaces::IConfig>
+          IFacesImpl::IEnvironmentImplEx
+            <
+              Common::TypeListAdapter
+                <
+                  IFaces::IClassFactory,
+                  IFaces::IServiceManager,
+                  IFaces::IConfig
+                >
+            >
         >
       >
 {

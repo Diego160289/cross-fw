@@ -16,6 +16,7 @@ namespace System
     void Lock();
     void Unlock();
   private:
+    pthread_mutexattr_t MutexAttr;
     pthread_mutex_t MutexHandle;
   };
 }

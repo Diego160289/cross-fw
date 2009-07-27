@@ -54,7 +54,6 @@ namespace IFacesImpl
 
   void IEnvironmentImpl::AddIFaceId(const std::string &ifaceId)
   {
-    Common::ISyncObject Locker(GetSynObj());
     if (Interfaces.find(ifaceId) != Interfaces.end())
       throw IEnvironmentImplException("IFace id already exists");
     Interfaces[ifaceId];

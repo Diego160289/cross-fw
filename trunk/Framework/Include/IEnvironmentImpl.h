@@ -38,6 +38,7 @@ namespace IFacesImpl
 
 
     void AddIFaceId(const std::string &ifaceId);
+
     template <typename T>
     Common::RefObjPtr<T> GetInterface() const
     {
@@ -62,6 +63,9 @@ namespace IFacesImpl
   public:
     IEnvironmentImplEx()
     {
+      const Common::StringVector IDs = Common::IFacesIdFromList<TNecessaryIFacesList>::Get();
+      for (Common::StringVector::const_iterator i = IDs.begin() ; i != IDs.end() ; ++i)
+        AddIFaceId(*i);
     }
   };
 
