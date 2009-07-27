@@ -8,8 +8,11 @@
 #include "Pointers.h"
 #include "MutexStub.h"
 #include "IsBaseOf.h"
+#include "Typedefs.h"
 
 #include <stdexcept>
+#include <algorithm>
+#include <iterator>
 
 
 namespace Common
@@ -19,6 +22,30 @@ namespace Common
   using IFaces::retFalse;
   using IFaces::retFail;
   using IFaces::retNoInterface;
+
+
+  template <typename TList>
+  struct IFacesIdFromList
+  {
+    static const StringVector Get()
+    {
+      StringVector Ret;
+      typedef typename TList::Head CurIFace;
+      Ret.push_back(CurIFace::GetUUID());
+      StringVector IDs = IFacesIdFromList<typename TList::Tail>::Get();
+      std::copy(IDs.begin(), IDs.end(), std::back_inserter(Ret));
+      return Ret;
+    }
+  };
+
+  template <>
+  struct IFacesIdFromList<NullType>
+  {
+    static const StringVector Get()
+    {
+      return StringVector();
+    }
+  };
 
 
   template <typename TList>
