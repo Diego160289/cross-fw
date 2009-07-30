@@ -9,8 +9,10 @@ CXX = g++
 
 CC = cc
 
+FWDIR := ./
+
 ifeq ($(OS), Win)
-	MDCOMMAND := ./Sources/MyWinMkDir/MyWinMkDir.exe
+	MDCOMMAND := $(FWDIR)Sources/MyWinMkDir/MyWinMkDir.exe
 else
 	MDCOMMAND := md
 endif
