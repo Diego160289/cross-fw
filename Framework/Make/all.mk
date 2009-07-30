@@ -1,4 +1,4 @@
-all: make_bin
+all: create_md_command make_bin
 
 make_bin: make_libs make_dlls make_tools
 	make TARGETTYPE=Exe -f ./Make/fwloader.mk
@@ -20,3 +20,14 @@ make_dlls:
 
 make_tools:
 	make TARGETTYPE=Exe -f ./Make/cmpregclient.mk
+
+ifeq ($(OS), Win)
+create_md_command: ./Sources/MyWinMkDir/MyWinMkDir.cpp
+	g++ -O3 -Wall \
+	./Sources/MyWinMkDir/MyWinMkDir.cpp \
+	-o ./Sources/MyWinMkDir/MyWinMkDir.exe
+
+else
+create_md_command:
+
+endif
