@@ -1,4 +1,4 @@
-all: create_md_command make_bin
+all: create_md_command make_bin	clean
 
 make_bin: make_libs make_dlls make_tools
 	make TARGETTYPE=Exe -f ./Make/fwloader.mk
@@ -30,4 +30,13 @@ create_md_command: ./Sources/MyWinMkDir/MyWinMkDir.cpp
 else
 create_md_command:
 
+endif
+
+ifeq ($(OS), Win)
+clean:
+	rd /S /Q .\Objects
+
+else
+clean:
+	rm ./Objects
 endif
