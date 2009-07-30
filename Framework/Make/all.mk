@@ -1,3 +1,5 @@
+FWDIR := ./
+
 all: create_md_command make_bin	clean
 
 make_bin: make_libs make_dlls make_tools
@@ -24,8 +26,8 @@ make_tools:
 ifeq ($(OS), Win)
 create_md_command: ./Sources/MyWinMkDir/MyWinMkDir.cpp
 	g++ -O3 -Wall \
-	./Sources/MyWinMkDir/MyWinMkDir.cpp \
-	-o ./Sources/MyWinMkDir/MyWinMkDir.exe
+	$(FWDIR)Sources/MyWinMkDir/MyWinMkDir.cpp \
+	-o $(FWDIR)Sources/MyWinMkDir/MyWinMkDir.exe
 
 else
 create_md_command:
@@ -35,10 +37,9 @@ endif
 ifeq ($(OS), Win)
 clean:
 	rd /S /Q .\Objects
-	del .\Sources\MyWinMkDir\MyWinMkDir.exe
 
 else
 clean:
-	rm ./Objects
-	rm ./Sources/MyWinMkDir/MyWinMkDir.exe
+	rm $(FWDIR)Objects
+
 endif
