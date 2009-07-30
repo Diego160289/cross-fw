@@ -9,6 +9,12 @@ CXX = g++
 
 CC = cc
 
+ifeq ($(OS), Win)
+	MDCOMMAND := ./Sources/MyWinMkDir/MyWinMkDir.exe
+else
+	MDCOMMAND := md
+endif
+
 ifeq ($(MAKETYPE), Debug)
 	CXXFLAGS = -O0 -g3 -Wall -D_DEBUG \
 		-fpermissive -fmessage-length=0
@@ -92,7 +98,7 @@ OBJC = $(C:.c=.o)
 	-o $(OBJDIR)/$(subst /$(OS)/,Platform/,$(findstring /$(OS)/,$^))$(notdir $@)
 
 ifeq ($(TARGETTYPE), Lib)
-all: $(OBJ) $(OBJC)
+all: mk_dirs $(OBJ) $(OBJC)
 	ar cr \
 	$(TARGETDIR)/$(TARGET) \
 	$(wildcard $(OBJDIR)/Platform/*.o) \
@@ -101,7 +107,7 @@ all: $(OBJ) $(OBJC)
 endif
 
 ifeq ($(TARGETTYPE), Dll)
-all: $(OBJ) $(OBJC)
+all: mk_dirs $(OBJ) $(OBJC)
 	$(CXX) \
 	$(CXXFLAGS) -shared $(LINKCXXFLAGS) \
 	$(wildcard $(OBJDIR)/Platform/*.o) \
@@ -114,7 +120,7 @@ all: $(OBJ) $(OBJC)
 endif
 
 ifeq ($(TARGETTYPE), Exe)
-all: $(OBJ) $(OBJC)
+all: mk_dirs $(OBJ) $(OBJC)
 	$(CXX) \
 	$(CXXFLAGS) $(LINKCXXFLAGS) \
 	$(wildcard $(OBJDIR)/Platform/*.o) \
@@ -125,3 +131,8 @@ all: $(OBJ) $(OBJC)
 	-o $(TARGETDIR)/$(TARGET)
 	@echo Success $(CURCFG)
 endif
+
+mk_dirs:
+	$(MDCOMMAND) $(OBJDIR)
+	$(MDCOMMAND) $(OBJDIR)/Platform
+	$(MDCOMMAND) $(TARGETDIR) 
