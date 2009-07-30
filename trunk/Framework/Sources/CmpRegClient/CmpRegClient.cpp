@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
       if (Pos == std::string::npos)
       {
         Info.SetModuleName(ModuleName);
-        Info.SetLocation("./");
+        Info.SetLocation(".");
       }
       else
       {

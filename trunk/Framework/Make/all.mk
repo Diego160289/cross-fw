@@ -35,8 +35,10 @@ endif
 ifeq ($(OS), Win)
 clean:
 	rd /S /Q .\Objects
+	del .\Sources\MyWinMkDir\MyWinMkDir.exe
 
 else
 clean:
 	rm ./Objects
+	rm ./Sources/MyWinMkDir/MyWinMkDir.exe
 endif
