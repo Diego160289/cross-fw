@@ -10,11 +10,12 @@ namespace IFaces
     : public IBase
   {
     DECLARE_UUID(28505b5a-25fb-47e9-b736-c60aab73b949)
-    virtual unsigned GetWindowCount() const = 0;
-    virtual RetCode CreateWindow(unsigned *index) = 0;
-    virtual RetCode GetCurWindowIndex(unsigned *index) const = 0;
-    virtual void* GetCurWindowHandle() = 0;
-    virtual RetCode SetCurWindow(unsigned index) = 0;
+    virtual unsigned GetWndCount() const = 0;
+    virtual RetCode CreateWnd(unsigned *index) = 0;
+    virtual RetCode DestroyWnd(unsigned index) = 0;
+    virtual RetCode GetCurWndIndex(unsigned *index) const = 0;
+    virtual void* GetCurWndHandle() = 0;
+    virtual RetCode SetCurWnd(unsigned index) = 0;
   };
 
   struct IDisplay

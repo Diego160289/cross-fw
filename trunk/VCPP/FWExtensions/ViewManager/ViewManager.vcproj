@@ -194,6 +194,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\FWExtensions\Sources\ViewManager\ViewFrameImpl.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\FWExtensions\Sources\ViewManager\ViewFrameImpl.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\FWExtensions\Sources\ViewManager\ViewManager.cpp"
 			>
 		</File>
