@@ -4,6 +4,7 @@
 #include"Exceptions.h"
 #include "IFaces.h"
 #include "RefObjPtr.h"
+#include "RefObjQIPtr.h"
 #include "Pointers.h"
 #include "IVariantImpl.h"
 #include "IEnumImpl.h"
@@ -140,6 +141,28 @@ namespace Common
       ComponentInfoPoolPtr GetAllComponentsInfo() const;
     private:
       Registry Reg;
+    };
+
+    DECLARE_RUNTIME_EXCEPTION(ClassFactory)
+
+    class ClassFactory
+    {
+    public:
+      typedef RefObjPtr<IFaces::IClassFactory> IClassFactoryPtr;
+      ClassFactory(IClassFactoryPtr factory);
+      template <typename T>
+      RefObjPtr<T> CreateObject(const char *classId)
+      {
+        RefObjPtr<IFaces::IBase> Obj;
+        if (Factory->CreateObject(classId, Obj.GetPPtr()) != retOk)
+          throw ClassFactoryException("Can't create object");
+        RefObjQIPtr<T> Ret(Obj);
+        if (!Ret.Get())
+          throw ClassFactoryException("Interface not found");
+        return Ret;
+      }
+    private:
+      IClassFactoryPtr Factory;
     };
   }
 }

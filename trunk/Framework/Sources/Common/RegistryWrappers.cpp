@@ -1,5 +1,4 @@
 #include "ComponentWrappers.h"
-#include "RefObjQIPtr.h"
 
 #include <sstream>
 
@@ -397,6 +396,12 @@ namespace Common
           Info->AddClassId((const char*)(*j)->GetKeyValue());
       }
       return RetPool;
+    }
+
+
+    ClassFactory::ClassFactory(IClassFactoryPtr factory)
+      : Factory(factory)
+    {
     }
   }
 }

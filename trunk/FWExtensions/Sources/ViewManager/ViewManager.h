@@ -2,8 +2,18 @@
 #define __VIEWMANAGER_H__
 
 #include "../../Framework/Include/IFacesTools.h"
+#include "../../Framework/Include/Pointers.h"
 
 #include "WFExtensions.h"
+
+#include "SysDisplays.h"
+
+using IFaces::RetCode;
+using IFaces::retFail;
+using IFaces::retOk;
+using IFaces::retFalse;
+using IFaces::retBadParam;
+using IFaces::retNotImpl;
 
 
 class IViewManagerImpl
@@ -20,7 +30,12 @@ public:
   bool FinalizeCreate();
   void BeforeDestroy();
 
+  // IViewManager
+  virtual unsigned GetDisplayCount() const;
+  virtual RetCode GetDisplay(unsigned index, IFaces::IDisplay **display);
+
 private:
+  Common::SharedPtr<SysDisplays> Displays;
 };
 
 #endif  // !__VIEWMANAGER_H__
