@@ -10,6 +10,7 @@ namespace IFaces
     : public IBase
   {
     DECLARE_UUID(28505b5a-25fb-47e9-b736-c60aab73b949)
+    virtual RetCode Show(bool isVisible) = 0;
     virtual unsigned GetWndCount() const = 0;
     virtual RetCode CreateWnd(unsigned *index) = 0;
     virtual RetCode DestroyWnd(unsigned index) = 0;

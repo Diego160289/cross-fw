@@ -33,6 +33,7 @@ bool IMainServiceImpl::OnInit()
     {
       return false;
     }
+    /*
     unsigned WindowIndex = 0;
     if (Frame->CreateWnd(&WindowIndex) != retOk)
     {
@@ -41,7 +42,8 @@ bool IMainServiceImpl::OnInit()
     if (Frame->SetCurWnd(WindowIndex) != retOk)
     {
       return false;
-    }
+    }*/
+    Frame->Show(true);
   }
   catch (std::exception &)
   {
