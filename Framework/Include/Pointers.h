@@ -33,6 +33,19 @@ namespace Common
       if (Counter)
         (*Counter)++;
     }
+    SharedPtr& operator = (T *ptr)
+    {
+      SharedPtr Tmp(ptr);
+      Swap(Tmp);
+      return *this;
+    }
+    template <typename TOther>
+    SharedPtr& operator = (TOther *ptr)
+    {
+      SharedPtr<T> Tmp(ptr);
+      Swap(Tmp);
+      return *this;
+    }
     SharedPtr& operator = (const SharedPtr &ptr)
     {
       SharedPtr Tmp(ptr);
