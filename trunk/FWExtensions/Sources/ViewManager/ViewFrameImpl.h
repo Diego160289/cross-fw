@@ -2,11 +2,12 @@
 #define __VIEWFRAMEIMPL_H__
 
 #include "../../Framework/Include/IFacesTools.h"
+#include "../../Framework/Include/Pointers.h"
 
 #include "WFExtensions.h"
 
 #include "SysDisplays.h"
-
+#include "FrameImpl.h"
 
 using IFaces::RetCode;
 using IFaces::retFail;
@@ -26,10 +27,13 @@ public:
 
   IViewFrameImpl();
 
+  void Create(Common::SharedPtr<SysDisplays::SysDisplay> display);
+
   bool FinalizeCreate();
   void BeforeDestroy();
 
   // IViewFrame
+  virtual RetCode Show(bool isVisible);
   virtual unsigned GetWndCount() const;
   virtual RetCode CreateWnd(unsigned *index);
   virtual RetCode DestroyWnd(unsigned index);
@@ -38,6 +42,7 @@ public:
   virtual RetCode SetCurWnd(unsigned index);
 
 private:
+  Common::SharedPtr<FrameImpl> Frame;
 };
 
 #endif // !__VIEWFRAMEIMPL_H__

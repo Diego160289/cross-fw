@@ -8,6 +8,8 @@
 
 #include "SysDisplays.h"
 
+#include "ViewFrameImpl.h"
+
 
 using IFaces::RetCode;
 using IFaces::retFail;
@@ -40,6 +42,7 @@ public:
 
 private:
   Common::SharedPtr<SysDisplays::SysDisplay> Display;
+  Common::RefObjPtr<IViewFrameImpl> Frame;
 };
 
 #endif // !__DISPLAYIMPL_H__

@@ -177,6 +177,14 @@
 			Name="Win"
 			>
 			<File
+				RelativePath="..\..\..\FWExtensions\Sources\ViewManager\Win\FrameImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\FWExtensions\Sources\ViewManager\Win\FrameImpl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\FWExtensions\Sources\ViewManager\Win\SysDisplays.cpp"
 				>
 			</File>
