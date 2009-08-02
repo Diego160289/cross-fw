@@ -2,6 +2,15 @@
 #define __MAINSERVICE_H__
 
 #include "../../Framework/Include/ServiceBase.h"
+#include "../../FWExtensions/Include/WFExtensions.h"
+
+
+using IFaces::RetCode;
+using IFaces::retFail;
+using IFaces::retOk;
+using IFaces::retFalse;
+using IFaces::retBadParam;
+using IFaces::retNotImpl;
 
 
 class IMainServiceImpl
@@ -19,6 +28,7 @@ public:
   virtual void OnDone();
 
 private:
+  Common::RefObjPtr<IFaces::IViewManager> ViewManager;
 };
 
 #endif  // !__MAINSERVICE_H__
