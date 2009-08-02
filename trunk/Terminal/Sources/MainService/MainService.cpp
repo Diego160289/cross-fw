@@ -16,6 +16,7 @@ void IMainServiceImpl::BeforeDestroy()
 
 bool IMainServiceImpl::OnInit()
 {
+  MarkToDoneService();
   return true;
 }
 
