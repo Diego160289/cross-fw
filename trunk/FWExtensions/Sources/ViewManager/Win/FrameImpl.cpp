@@ -27,7 +27,7 @@ private:
     Wnd.hInstance = GetModuleHandle(0);
     Wnd.hIcon = 0;
     Wnd.hCursor = LoadCursor(0, IDC_ARROW);
-    Wnd.hbrBackground = reinterpret_cast<HBRUSH>(GetStockObject(NULL_BRUSH));
+    Wnd.hbrBackground = reinterpret_cast<HBRUSH>(GetStockObject(/*NULL_BRUSH*/WHITE_BRUSH));
     Wnd.lpszMenuName = 0;
     Wnd.lpszClassName = FrameClassName;
     Wnd.hIconSm = 0;
