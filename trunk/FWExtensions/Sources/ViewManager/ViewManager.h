@@ -35,7 +35,7 @@ public:
   virtual RetCode GetDisplay(unsigned index, IFaces::IDisplay **display);
 
 private:
-  Common::SharedPtr<SysDisplays> Displays;
+  Common::AutoPtr<SysDisplays> Displays;
 };
 
 #endif  // !__VIEWMANAGER_H__

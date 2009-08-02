@@ -113,6 +113,19 @@ namespace Common
     {
       ptr.Ptr = 0;
     }
+    AutoPtr& operator = (T *ptr)
+    {
+      Release();
+      Ptr = ptr;
+      return *this;
+    }
+    template <typename TOther>
+    AutoPtr& operator = (TOther *ptr)
+    {
+      Release();
+      Ptr = static_cast<T*>(ptr);
+      return *this;
+    }
     AutoPtr& operator = (AutoPtr &ptr)
     {
       Release();

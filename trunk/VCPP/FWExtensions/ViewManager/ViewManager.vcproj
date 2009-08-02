@@ -173,6 +173,18 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="Win"
+			>
+			<File
+				RelativePath="..\..\..\FWExtensions\Sources\ViewManager\Win\SysDisplays.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\FWExtensions\Sources\ViewManager\Win\SysDisplays.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\..\FWExtensions\Sources\ViewManager\ViewManager.cpp"
 			>
