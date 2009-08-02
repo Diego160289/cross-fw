@@ -34,11 +34,11 @@ bool IMainServiceImpl::OnInit()
       return false;
     }
     unsigned WindowIndex = 0;
-    if (Frame->CreateWindow(&WindowIndex) != retOk)
+    if (Frame->CreateWnd(&WindowIndex) != retOk)
     {
       return false;
     }
-    if (Frame->SetCurWindow(WindowIndex) != retOk)
+    if (Frame->SetCurWnd(WindowIndex) != retOk)
     {
       return false;
     }
