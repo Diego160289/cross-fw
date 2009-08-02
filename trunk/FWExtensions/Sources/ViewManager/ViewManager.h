@@ -4,9 +4,12 @@
 #include "../../Framework/Include/IFacesTools.h"
 #include "../../Framework/Include/Pointers.h"
 
+#include <map>
+
 #include "WFExtensions.h"
 
 #include "SysDisplays.h"
+#include "DisplayImpl.h"
 
 using IFaces::RetCode;
 using IFaces::retFail;
@@ -35,7 +38,10 @@ public:
   virtual RetCode GetDisplay(unsigned index, IFaces::IDisplay **display);
 
 private:
-  Common::AutoPtr<SysDisplays> Displays;
+  Common::SharedPtr<SysDisplays> DisplayHolder;
+  typedef Common::RefObjPtr<IDisplayImpl> DisplayPtr;
+  typedef std::map<unsigned, DisplayPtr> DisplayPool;
+  DisplayPool Displays;
 };
 
 #endif  // !__VIEWMANAGER_H__

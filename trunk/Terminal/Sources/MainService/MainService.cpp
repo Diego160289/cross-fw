@@ -29,7 +29,7 @@ bool IMainServiceImpl::OnInit()
       return false;
     }
     Common::RefObjPtr<IFaces::IViewFrame> Frame;
-    if (!Display->CreateFrame(Frame.GetPPtr()) != retOk)
+    if (Display->CreateFrame(Frame.GetPPtr()) != retOk)
     {
       return false;
     }

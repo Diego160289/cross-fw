@@ -186,6 +186,14 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\..\..\FWExtensions\Sources\ViewManager\DisplayImpl.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\FWExtensions\Sources\ViewManager\DisplayImpl.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\FWExtensions\Sources\ViewManager\ViewManager.cpp"
 			>
 		</File>
