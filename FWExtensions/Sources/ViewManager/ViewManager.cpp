@@ -7,16 +7,19 @@ IViewManagerImpl::IViewManagerImpl()
 
 bool IViewManagerImpl::FinalizeCreate()
 {
+  Displays = new SysDisplays;
   return true;
 }
 
 void IViewManagerImpl::BeforeDestroy()
 {
+  Displays.Release();
 }
 
 unsigned IViewManagerImpl::GetDisplayCount() const
 {
-  return 0;
+  Common::ISyncObject Locker(GetSynObj());
+  return static_cast<unsigned>(Displays->GetDisplays().size());
 }
 
 RetCode IViewManagerImpl::GetDisplay(unsigned index, IFaces::IDisplay **display)
