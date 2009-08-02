@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
-	Name="ViewManager"
-	ProjectGUID="{1458C1A1-9EE4-40EF-8633-824F19DFDA99}"
-	RootNamespace="ViewManager"
+	Name="MainService"
+	ProjectGUID="{A1DB49E3-1681-4402-8861-16EFB7C71EB0}"
+	RootNamespace="MainService"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -40,8 +40,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);&quot;$(SolutionDir)\..\..\FWExtensions\Include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;VIEWMANAGER_EXPORTS"
+				AdditionalIncludeDirectories="$(SolutionDir)"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MAINSERVICE_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -117,8 +117,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\Framework\Include&quot;;&quot;$(SolutionDir)\..\..\FWExtensions\Include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;VIEWMANAGER_EXPORTS"
+				AdditionalIncludeDirectories="$(SolutionDir)"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MAINSERVICE_EXPORTS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -174,15 +174,15 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\..\FWExtensions\Sources\ViewManager\ViewManager.cpp"
+			RelativePath="..\..\..\Terminal\Sources\MainService\MainService.cpp"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\FWExtensions\Sources\ViewManager\ViewManager.h"
+			RelativePath="..\..\..\Terminal\Sources\MainService\MainService.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\FWExtensions\Sources\ViewManager\ViewManagerModule.cpp"
+			RelativePath="..\..\..\Terminal\Sources\MainService\MainServiceModule.cpp"
 			>
 		</File>
 	</Files>
