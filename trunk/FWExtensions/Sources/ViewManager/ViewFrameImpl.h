@@ -38,7 +38,7 @@ public:
   virtual RetCode CreateWnd(unsigned *index);
   virtual RetCode DestroyWnd(unsigned index);
   virtual RetCode GetCurWndIndex(unsigned *index) const;
-  virtual void* GetCurWndHandle();
+  virtual void* GetCurWnd();
   virtual RetCode SetCurWnd(unsigned index);
 
 private:

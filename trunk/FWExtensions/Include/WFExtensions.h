@@ -15,7 +15,7 @@ namespace IFaces
     virtual RetCode CreateWnd(unsigned *index) = 0;
     virtual RetCode DestroyWnd(unsigned index) = 0;
     virtual RetCode GetCurWndIndex(unsigned *index) const = 0;
-    virtual void* GetCurWndHandle() = 0;
+    virtual void* GetCurWnd() = 0;
     virtual RetCode SetCurWnd(unsigned index) = 0;
   };
 
