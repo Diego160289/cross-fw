@@ -21,7 +21,7 @@ public:
     Common::ModuleHolder RegistryModule(Common::ModuleHolder::DllHolderPtr(
       new System::DllHolder(Common::GetValueSromStringMap("RegistryModuleName", params).c_str())));
     Common::RefObjQIPtr<IFaces::IRegistryCtrl> RegistryCtrl(
-      RegistryModule.CreateObject(Common::GetValueSromStringMap("RegitryClassId", params).c_str()));
+      RegistryModule.CreateObject(Common::GetValueSromStringMap("RegistryClassId", params).c_str()));
     {
       Common::Wrappers::RegistryCtrl Ctrl(RegistryCtrl);
       Ctrl.Load(Common::GetValueSromStringMap("RegistryName", params).c_str());
