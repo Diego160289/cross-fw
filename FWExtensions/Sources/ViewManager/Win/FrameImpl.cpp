@@ -283,17 +283,30 @@ bool FrameImpl::CreateWnd(unsigned *index)
 
 bool FrameImpl::DestroyWnd(unsigned index)
 {
+  WndPool::iterator Iter = Wins.find(index);
+  if (Iter == Wins.end())
+    return false;
+  if (Iter == CurWnd)
+  {
+    CurWnd->second->Show(false);
+    CurWnd = Wins.end();
+  }
+  Iter->second->Destroy();
+  Wins.erase(Iter);
   return false;
 }
 
 bool FrameImpl::GetCurWndIndex(unsigned *index) const
 {
-  return false;
+  if (CurWnd == Wins.end())
+    return false;
+  *index = CurWnd->first;
+  return true;
 }
 
 void* FrameImpl::GetCurWnd()
 {
-  return 0;
+  return CurWnd == Wins.end() ? 0 : reinterpret_cast<void*>(CurWnd->second->GetHWND());
 }
 
 bool FrameImpl::SetCurWnd(unsigned index)
