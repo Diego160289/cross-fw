@@ -40,6 +40,7 @@ namespace IFaces
     : public IBase
   {
     DECLARE_UUID(97835a53-8f31-4eeb-9485-d7b62da5d146)
+    virtual RetCode AttachFrame(IViewFrame *frame) = 0;
   };
 }
 

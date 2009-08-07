@@ -344,8 +344,8 @@ void IServiceManagerImpl::StopManager()
 
 void IServiceManagerImpl::DoneService(IServicePtr service)
 {
-  UnbuildService(service);
   service->Done();
+  UnbuildService(service);
 }
 
 void IServiceManagerImpl::StoppingServicesFunc()
