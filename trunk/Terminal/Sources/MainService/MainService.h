@@ -28,6 +28,7 @@ public:
   virtual void OnDone();
 
 private:
+  unsigned FlashServiceHandle;
   Common::RefObjPtr<IFaces::IViewManager> ViewManager;
 };
 

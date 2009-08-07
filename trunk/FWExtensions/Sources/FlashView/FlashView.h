@@ -2,8 +2,11 @@
 #define __FLASHVIEW_H__
 
 #include "../../Framework/Include/ServiceBase.h"
+#include "../../Framework/Include/Pointers.h"
 
 #include "WFExtensions.h"
+
+#include "FlashCtrlHolder.h"
 
 
 using IFaces::RetCode;
@@ -32,8 +35,11 @@ public:
   virtual void OnDone();
 
   // IFlashView
+  virtual RetCode AttachFrame(IFaces::IViewFrame *frame);
 
 private:
+  typedef Common::SharedPtr<FlashCtrlHolder> FlashCtrlHolderPtr;
+  FlashCtrlHolderPtr FlashCtrl;;
 };
 
 #endif  // !__FLASHVIEW_H__

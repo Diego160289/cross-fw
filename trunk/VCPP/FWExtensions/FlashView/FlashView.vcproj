@@ -173,6 +173,18 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="Win"
+			>
+			<File
+				RelativePath="..\..\..\FWExtensions\Sources\FlashView\Win\FlashCtrlHolder.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\FWExtensions\Sources\FlashView\Win\FlashCtrlHolder.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\..\FWExtensions\Sources\FlashView\FlashView.cpp"
 			>

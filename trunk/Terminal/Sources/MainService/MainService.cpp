@@ -2,6 +2,7 @@
 
 
 IMainServiceImpl::IMainServiceImpl()
+  : FlashServiceHandle(0)
 {
 }
 
@@ -42,6 +43,16 @@ bool IMainServiceImpl::OnInit()
     {
       return false;
     }
+    Common::RefObjPtr<IFaces::IBase> FlashCtrl;
+    if (!(FlashServiceHandle = GetServiceManager()->StartService("83ef6af0-e752-4601-87fe-90b8be229e1f", FlashCtrl.GetPPtr())))
+    {
+      return false;
+    }
+    Common::RefObjQIPtr<IFaces::IFlashView> FlashView(FlashCtrl);
+    if (!FlashView.Get())
+    {
+      return false;
+    }
     Frame->Show(true);
   }
   catch (std::exception &)
@@ -54,5 +65,7 @@ bool IMainServiceImpl::OnInit()
 
 void IMainServiceImpl::OnDone()
 {
+  if (FlashServiceHandle)
+    GetServiceManager()->StopService(FlashServiceHandle);
   ViewManager.Release();
 }
