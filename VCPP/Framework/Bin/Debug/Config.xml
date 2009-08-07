@@ -3,9 +3,9 @@
   <RegistryModuleName>
     <![CDATA[./Registry.dll]]>
   </RegistryModuleName>
-  <RegitryClassId>
+  <RegistryClassId>
     <![CDATA[cf7456c3-70c7-4a97-b8e4-f910cd2f823b]]>
-  </RegitryClassId>
+  </RegistryClassId>
   <RegistryName>
     <![CDATA[./Registry.xml]]>
   </RegistryName>
