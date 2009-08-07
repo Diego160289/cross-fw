@@ -83,36 +83,8 @@ WndRoot::WndRoot()
   ZeroMemory(&Rect, sizeof(Rect));
 }
 
-LRESULT CALLBACK WndRoot::FrameProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam)
+WndRoot::~WndRoot()
 {
-  switch (msg)
-  {
-  case WM_CREATE :
-  {
-    if (lParam)
-    {
-      LPCREATESTRUCTA CS = reinterpret_cast<LPCREATESTRUCTA>(lParam);
-      WndRoot *Impl = reinterpret_cast<FrameImpl*>(CS->lpCreateParams);
-      WndClassHolder::Instance().RegWin(wnd, Impl);
-    }
-  }
-  break;
-  default :
-    break;
-  }
-  return WndRoot::WndClassHolder::Instance().ProcessMsg(wnd, msg, wParam, lParam) ?
-    1 : ::DefWindowProcA(wnd, msg, wParam, lParam);
-}
-
-bool WndRoot::ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam)
-{
-  if (msg == WM_DESTROY)
-  {
-    WndClassHolder::Instance().UnRegWin(Wnd);
-    PostQuitMessage(0);
-    return true;
-  }
-  return false;
 }
 
 void WndRoot::Create(DWORD exStyle, LPCSTR className, LPCSTR windowName,
@@ -126,8 +98,26 @@ void WndRoot::Create(DWORD exStyle, LPCSTR className, LPCSTR windowName,
     }
 }
 
-WndRoot::~WndRoot()
+void WndRoot::CreateAndRun(DWORD exStyle, LPCSTR className, LPCSTR windowName,
+                           DWORD style, int x, int y, int width, int height,
+                           HWND parent, HMENU menu)
 {
+  ExStyle = exStyle;
+  ClassName = className;
+  WinName = windowName;
+  Style = style;
+  Rect.left = x;
+  Rect.top = y;
+  Rect.right = x + width;
+  Rect.bottom = y + height;
+  Parent = parent;
+  Menu = menu;
+  WndEvent.Reset();
+  Common::SharedPtr<System::Thread> NewWndThread(new System::Thread(Common::CreateMemberCallback(*this, &FrameImpl::WndThreadFunc)));
+  while (!WndEvent.Wait());
+  if (!IsCreated)
+    throw FrameImplException("Can't create frame");
+  WndThread = NewWndThread;
 }
 
 void WndRoot::Show(bool isVisible)
@@ -164,6 +154,27 @@ bool WndRoot::MoveWindow(int x, int y, int width, int height)
     !!::MoveWindow(Wnd, x, y, width, height, IsWindowVisible(Wnd));
 }
 
+LRESULT CALLBACK WndRoot::FrameProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+  switch (msg)
+  {
+  case WM_CREATE :
+  {
+    if (lParam)
+    {
+      LPCREATESTRUCTA CS = reinterpret_cast<LPCREATESTRUCTA>(lParam);
+      WndRoot *Impl = reinterpret_cast<FrameImpl*>(CS->lpCreateParams);
+      WndClassHolder::Instance().RegWin(wnd, Impl);
+    }
+  }
+  break;
+  default :
+    break;
+  }
+  return WndRoot::WndClassHolder::Instance().ProcessMsg(wnd, msg, wParam, lParam) ?
+    1 : ::DefWindowProcA(wnd, msg, wParam, lParam);
+}
+
 void WndRoot::WndThreadFunc()
 {
   try
@@ -188,43 +199,32 @@ void WndRoot::WndThreadFunc()
   }
 }
 
-void WndRoot::CreateAndRun(DWORD exStyle, LPCSTR className, LPCSTR windowName,
-                           DWORD style, int x, int y, int width, int height,
-                           HWND parent, HMENU menu)
+bool WndRoot::ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam)
 {
-  ExStyle = exStyle;
-  ClassName = className;
-  WinName = windowName;
-  Style = style;
-  Rect.left = x;
-  Rect.top = y;
-  Rect.right = x + width;
-  Rect.bottom = y + height;
-  Parent = parent;
-  Menu = menu;
-  WndEvent.Reset();
-  Common::SharedPtr<System::Thread> NewWndThread(new System::Thread(Common::CreateMemberCallback(*this, &FrameImpl::WndThreadFunc)));
-  while (!WndEvent.Wait());
-  if (!IsCreated)
-    throw FrameImplException("Can't create frame");
-  WndThread = NewWndThread;
+  if (msg == WM_DESTROY)
+  {
+    WndClassHolder::Instance().UnRegWin(Wnd);
+    PostQuitMessage(0);
+    return true;
+  }
+  return false;
 }
 
+
+const char ChildView::ChildViewClassName[] = "ViewManaqerChildViewWnd";
 
 void ChildView::Create(LPCRECT r, WndRoot *parent)
 {
   WndClassHolder::Instance().RegWndClass(ChildViewClassName);
-  CreateAndRun(0, ChildViewClassName, "", WS_CHILD | WS_BORDER,
-    r->left + 100, r->top + 100, r->right - r->left - 200, r->bottom - r->top - 200,
+  CreateAndRun(0, ChildViewClassName, "", WS_CHILD,
+    r->left, r->top, r->right - r->left, r->bottom - r->top,
     parent->GetHWND(), 0);
 }
 
 void ChildView::Destroy()
 {
-  ::DestroyWindow(GetHWND());
+  SendMessage(GetHWND(), WM_CLOSE, 0, 0);
 }
-
-const char ChildView::ChildViewClassName[] = "ViewManaqerChildViewWnd";
 
 
 const char FrameImpl::FrameClassName[] = "ViewManagerWnd";
@@ -254,7 +254,7 @@ void FrameImpl::Destroy()
   for (WndPool::iterator i = Wins.begin() ; i != Wins.end() ; ++i)
     i->second->Destroy();
   Wins.clear();
-  ::DestroyWindow(GetHWND());
+  SendMessage(GetHWND(), WM_CLOSE, 0, 0);
 }
 
 unsigned FrameImpl::GetWndCount() const
@@ -301,6 +301,7 @@ bool FrameImpl::SetCurWnd(unsigned index)
   WndPool::iterator Iter = Wins.find(index);
   if (Iter == Wins.end())
     return false;
+  CurWnd->second->Show(false);
   CurWnd = Iter;
   CurWnd->second->Show(true);
   return true;
