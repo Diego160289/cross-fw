@@ -3,8 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ViewManager", "ViewManager\ViewManager.vcproj", "{1458C1A1-9EE4-40EF-8633-824F19DFDA99}"
 	ProjectSection(ProjectDependencies) = postProject
-		{BCD1C943-1663-4547-BD54-3021407257A3} = {BCD1C943-1663-4547-BD54-3021407257A3}
 		{902F4697-BDEA-4322-9412-8A5E53D2A9AB} = {902F4697-BDEA-4322-9412-8A5E53D2A9AB}
+		{BCD1C943-1663-4547-BD54-3021407257A3} = {BCD1C943-1663-4547-BD54-3021407257A3}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{CC421BBC-3831-48F5-BFE3-867E04BB34BA}"
@@ -75,6 +75,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestService2", "..\Framewor
 		{BCD1C943-1663-4547-BD54-3021407257A3} = {BCD1C943-1663-4547-BD54-3021407257A3}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FlashView", "FlashView\FlashView.vcproj", "{00983805-B96A-406F-ADF9-106CE9D56FB7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BCD1C943-1663-4547-BD54-3021407257A3} = {BCD1C943-1663-4547-BD54-3021407257A3}
+		{902F4697-BDEA-4322-9412-8A5E53D2A9AB} = {902F4697-BDEA-4322-9412-8A5E53D2A9AB}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -137,6 +143,10 @@ Global
 		{4169FC2E-E891-493B-B2EC-B3D538B43DDB}.Debug|Win32.Build.0 = Debug|Win32
 		{4169FC2E-E891-493B-B2EC-B3D538B43DDB}.Release|Win32.ActiveCfg = Release|Win32
 		{4169FC2E-E891-493B-B2EC-B3D538B43DDB}.Release|Win32.Build.0 = Release|Win32
+		{00983805-B96A-406F-ADF9-106CE9D56FB7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00983805-B96A-406F-ADF9-106CE9D56FB7}.Debug|Win32.Build.0 = Debug|Win32
+		{00983805-B96A-406F-ADF9-106CE9D56FB7}.Release|Win32.ActiveCfg = Release|Win32
+		{00983805-B96A-406F-ADF9-106CE9D56FB7}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

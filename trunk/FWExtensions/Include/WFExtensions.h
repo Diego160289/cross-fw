@@ -36,6 +36,11 @@ namespace IFaces
     virtual RetCode GetDisplay(unsigned index, IDisplay **display) = 0;
   };
 
+  struct IFlashView
+    : public IBase
+  {
+    DECLARE_UUID(97835a53-8f31-4eeb-9485-d7b62da5d146)
+  };
 }
 
 #endif // !__WFEXTENSIONS_H__
