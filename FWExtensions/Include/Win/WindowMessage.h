@@ -8,6 +8,7 @@ namespace IFaces
 {
   struct WindowMessage
   {
+    HWND Wnd;
     UINT Msg;
     WPARAM WParam;
     LPARAM LParam;

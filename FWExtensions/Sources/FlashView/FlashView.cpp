@@ -1,5 +1,4 @@
 #include "FlashView.h"
-#include "WindowMessage.h"
 
 
 IFlashViewImpl::IFlashViewImpl()
@@ -19,7 +18,7 @@ bool IFlashViewImpl::OnInit()
 {
   try
   {
-    FlashCtrl = new FlashCtrlHolder;
+    (FlashCtrl = new FlashCtrlHolder)->Create();
   }
   catch (std::exception &)
   {
@@ -30,14 +29,13 @@ bool IFlashViewImpl::OnInit()
 
 void IFlashViewImpl::OnDone()
 {
+  FlashCtrl->Destroy();
+  Common::ISyncObject Locker(GetSynObj());
   FlashCtrl.Release();
 }
 
-bool IFlashViewImpl::OnMessage(const IFaces::WindowMessage &msg)
+long IFlashViewImpl::OnMessage(const IFaces::WindowMessage &msg)
 {
-  if (msg.Msg == WM_CREATE)
-  {
-    int k = 0;
-  }
-  return false;
+  Common::ISyncObject Locker(GetSynObj());
+  return FlashCtrl.Get() ? FlashCtrl->OnMessage(msg) : 0;
 }
