@@ -58,11 +58,11 @@ public:
     if (Iter != Wins.end())
       Wins.erase(Iter);
   }
-  bool ProcessMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+  long ProcessMsg(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
   {
     Common::SyncObject<System::Mutex> Locker(WndMapMtx);
     WndPool::iterator Iter = Wins.find(hwnd);
-    return Iter != Wins.end() ? Iter->second->ProcessMsg(msg, wParam, lParam) : false;
+    return Iter != Wins.end() ? Iter->second->ProcessMsg(msg, wParam, lParam) : 0;
   }
 private:
   System::Mutex WndMapMtx;
@@ -93,8 +93,8 @@ void WndRoot::Create(DWORD exStyle, LPCSTR className, LPCSTR windowName,
                      DWORD style, int x, int y, int width, int height,
                      HWND parent, HMENU menu)
 {
-    if (!(Wnd = CreateWindowExA(exStyle, className, windowName, style,
-            x, y, width, height, parent, menu, GetModuleHandle(0), this)))
+    if (!CreateWindowExA(exStyle, className, windowName, style,
+          x, y, width, height, parent, menu, GetModuleHandle(0), this))
     {
       throw FrameImplException("Can't create frame");
     }
@@ -158,20 +158,12 @@ bool WndRoot::MoveWindow(int x, int y, int width, int height)
 
 LRESULT CALLBACK WndRoot::FrameProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-  switch (msg)
+  if (msg == WM_CREATE)
   {
-  case WM_CREATE :
-  {
-    if (lParam)
-    {
-      LPCREATESTRUCTA CS = reinterpret_cast<LPCREATESTRUCTA>(lParam);
-      WndRoot *Impl = reinterpret_cast<FrameImpl*>(CS->lpCreateParams);
-      WndClassHolder::Instance().RegWin(wnd, Impl);
-    }
-  }
-  break;
-  default :
-    break;
+    LPCREATESTRUCTA CS = reinterpret_cast<LPCREATESTRUCTA>(lParam);
+    WndRoot *Impl = reinterpret_cast<FrameImpl*>(CS->lpCreateParams);
+    WndClassHolder::Instance().RegWin(wnd, Impl);
+    Impl->Wnd = wnd;
   }
   return WndRoot::WndClassHolder::Instance().ProcessMsg(wnd, msg, wParam, lParam) ?
     1 : ::DefWindowProcA(wnd, msg, wParam, lParam);
@@ -201,15 +193,15 @@ void WndRoot::WndThreadFunc()
   }
 }
 
-bool WndRoot::ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam)
+long WndRoot::ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam)
 {
   if (msg == WM_DESTROY)
   {
     WndClassHolder::Instance().UnRegWin(Wnd);
     PostQuitMessage(0);
-    return true;
+    return 1;
   }
-  return false;
+  return 0;
 }
 
 
@@ -234,18 +226,19 @@ void ChildView::Destroy()
   Handler.Release();
 }
 
-bool ChildView::ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam)
+long ChildView::ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam)
 {
-  bool Res = false;
+  long Res = 0;
   if (Handler.Get())
   {
     IFaces::WindowMessage Msg;
+    Msg.Wnd = GetHWND();
     Msg.Msg = msg;
     Msg.WParam = wParam;
     Msg.LParam = lParam;
     Res = Handler->OnMessage(Msg);
   }
-  Res = Res || WndRoot::ProcessMsg(msg, wParam, lParam);
+  Res = Res | WndRoot::ProcessMsg(msg, wParam, lParam);
   return Res;
 }
 
@@ -338,24 +331,19 @@ bool FrameImpl::SetCurWnd(unsigned index)
   return true;
 }
 
-bool FrameImpl::ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam)
+long FrameImpl::ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam)
 {
-  switch (msg)
+  if (msg == WM_SIZE)
   {
-  case WM_SIZE :
+    RECT Rect = { 0 };
+    if (!GetClientRect(&Rect))
+      return false;
+    for (WndPool::iterator i = Wins.begin() ; i != Wins.end() ; ++i)
     {
-      RECT Rect = { 0 };
-      if (!GetClientRect(&Rect))
-        return false;
-      for (WndPool::iterator i = Wins.begin() ; i != Wins.end() ; ++i)
-      {
-        i->second->MoveWindow(Rect.left, Rect.top,
-          Rect.left + LOWORD(lParam), Rect.top + HIWORD(lParam));
-      }
+      i->second->MoveWindow(Rect.left, Rect.top,
+        Rect.left + LOWORD(lParam), Rect.top + HIWORD(lParam));
     }
-    return true;
-  default:
-    break;
+    return 1;
   }
   return WndRoot::ProcessMsg(msg, wParam, lParam);
 }

@@ -12,7 +12,7 @@ namespace IFaces
     : public IBase
   {
     DECLARE_UUID(144a971c-64da-4be1-ab10-64bda8c5486b)
-    virtual bool OnMessage(const WindowMessage &msg) = 0;
+    virtual long OnMessage(const WindowMessage &msg) = 0;
   };
 
   struct IViewFrame

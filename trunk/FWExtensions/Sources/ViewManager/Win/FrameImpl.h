@@ -48,7 +48,7 @@ private:
   void WndThreadFunc();
 protected:
   class WndClassHolder;
-  virtual bool ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam);
+  virtual long ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam);
 };
 
 class ChildView
@@ -62,7 +62,7 @@ private:
   static const char ChildViewClassName[];
   Common::RefObjPtr<IFaces::IWndMessageHandler> Handler;
 protected:
-  virtual bool ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam);
+  virtual long ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam);
 };
 
 class FrameImpl
@@ -92,7 +92,7 @@ private:
   WndPool::iterator CurWnd;
 
 protected:
-  virtual bool ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam);
+  virtual long ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam);
 };
 
 #endif // !__FRAMEIMPL_H__

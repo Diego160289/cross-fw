@@ -41,11 +41,11 @@ public:
   // IFlashView
 
   // IWndMessageHandler
-  virtual bool OnMessage(const IFaces::WindowMessage &msg);
+  virtual long OnMessage(const IFaces::WindowMessage &msg);
 
 private:
   typedef Common::SharedPtr<FlashCtrlHolder> FlashCtrlHolderPtr;
-  FlashCtrlHolderPtr FlashCtrl;;
+  FlashCtrlHolderPtr FlashCtrl;
 };
 
 #endif  // !__FLASHVIEW_H__
