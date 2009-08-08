@@ -4,6 +4,8 @@
 #include "../../../../Framework/Include/SyncObj.h"
 #include "../../../../Framework/Include/Typedefs.h"
 
+#include "WindowMessage.h"
+
 
 class WndRoot::WndClassHolder
   : private Common::NoCopyable
@@ -213,6 +215,11 @@ bool WndRoot::ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam)
 
 const char ChildView::ChildViewClassName[] = "ViewManaqerChildViewWnd";
 
+ChildView::ChildView(IFaces::IWndMessageHandler *handler)
+  : Handler(handler)
+{
+}
+
 void ChildView::Create(LPCRECT r, WndRoot *parent)
 {
   WndClassHolder::Instance().RegWndClass(ChildViewClassName);
@@ -224,6 +231,22 @@ void ChildView::Create(LPCRECT r, WndRoot *parent)
 void ChildView::Destroy()
 {
   SendMessage(GetHWND(), WM_CLOSE, 0, 0);
+  Handler.Release();
+}
+
+bool ChildView::ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam)
+{
+  bool Res = false;
+  if (Handler.Get())
+  {
+    IFaces::WindowMessage Msg;
+    Msg.Msg = msg;
+    Msg.WParam = wParam;
+    Msg.LParam = lParam;
+    Res = Handler->OnMessage(Msg);
+  }
+  Res = Res || WndRoot::ProcessMsg(msg, wParam, lParam);
+  return Res;
 }
 
 
@@ -262,14 +285,14 @@ unsigned FrameImpl::GetWndCount() const
   return static_cast<unsigned>(0);
 }
 
-bool FrameImpl::CreateWnd(unsigned *index)
+bool FrameImpl::CreateWnd(unsigned *index, IFaces::IWndMessageHandler *handler)
 {
   RECT Rect = { 0 };
   if (!GetClientRect(&Rect))
     return false;
   try
   {
-    ChildViewPtr NewWnd(new ChildView);
+    ChildViewPtr NewWnd(new ChildView(handler));
     NewWnd->Create(&Rect, this);
     Wins[*index = WndIdCounter++] = NewWnd;
     CurWnd = Wins.find(*index);
@@ -296,17 +319,12 @@ bool FrameImpl::DestroyWnd(unsigned index)
   return false;
 }
 
-bool FrameImpl::GetCurWndIndex(unsigned *index) const
+bool FrameImpl::GetCurWnd(unsigned *index) const
 {
   if (CurWnd == Wins.end())
     return false;
   *index = CurWnd->first;
   return true;
-}
-
-void* FrameImpl::GetCurWnd()
-{
-  return CurWnd == Wins.end() ? 0 : reinterpret_cast<void*>(CurWnd->second->GetHWND());
 }
 
 bool FrameImpl::SetCurWnd(unsigned index)

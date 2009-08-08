@@ -6,16 +6,24 @@
 namespace IFaces
 {
 
+  struct WindowMessage;
+
+  struct IWndMessageHandler
+    : public IBase
+  {
+    DECLARE_UUID(144a971c-64da-4be1-ab10-64bda8c5486b)
+    virtual bool OnMessage(const WindowMessage &msg) = 0;
+  };
+
   struct IViewFrame
     : public IBase
   {
     DECLARE_UUID(28505b5a-25fb-47e9-b736-c60aab73b949)
     virtual RetCode Show(bool isVisible) = 0;
     virtual unsigned GetWndCount() const = 0;
-    virtual RetCode CreateWnd(unsigned *index) = 0;
+    virtual RetCode CreateWnd(unsigned *index, IWndMessageHandler *handler = 0) = 0;
     virtual RetCode DestroyWnd(unsigned index) = 0;
-    virtual RetCode GetCurWndIndex(unsigned *index) const = 0;
-    virtual void* GetCurWnd() = 0;
+    virtual RetCode GetCurWnd(unsigned *index) const = 0;
     virtual RetCode SetCurWnd(unsigned index) = 0;
   };
 
@@ -40,7 +48,6 @@ namespace IFaces
     : public IBase
   {
     DECLARE_UUID(97835a53-8f31-4eeb-9485-d7b62da5d146)
-    virtual RetCode AttachFrame(IViewFrame *frame) = 0;
   };
 }
 

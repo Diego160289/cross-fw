@@ -20,7 +20,11 @@ using IFaces::retNotImpl;
 class IFlashViewImpl
   : public Common::ServiceBase
       <
-        TYPE_LIST_1(IFaces::IFlashView)
+        Common::TypeListAdapter
+          <
+            IFaces::IFlashView,
+            IFaces::IWndMessageHandler
+          >
       >
 {
 public:
@@ -35,7 +39,9 @@ public:
   virtual void OnDone();
 
   // IFlashView
-  virtual RetCode AttachFrame(IFaces::IViewFrame *frame);
+
+  // IWndMessageHandler
+  virtual bool OnMessage(const IFaces::WindowMessage &msg);
 
 private:
   typedef Common::SharedPtr<FlashCtrlHolder> FlashCtrlHolderPtr;
