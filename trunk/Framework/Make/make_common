@@ -14,7 +14,7 @@ FWDIR := ./
 ifeq ($(OS), Win)
 	MDCOMMAND := $(FWDIR)Sources/MyWinMkDir/MyWinMkDir.exe
 else
-	MDCOMMAND := md
+	MDCOMMAND := @mkdir -p -- 
 endif
 
 ifeq ($(MAKETYPE), Debug)
