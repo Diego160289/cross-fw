@@ -40,6 +40,6 @@ clean:
 
 else
 clean:
-	rm -r -f $(FWDIR)Objects
+	rm -r -f ./Objects
 
 endif
