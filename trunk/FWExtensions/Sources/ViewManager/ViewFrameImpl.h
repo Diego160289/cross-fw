@@ -35,10 +35,9 @@ public:
   // IViewFrame
   virtual RetCode Show(bool isVisible);
   virtual unsigned GetWndCount() const;
-  virtual RetCode CreateWnd(unsigned *index);
+  virtual RetCode CreateWnd(unsigned *index, IFaces::IWndMessageHandler *handler = 0);
   virtual RetCode DestroyWnd(unsigned index);
-  virtual RetCode GetCurWndIndex(unsigned *index) const;
-  virtual void* GetCurWnd();
+  virtual RetCode GetCurWnd(unsigned *index) const;
   virtual RetCode SetCurWnd(unsigned index);
 
 private:

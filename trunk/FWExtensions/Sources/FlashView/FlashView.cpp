@@ -1,4 +1,5 @@
 #include "FlashView.h"
+#include "WindowMessage.h"
 
 
 IFlashViewImpl::IFlashViewImpl()
@@ -32,7 +33,11 @@ void IFlashViewImpl::OnDone()
   FlashCtrl.Release();
 }
 
-RetCode IFlashViewImpl::AttachFrame(IFaces::IViewFrame *frame)
+bool IFlashViewImpl::OnMessage(const IFaces::WindowMessage &msg)
 {
-  return retFail;
+  if (msg.Msg == WM_CREATE)
+  {
+    int k = 0;
+  }
+  return false;
 }

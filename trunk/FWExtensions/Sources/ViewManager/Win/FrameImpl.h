@@ -6,6 +6,8 @@
 #include "../../../../Framework/Include/Exceptions.h"
 #include "../../../../Framework/Include/Thread.h"
 #include "../../../../Framework/Include/ManualEvent.h"
+#include "../../../../Framework/Include/IFaces.h"
+#include "../../../../Framework/Include/RefObjPtr.h"
 
 #include <map>
 
@@ -53,10 +55,14 @@ class ChildView
   : public WndRoot
 {
 public:
+  ChildView(IFaces::IWndMessageHandler *handler);
   void Create(LPCRECT r, WndRoot *parent);
   void Destroy();
 private:
   static const char ChildViewClassName[];
+  Common::RefObjPtr<IFaces::IWndMessageHandler> Handler;
+protected:
+  virtual bool ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam);
 };
 
 class FrameImpl
@@ -70,10 +76,9 @@ public:
   void Destroy();
 
   unsigned GetWndCount() const;
-  bool CreateWnd(unsigned *index);
+  bool CreateWnd(unsigned *index, IFaces::IWndMessageHandler *handler);
   bool DestroyWnd(unsigned index);
-  bool GetCurWndIndex(unsigned *index) const;
-  void* GetCurWnd();
+  bool GetCurWnd(unsigned *index) const;
   bool SetCurWnd(unsigned index);
 
 

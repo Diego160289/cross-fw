@@ -69,7 +69,7 @@ ifeq ($(TARGETTYPE), Exe)
 	LIBS += Common System
 endif
 
-INCLUDE += ./Include $(SRCDIR)/$(OS)
+INCLUDE += ./Include $(SRCDIR)/$(OS) ./Include/$(OS)
 
 CPP = $(wildcard $(SRCDIR)/*.cpp)
 

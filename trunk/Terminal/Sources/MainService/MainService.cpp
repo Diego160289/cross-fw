@@ -34,15 +34,6 @@ bool IMainServiceImpl::OnInit()
     {
       return false;
     }
-    unsigned WindowIndex = 0;
-    if (Frame->CreateWnd(&WindowIndex) != retOk)
-    {
-      return false;
-    }
-    if (Frame->SetCurWnd(WindowIndex) != retOk)
-    {
-      return false;
-    }
     Common::RefObjPtr<IFaces::IBase> FlashCtrl;
     if (!(FlashServiceHandle = GetServiceManager()->StartService("83ef6af0-e752-4601-87fe-90b8be229e1f", FlashCtrl.GetPPtr())))
     {
@@ -50,6 +41,20 @@ bool IMainServiceImpl::OnInit()
     }
     Common::RefObjQIPtr<IFaces::IFlashView> FlashView(FlashCtrl);
     if (!FlashView.Get())
+    {
+      return false;
+    }
+    Common::RefObjQIPtr<IFaces::IWndMessageHandler> FlashMsgHandler(FlashCtrl);
+    if (!FlashMsgHandler.Get())
+    {
+      return false;
+    }
+    unsigned WindowIndex = 0;
+    if (Frame->CreateWnd(&WindowIndex, FlashMsgHandler.Get()) != retOk)
+    {
+      return false;
+    }
+    if (Frame->SetCurWnd(WindowIndex) != retOk)
     {
       return false;
     }

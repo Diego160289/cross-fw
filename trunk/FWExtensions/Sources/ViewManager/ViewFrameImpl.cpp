@@ -43,12 +43,12 @@ unsigned IViewFrameImpl::GetWndCount() const
   return 0;
 }
 
-RetCode IViewFrameImpl::CreateWnd(unsigned *index)
+RetCode IViewFrameImpl::CreateWnd(unsigned *index, IFaces::IWndMessageHandler *handler)
 {
   Common::ISyncObject Locker(GetSynObj());
   if (!Frame.Get())
     return retFail;
-  return Frame->CreateWnd(index) ? retOk : retFail;
+  return Frame->CreateWnd(index, handler) ? retOk : retFail;
 }
 
 RetCode IViewFrameImpl::DestroyWnd(unsigned index)
@@ -59,20 +59,12 @@ RetCode IViewFrameImpl::DestroyWnd(unsigned index)
   return Frame->DestroyWnd(index) ? retOk : retFail;
 }
 
-RetCode IViewFrameImpl::GetCurWndIndex(unsigned *index) const
+RetCode IViewFrameImpl::GetCurWnd(unsigned *index) const
 {
   Common::ISyncObject Locker(GetSynObj());
   if (!Frame.Get())
     return retFail;
-  return Frame->GetCurWndIndex(index) ? retOk : retFail;
-}
-
-void* IViewFrameImpl::GetCurWnd()
-{
-  Common::ISyncObject Locker(GetSynObj());
-  if (!Frame.Get())
-    return 0;
-  return Frame->GetCurWnd();
+  return Frame->GetCurWnd(index) ? retOk : retFail;
 }
 
 RetCode IViewFrameImpl::SetCurWnd(unsigned index)
