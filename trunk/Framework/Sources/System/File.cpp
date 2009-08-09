@@ -43,9 +43,9 @@ namespace System
     Impl->SeekTo(pos);
   }
 
-  void File::GetPos(unsigned long *pos) const
+  unsigned long File::GetPos() const
   {
-    Impl->GetPos(pos);
+    return Impl->GetPos();
   }
 
   void File::Remove(const char *fileName)

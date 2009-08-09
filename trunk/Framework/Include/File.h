@@ -21,7 +21,7 @@ namespace System
     void SeekToBegin();
     void SeekToEnd();
     void SeekTo(unsigned long pos);
-    void GetPos(unsigned long *pos) const;
+    unsigned long GetPos() const;
     static void Remove(const char *fileName);
   private:
     class FileImpl;
