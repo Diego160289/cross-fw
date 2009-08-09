@@ -223,8 +223,32 @@ namespace IFaces
     : public IBase
   {
     DECLARE_UUID(a06ead08-0c89-4aed-aafd-885786434ae9)
-    virtual RetCode GetValue(const char* name, IVariant **value) const = 0;
+    virtual RetCode GetValue(const char *name, IVariant **value) const = 0;
     virtual RetCode EnumValues(IEnum **values) const = 0;
+  };
+
+  struct IStream
+    : public IBase
+  {
+    DECLARE_UUID(757dba03-6669-4204-8303-b5f016c621b5)
+    virtual RetCode GetSize(unsigned long *size) const = 0;
+    virtual RetCode Read(void *buf, unsigned long bufSize, unsigned long *readBytes) = 0;
+    virtual RetCode Write(const void *buf, unsigned long bytes) = 0;
+    virtual RetCode SeekToBegin() = 0;
+    virtual RetCode SeekToEnd() = 0;
+    virtual RetCode SeekTo(unsigned long pos) = 0;
+  };
+
+  struct IStorage
+    : public IBase
+  {
+    DECLARE_UUID(1f1670a1-b85b-4d99-b369-e55e1cf05fc4)
+    virtual RetCode CreateStorage(const char *name, IStorage **storage) = 0;
+    virtual RetCode OpenStorage(const char *name, IStorage **storage) = 0;
+    virtual RetCode CreateStream(const char *name, IStream **stream) = 0;
+    virtual RetCode OpenStream(const char *name, IStream **stream) = 0;
+    virtual RetCode RemoveItem(const char *name) = 0;
+    virtual RetCode Enum(IEnum **items) const = 0;
   };
 
   struct IMessageQueue

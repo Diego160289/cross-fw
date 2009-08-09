@@ -64,7 +64,7 @@ FlashHandle::~FlashHandle()
 void FlashHandle::Create(HWND parent)
 {
   if (!(FlashWnd = CreateWindowA(FPC_GetClassName(Flash), 0, 
-    WS_CHILD | WS_BORDER | WS_VISIBLE, 0,  0, 100, 100, parent, 0, GetModuleHandle(0), 0)))
+    WS_CHILD | WS_VISIBLE, 0,  0, 100, 100, parent, 0, GetModuleHandle(0), 0)))
   {
     throw FlashCtrlHolderException("Can't create flash control window");
   }

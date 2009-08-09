@@ -149,6 +149,14 @@
 			Name="Win"
 			>
 			<File
+				RelativePath="..\..\..\Framework\Sources\System\Win\DirImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Framework\Sources\System\Win\DirImpl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Framework\Sources\System\Win\DllHolderImpl.cpp"
 				>
 			</File>
@@ -197,6 +205,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\..\..\Framework\Sources\System\Dir.cpp"
+			>
+		</File>
 		<File
 			RelativePath="..\..\..\Framework\Sources\System\DllHolder.cpp"
 			>

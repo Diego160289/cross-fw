@@ -2,7 +2,6 @@
 #define __ILOGOBJECTIMPL_H__
 
 #include "IFacesTools.h"
-#include "SyncObj.h"
 #include "Exceptions.h"
 
 
