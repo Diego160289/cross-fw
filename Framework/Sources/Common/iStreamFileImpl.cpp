@@ -14,31 +14,37 @@ namespace IFacesImpl
 
   RetCode IStreamFileImpl::GetSize(unsigned long *size) const
   {
+    Common::ISyncObject Locker(GetSynObj());
     return retFail;
   }
 
   RetCode IStreamFileImpl::Read(void *buf, unsigned long bufSize, unsigned long *readBytes)
   {
+    Common::ISyncObject Locker(GetSynObj());
     return retFail;
   }
 
   RetCode IStreamFileImpl::Write(const void *buf, unsigned long bytes)
   {
+    Common::ISyncObject Locker(GetSynObj());
     return retFail;
   }
 
   RetCode IStreamFileImpl::SeekToBegin()
   {
+    Common::ISyncObject Locker(GetSynObj());
     return retFail;
   }
 
   RetCode IStreamFileImpl::SeekToEnd()
   {
+    Common::ISyncObject Locker(GetSynObj());
     return retFail;
   }
 
   RetCode IStreamFileImpl::SeekTo(unsigned long pos)
   {
+    Common::ISyncObject Locker(GetSynObj());
     return retFail;
   }
   

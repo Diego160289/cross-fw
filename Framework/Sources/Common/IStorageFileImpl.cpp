@@ -16,6 +16,7 @@ namespace IFacesImpl
 
   RetCode IStorageFileImpl::CreateStorage(const char *name, IFaces::IStorage **storage)
   {
+    Common::ISyncObject Locker(GetSynObj());
     if (!name)
       return retBadParam;
     if (!StorageName.empty())
@@ -36,6 +37,7 @@ namespace IFacesImpl
 
   RetCode IStorageFileImpl::OpenStorage(const char *name, IFaces::IStorage **storage)
   {
+    Common::ISyncObject Locker(GetSynObj());
     if (!name)
       return retBadParam;
     if (!StorageName.empty())
@@ -52,6 +54,7 @@ namespace IFacesImpl
 
   RetCode IStorageFileImpl::CreateStream(const char *name, IFaces::IStream **stream)
   {
+    Common::ISyncObject Locker(GetSynObj());
     try
     {
       std::string FileName = StorageName + "/";
@@ -67,6 +70,7 @@ namespace IFacesImpl
 
   RetCode IStorageFileImpl::OpenStream(const char *name, IFaces::IStream **stream)
   {
+    Common::ISyncObject Locker(GetSynObj());
     try
     {
       std::string FileName = StorageName + "/";
@@ -82,11 +86,13 @@ namespace IFacesImpl
 
   RetCode IStorageFileImpl::RemoveItem(const char *name)
   {
+    Common::ISyncObject Locker(GetSynObj());
     return System::RemoveDir(name) ? retOk : retFail;
   }
 
   RetCode IStorageFileImpl::Enum(IFaces::IEnum **items) const
   {
+    Common::ISyncObject Locker(GetSynObj());
     System::DirItemPoolPtr DirItems = System::EnumDir(StorageName.c_str());
     if (!DirItems.get())
       return retFail;
