@@ -116,6 +116,7 @@ all: mk_dirs $(OBJ) $(OBJC)
 	$(wildcard $(OBJDIR)/*.o) \
 	$(addprefix -L ,$(LIBSDIR)) \
 	$(addprefix -l ,$(LIBS)) \
+	$(addprefix -L ,$(SYSLIBSDIR)) \
 	$(addprefix -l ,$(SYSLIBS)) \
 	-o $(TARGETDIR)/$(TARGET)
 	@echo Success $(CURCFG)
@@ -129,6 +130,7 @@ all: mk_dirs $(OBJ) $(OBJC)
 	$(wildcard $(OBJDIR)/*.o) \
 	$(addprefix -L ,$(LIBSDIR)) \
 	$(addprefix -l ,$(LIBS)) \
+	$(addprefix -L ,$(SYSLIBSDIR)) \
 	$(addprefix -l ,$(SYSLIBS)) \
 	-o $(TARGETDIR)/$(TARGET)
 	@echo Success $(CURCFG)
