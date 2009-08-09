@@ -25,7 +25,7 @@ namespace System
   bool CreateDirImpl(const char *dirName)
   {
     return dirName &&
-      (!!::CreateDirectoryA(dirName, 0) || GetLastError() == ERROR_ALREADY_EXISTS);
+      (CreateDirectoryA(dirName, 0) || GetLastError() == ERROR_ALREADY_EXISTS);
   }
 
   bool RemoveDirImpl(const char *dirName)

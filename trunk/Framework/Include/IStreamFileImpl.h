@@ -18,16 +18,6 @@ namespace IFacesImpl
 
   DECLARE_RUNTIME_EXCEPTION(IStreamFileImpl)
 
-  class IStreamFileImpl;
-
-  template <typename TSyn>
-  Common::RefObjPtr<IStreamFileImpl>
-    OpenFileStream(const std::string &name, bool createNew);
-
-  Common::RefObjPtr<IStreamFileImpl>
-    OpenFileStream(const std::string &name, bool createNew,
-                    const Common::ISynObj &syn);
-
   class IStreamFileImpl
     : public Common::CoClassBase
         <
@@ -47,17 +37,17 @@ namespace IFacesImpl
     virtual RetCode SeekToBegin();
     virtual RetCode SeekToEnd();
     virtual RetCode SeekTo(unsigned long pos);
+    virtual RetCode GetPos(unsigned long *pos) const;
+    virtual RetCode CopyTo(IStream *dest) const;
 
-  private:
-    template <typename TSyn>
-    friend Common::RefObjPtr<IStreamFileImpl>
-      OpenFileStream(const std::string &, bool);
-    friend Common::RefObjPtr<IStreamFileImpl>
-      OpenFileStream(const std::string &, bool, const Common::ISynObj &);
-
-    Common::SharedPtr<System::File> File;
     void Init(const std::string &name, bool isNew);
+  private:
+    Common::SharedPtr<System::File> File;
   };
+
+  Common::RefObjPtr<IStreamFileImpl>
+    OpenFileStream(const std::string &name, bool createNew,
+                    const Common::ISynObj &syn);
 
   template <typename TSyn>
   Common::RefObjPtr<IStreamFileImpl>

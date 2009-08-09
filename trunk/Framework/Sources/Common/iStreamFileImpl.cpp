@@ -47,7 +47,17 @@ namespace IFacesImpl
     Common::ISyncObject Locker(GetSynObj());
     return retFail;
   }
-  
+
+  RetCode IStreamFileImpl::GetPos(unsigned long *pos) const
+  {
+    return retFail;
+  }
+
+  RetCode IStreamFileImpl::CopyTo(IStream *dest) const
+  {
+    return retFail;
+  }
+
   void IStreamFileImpl::Init(const std::string &name, bool isNew)
   {
     if (name.empty())
