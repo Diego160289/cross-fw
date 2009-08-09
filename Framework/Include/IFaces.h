@@ -237,6 +237,8 @@ namespace IFaces
     virtual RetCode SeekToBegin() = 0;
     virtual RetCode SeekToEnd() = 0;
     virtual RetCode SeekTo(unsigned long pos) = 0;
+    virtual RetCode GetPos(unsigned long *pos) const = 0;
+    virtual RetCode CopyTo(IStream *dest) const = 0;
   };
 
   struct IStorage

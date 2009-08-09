@@ -17,16 +17,6 @@ namespace IFacesImpl
 
   DECLARE_RUNTIME_EXCEPTION(IStorageFileImpl)
 
-  class IStorageFileImpl;
-
-  template <typename TSyn>
-  Common::RefObjPtr<IStorageFileImpl>
-    OpenFileStorage(const std::string &name, bool createNew);
-
-  Common::RefObjPtr<IStorageFileImpl>
-    OpenFileStorage(const std::string &name, bool createNew,
-                    const Common::ISynObj &syn);
-
   class IStorageFileImpl
     : public Common::CoClassBase
         <
@@ -47,16 +37,14 @@ namespace IFacesImpl
     virtual RetCode RemoveItem(const char *name);
     virtual RetCode Enum(IFaces::IEnum **items) const;
 
-  private:
-    template <typename TSyn>
-    friend Common::RefObjPtr<IStorageFileImpl>
-      OpenFileStorage(const std::string &, bool);
-    friend Common::RefObjPtr<IStorageFileImpl>
-      OpenFileStorage(const std::string &, bool, const Common::ISynObj &);
-
-    std::string StorageName;
     void Init(const std::string &name, bool isNew);
+  private:
+    std::string StorageName;
   };
+
+  Common::RefObjPtr<IStorageFileImpl>
+    OpenFileStorage(const std::string &name, bool createNew,
+                    const Common::ISynObj &syn);
 
   template <typename TSyn>
   Common::RefObjPtr<IStorageFileImpl>

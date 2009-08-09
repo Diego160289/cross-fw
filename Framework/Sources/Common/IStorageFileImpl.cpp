@@ -19,15 +19,16 @@ namespace IFacesImpl
     Common::ISyncObject Locker(GetSynObj());
     if (!name)
       return retBadParam;
-    if (!StorageName.empty())
-      return retFail;
     try
     {
-      Common::RefObjQIPtr<IFaces::IStorage> NewStg(OpenFileStorage(name, true, GetSynObj()));
-      if (!System::CreateDir(StorageName.c_str()))
+      std::string DirName = StorageName + "/";
+      DirName += name;
+      Common::RefObjQIPtr<IFaces::IStorage> NewStg(OpenFileStorage(DirName, true, GetSynObj()));
+      if (!System::CreateDir(DirName.c_str()))
         return retFail;
       if (NewStg.QueryInterface(storage) != retOk)
         System::RemoveDir(StorageName.c_str());
+      return retOk;
     }
     catch (std::exception &)
     {
@@ -40,11 +41,11 @@ namespace IFacesImpl
     Common::ISyncObject Locker(GetSynObj());
     if (!name)
       return retBadParam;
-    if (!StorageName.empty())
-      return retFail;
     try
     {
-      return OpenFileStorage(name, false, GetSynObj()).QueryInterface(storage);
+      std::string DirName = StorageName + "/";
+      DirName += name;
+      return OpenFileStorage(DirName, false, GetSynObj()).QueryInterface(storage);
     }
     catch (std::exception &)
     {
@@ -124,8 +125,10 @@ namespace IFacesImpl
   {
     if (name.empty())
       throw IStorageFileImplException("Empty dir name");
-    if (isNew && !System::ExistsDir(name.c_str()))
+    if (!isNew && !System::ExistsDir(name.c_str()))
       throw IStorageFileImplException("Dir not exists");
+    if (isNew && !System::CreateDir(name.c_str()))
+      throw IStorageFileImplException("Can't create dir");
     StorageName = name;
   }
 

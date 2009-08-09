@@ -94,18 +94,32 @@ Common::StringMapPtr LoadConfig(const char *configFileName)
   return RetMap;
 }
 
+#include "IStorageFileImpl.h"
+
 int main(int argc, char *argv[])
 {
-  if (argc != 2)
+  /*if (argc != 2)
   {
     std::cerr
       << "Bad params\n"
       << "FWLoader \"config file\"\n";
     return 1;
-  }
+  }*/
   try
   {
-    FWLoader(*LoadConfig(argv[1]).get());
+    Common::RefObjQIPtr<IFaces::IStorage> Stg =
+      IFacesImpl::OpenFileStorage<System::Mutex>("c:/temp/__1", false);
+    Common::RefObjPtr<IFaces::IStorage> Stg1;
+    if (Stg->CreateStorage("124412123132", Stg1.GetPPtr()) != IFaces::retOk)
+      std::cerr << "Can't create storage" << std::endl;
+    Common::RefObjPtr<IFaces::IEnum> Enum;
+    if (Stg->Enum(Enum.GetPPtr()) != IFaces::retOk)
+      std::cerr << "Can't enum dir" << std::endl;
+    IFacesImpl::IEnumHelper Helper(Enum);
+    Common::RefObjPtr<IFaces::IStorage> Stg2;
+    if (Common::RefObjQIPtr<IFaces::IStorage>(Helper.First())->CreateStorage("tttt", Stg2.GetPPtr()) != IFaces::retOk)
+      std::cerr << "Can't create stg tttt" << std::endl;
+    //FWLoader(*LoadConfig(argv[1]).get());
   }
   catch (std::exception &e)
   {
