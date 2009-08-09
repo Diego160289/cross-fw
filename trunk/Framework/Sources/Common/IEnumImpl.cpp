@@ -63,6 +63,13 @@ namespace IFacesImpl
     IsModified = true;
   }
 
+  Common::RefObjPtr<IEnumImpl>
+  CreateEnum(const Common::ISynObj &syn)
+  {
+    return Common::IBaseImpl<IEnumImpl>::CreateWithSyn(syn);
+  }
+
+
 
   IEnumHelper::IEnumHelper(IEnumPtr enumerator)
     : Enumerator(enumerator)

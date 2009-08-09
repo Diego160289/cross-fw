@@ -51,6 +51,9 @@ namespace IFacesImpl
     return Common::IBaseImpl<IEnumImpl>::Create<TSyn>();
   }
 
+  Common::RefObjPtr<IEnumImpl>
+  CreateEnum(const Common::ISynObj &syn);
+
   DECLARE_RUNTIME_EXCEPTION(IEnumHelper)
 
   class IEnumHelper
