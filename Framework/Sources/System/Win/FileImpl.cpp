@@ -93,14 +93,14 @@ namespace System
       throw FileException("Can't seek to mew position");
   }
 
-  void File::FileImpl::GetPos(unsigned long *pos) const
+  unsigned long File::FileImpl::GetPos() const
   {
     DWORD CurPos = SetFilePointer(FileHandle, 0, 0, FILE_CURRENT);
     if (CurPos == INVALID_SET_FILE_POINTER)
       throw FileException("Can't get current position");
     if (SetFilePointer(FileHandle, static_cast<LONG>(CurPos), 0, FILE_CURRENT) == INVALID_SET_FILE_POINTER)
       throw FileException("Can't get current position");
-    *pos = static_cast<unsigned long>(CurPos);
+    return static_cast<unsigned long>(CurPos);
   }
 
   void File::FileImpl::Remove(const char *fileName)

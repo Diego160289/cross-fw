@@ -178,6 +178,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\Framework\Sources\Common\IStreamMemoryImpl.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\Framework\Sources\Common\IVariantImpl.cpp"
 			>
 		</File>
