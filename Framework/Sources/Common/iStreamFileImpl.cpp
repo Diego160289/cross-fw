@@ -140,7 +140,33 @@ namespace IFacesImpl
   RetCode IStreamFileImpl::CopyTo(IStream *dest) const
   {
     Common::ISyncObject Locker(GetSynObj());
-    return retFail;
+    if (!File.Get())
+      return retFail;
+    Common::RefObjPtr<IFaces::IStream> Dest(dest);
+    if (!Dest.Get())
+      return retFail;
+    try
+    {
+      unsigned long FileSize = File->GetSize();
+      if (!FileSize)
+        return retOk;
+      unsigned long CurPos = File->GetPos();
+      File->SeekToBegin();
+      const unsigned long MaxBufSize = 32 * 1024 * 1024;
+      unsigned long BufSize = MaxBufSize > FileSize ? FileSize : MaxBufSize;
+      std::vector<char> Buf(BufSize, 0);
+      for (unsigned long i = File->Read(&Buf[0], BufSize) ; i ; i = File->Read(&Buf[0], BufSize))
+      {
+        if (Dest->Write(&Buf[0], i) != retOk)
+          return retFail;
+      }
+      File->SeekTo(CurPos);
+    }
+    catch (std::exception &)
+    {
+      return retFail;
+    }
+    return retOk;
   }
 
   void IStreamFileImpl::Init(const std::string &name, bool isNew)

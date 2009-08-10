@@ -3,7 +3,7 @@
 
 #include "IFacesTools.h"
 #include "Exceptions.h"
-
+#include "IRawDataBufferImpl.h"
 
 namespace IFacesImpl
 {
@@ -19,7 +19,11 @@ namespace IFacesImpl
   class IStreamMemoryImpl
     : public Common::CoClassBase
         <
-          TYPE_LIST_1(IFaces::IStream)
+          Common::TypeListAdapter
+            <
+              IFaces::IStream,
+              IRawDataBufferImpl
+            >
         >
   {
   public:
@@ -39,16 +43,19 @@ namespace IFacesImpl
     virtual RetCode CopyTo(IStream *dest) const;
 
   private:
+    unsigned long Cursor;
   };
 
-  Common::RefObjPtr<IStreamMemoryImpl>
+  Common::RefObjPtr<IFaces::IStream>
     OpenMemoryStream(const Common::ISynObj &syn);
 
   template <typename TSyn>
-  Common::RefObjPtr<IStreamMemoryImpl>
+  Common::RefObjPtr<IFaces::IStream>
     OpenMemoryStream()
   {
-    return Common::IBaseImpl<IStreamMemoryImpl>::Create<TSyn>();
+    Common::RefObjPtr<IFaces::IStream> Ret;
+    Common::IBaseImpl<IStreamMemoryImpl>::Create<TSyn>().QueryInterface()REt.GetPPtr();
+    return Ret;
   }
 
 }
