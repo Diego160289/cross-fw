@@ -170,6 +170,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\Framework\Sources\Common\IRawDataBufferImpl.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\Framework\Sources\Common\IStorageFileImpl.cpp"
 			>
 		</File>
