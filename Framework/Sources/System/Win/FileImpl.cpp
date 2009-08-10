@@ -16,6 +16,7 @@ namespace System
       break;
     case fmReadWrite :
       Access = GENERIC_READ | GENERIC_WRITE;
+      break;
     default :
       throw FileException("Unknown file mode");
     }
@@ -30,6 +31,7 @@ namespace System
       break;
     case fmReadWrite :
       ShareMode = FILE_SHARE_WRITE;
+      break;
     default :
       throw FileException("Unknown file mode");
     }

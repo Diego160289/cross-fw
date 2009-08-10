@@ -95,6 +95,7 @@ Common::StringMapPtr LoadConfig(const char *configFileName)
 }
 
 #include "IStorageFileImpl.h"
+#include "IStorageHelper.h"
 
 int main(int argc, char *argv[])
 {
@@ -108,17 +109,16 @@ int main(int argc, char *argv[])
   try
   {
     Common::RefObjQIPtr<IFaces::IStorage> Stg =
-      IFacesImpl::OpenFileStorage<System::Mutex>("c:/temp/__1", false);
-    Common::RefObjPtr<IFaces::IStorage> Stg1;
-    if (Stg->CreateStorage("124412123132", Stg1.GetPPtr()) != IFaces::retOk)
-      std::cerr << "Can't create storage" << std::endl;
-    Common::RefObjPtr<IFaces::IEnum> Enum;
-    if (Stg->Enum(Enum.GetPPtr()) != IFaces::retOk)
-      std::cerr << "Can't enum dir" << std::endl;
-    IFacesImpl::IEnumHelper Helper(Enum);
-    Common::RefObjPtr<IFaces::IStorage> Stg2;
-    if (Common::RefObjQIPtr<IFaces::IStorage>(Helper.First())->CreateStorage("tttt", Stg2.GetPPtr()) != IFaces::retOk)
-      std::cerr << "Can't create stg tttt" << std::endl;
+      IFacesImpl::OpenFileStorage<System::Mutex>("c:/temp/__1", true);
+    IFacesImpl::ISorageHelper StgH(Stg);
+    Common::RefObjPtr<IFaces::IStorage> Stg1 = StgH.CreateStorage("__2");
+    IFacesImpl::ISorageHelper StgH1 = 
+      Common::RefObjQIPtr<IFaces::IStorage>(StgH.Enum().First());
+    Common::RefObjPtr<IFaces::IStorage> Stg2 = StgH1.CreateStorage("__3");
+    IFacesImpl::ISorageHelper StgH2 = Stg2;
+    const char Str[] = "This is a test";
+    StgH2.CreateStream("test.txt")->Write(Str, sizeof(Str));
+
     //FWLoader(*LoadConfig(argv[1]).get());
   }
   catch (std::exception &e)
