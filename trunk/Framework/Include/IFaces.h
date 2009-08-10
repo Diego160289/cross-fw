@@ -227,6 +227,15 @@ namespace IFaces
     virtual RetCode EnumValues(IEnum **values) const = 0;
   };
 
+  struct IRawDataBuffer
+    : public IBase
+  {
+    DECLARE_UUID(2d96dd96-6f3e-4be2-a579-8f84cacf12c5)
+    virtual void* GetData() = 0;
+    virtual const void* GetData() const = 0;
+    virtual unsigned long GetSize() const = 0;
+  };
+
   struct IStream
     : public IBase
   {
