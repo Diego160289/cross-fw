@@ -12,15 +12,15 @@
 namespace IFacesImpl
 {
 
-  DECLARE_RUNTIME_EXCEPTION(ISorageHelper)
+  DECLARE_RUNTIME_EXCEPTION(IStorageHelper)
 
-  class ISorageHelper
+  class IStorageHelper
   {
   public:
     typedef Common::RefObjPtr<IFaces::IStorage> IStoragePtr;
     typedef Common::RefObjPtr<IFaces::IStream> IStreamPtr;
 
-    ISorageHelper(IStoragePtr storage);
+    IStorageHelper(IStoragePtr storage);
 
     IStoragePtr CreateStorage(const std::string &name);
     IStoragePtr OpenStorage(const std::string &name);

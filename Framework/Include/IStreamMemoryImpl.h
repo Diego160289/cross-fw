@@ -54,7 +54,7 @@ namespace IFacesImpl
     OpenMemoryStream()
   {
     Common::RefObjPtr<IFaces::IStream> Ret;
-    Common::IBaseImpl<IStreamMemoryImpl>::Create<TSyn>().QueryInterface()REt.GetPPtr();
+    Common::IBaseImpl<IStreamMemoryImpl>::Create<TSyn>().QueryInterface(Ret.GetPPtr());
     return Ret;
   }
 
