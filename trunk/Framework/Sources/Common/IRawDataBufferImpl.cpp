@@ -34,7 +34,7 @@ namespace IFacesImpl
   void IRawDataBufferImpl::SetData(const void *data, unsigned long bytes)
   {
     Common::ISyncObject Locker(GetSynObj());
-    Buf.swap(Common::CharVector());
+    Buf.clear();
     Buf.reserve(bytes);
     std::copy(
       &reinterpret_cast<const char*>(data)[0],

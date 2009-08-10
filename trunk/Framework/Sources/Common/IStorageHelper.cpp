@@ -4,56 +4,56 @@
 namespace IFacesImpl
 {
 
-  ISorageHelper::ISorageHelper(IStoragePtr storage)
+  IStorageHelper::IStorageHelper(IStoragePtr storage)
     : Storage(storage)
   {
     if (!Storage.Get())
-      throw ISorageHelperException("Empty storage pointer");
+      throw IStorageHelperException("Empty storage pointer");
   }
 
-  ISorageHelper::IStoragePtr ISorageHelper::CreateStorage(const std::string &name)
+  IStorageHelper::IStoragePtr IStorageHelper::CreateStorage(const std::string &name)
   {
     IStoragePtr Ret;
     if (Storage->CreateStorage(name.c_str(), Ret.GetPPtr()) != retOk)
-      throw ISorageHelperException("Can't create storage");
+      throw IStorageHelperException("Can't create storage");
     return Ret;
   }
 
-  ISorageHelper::IStoragePtr ISorageHelper::OpenStorage(const std::string &name)
+  IStorageHelper::IStoragePtr IStorageHelper::OpenStorage(const std::string &name)
   {
     IStoragePtr Ret;
     if (Storage->OpenStorage(name.c_str(), Ret.GetPPtr()) != retOk)
-      throw ISorageHelperException("Can't open storage");
+      throw IStorageHelperException("Can't open storage");
     return Ret;
   }
 
-  ISorageHelper::IStreamPtr ISorageHelper::CreateStream(const std::string &name)
+  IStorageHelper::IStreamPtr IStorageHelper::CreateStream(const std::string &name)
   {
     IStreamPtr Ret;
     if (Storage->CreateStream(name.c_str(), Ret.GetPPtr()) != retOk)
-      throw ISorageHelperException("Can't create stream");
+      throw IStorageHelperException("Can't create stream");
     return Ret;
   }
 
-  ISorageHelper::IStreamPtr ISorageHelper::OpenStream(const std::string &name)
+  IStorageHelper::IStreamPtr IStorageHelper::OpenStream(const std::string &name)
   {
     IStreamPtr Ret;
     if (Storage->OpenStream(name.c_str(), Ret.GetPPtr()) != retOk)
-      throw ISorageHelperException("Can't open stream");
+      throw IStorageHelperException("Can't open stream");
     return Ret;
   }
 
-  void ISorageHelper::RemoveItem(const std::string &name)
+  void IStorageHelper::RemoveItem(const std::string &name)
   {
     if (Storage->RemoveItem(name.c_str()) != retOk)
-      throw ISorageHelperException("Can't remove storage item");
+      throw IStorageHelperException("Can't remove storage item");
   }
 
-  IEnumHelper ISorageHelper::Enum() const
+  IEnumHelper IStorageHelper::Enum() const
   {
     IEnumHelper::IEnumPtr Ret;
     if (Storage->Enum(Ret.GetPPtr()) != retOk)
-      throw ISorageHelperException("Can't enum storage");
+      throw IStorageHelperException("Can't enum storage");
     return Ret;
   }
 

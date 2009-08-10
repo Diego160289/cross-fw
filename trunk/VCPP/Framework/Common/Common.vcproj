@@ -186,6 +186,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\Framework\Sources\Common\IStreamHelper.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\Framework\Sources\Common\IStreamMemoryImpl.cpp"
 			>
 		</File>

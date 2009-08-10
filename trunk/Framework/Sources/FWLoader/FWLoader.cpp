@@ -96,6 +96,7 @@ Common::StringMapPtr LoadConfig(const char *configFileName)
 
 #include "IStorageFileImpl.h"
 #include "IStorageHelper.h"
+#include "IStreamHelper.h"
 
 int main(int argc, char *argv[])
 {
@@ -110,14 +111,13 @@ int main(int argc, char *argv[])
   {
     Common::RefObjQIPtr<IFaces::IStorage> Stg =
       IFacesImpl::OpenFileStorage<System::Mutex>("c:/temp/__1", true);
-    IFacesImpl::ISorageHelper StgH(Stg);
+    IFacesImpl::IStorageHelper StgH(Stg);
     Common::RefObjPtr<IFaces::IStorage> Stg1 = StgH.CreateStorage("__2");
-    IFacesImpl::ISorageHelper StgH1 = 
+    IFacesImpl::IStorageHelper StgH1 = 
       Common::RefObjQIPtr<IFaces::IStorage>(StgH.Enum().First());
-    Common::RefObjPtr<IFaces::IStorage> Stg2 = StgH1.CreateStorage("__3");
-    IFacesImpl::ISorageHelper StgH2 = Stg2;
+    IFacesImpl::IStorageHelper StgH2 = StgH1.CreateStorage("__3");
     const char Str[] = "This is a test";
-    StgH2.CreateStream("test.txt")->Write(Str, sizeof(Str));
+    IFacesImpl::IStreamHelper(StgH2.CreateStream("test.txt")).Write(Str, sizeof(Str));
 
     //FWLoader(*LoadConfig(argv[1]).get());
   }
