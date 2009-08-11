@@ -94,10 +94,10 @@ Common::StringMapPtr LoadConfig(const char *configFileName)
   return RetMap;
 }
 
-#include "IStorageFileImpl.h"
+/*#include "IStorageFileImpl.h"
 #include "IStorageHelper.h"
 #include "IStreamHelper.h"
-#include "IStreamMemoryImpl.h"
+#include "IStreamMemoryImpl.h"*/
 
 int main(int argc, char *argv[])
 {
@@ -110,22 +110,26 @@ int main(int argc, char *argv[])
   }*/
   try
   {
-    Common::RefObjQIPtr<IFaces::IStorage> Stg =
+    /*Common::RefObjQIPtr<IFaces::IStorage> Stg =
       IFacesImpl::OpenFileStorage<System::Mutex>("c:/temp/__1", true);
     IFacesImpl::IStorageHelper StgH(Stg);
     Common::RefObjPtr<IFaces::IStorage> Stg1 = StgH.CreateStorage("__2");
-    IFacesImpl::IStorageHelper StgH1 = 
-      Common::RefObjQIPtr<IFaces::IStorage>(StgH.Enum().First());
+    IFacesImpl::IStorageHelper StgH1(Common::RefObjQIPtr<IFaces::IStorage>(StgH.Enum().First()));
     IFacesImpl::IStorageHelper StgH2 = StgH1.CreateStorage("__3");
     const char Str[] = "This is a test";
     IFacesImpl::IStreamHelper(StgH2.CreateStream("test.txt")).Write(Str, sizeof(Str));
     Common::RefObjPtr<IFaces::IStream> Stream = StgH2.OpenStream("test.txt");
     std::cout << (const char* )IFacesImpl::StreamToBuf<System::Mutex>(Stream)->GetData() << std::endl;
-    IFacesImpl::IStreamHelper(Stream).SeekTo(5);
-    IFacesImpl::IStreamHelper(Stream).Write("*", 1);
-    std::cout << (const char* )IFacesImpl::StreamToBuf<System::Mutex>(Stream)->GetData() << std::endl;
+    Common::RefObjPtr<IFaces::IStream> MemStream = IFacesImpl::OpenMemoryStream<System::Mutex>();
+    IFacesImpl::IStreamHelper(Stream).CopyTo(MemStream);
+    IFacesImpl::IStreamHelper(MemStream).SeekTo(5);
+    IFacesImpl::IStreamHelper(MemStream).Write("*", 1);
+    IFacesImpl::IStreamHelper(MemStream).SeekToEnd();
+    IFacesImpl::IStreamHelper(MemStream).SeekTo(IFacesImpl::IStreamHelper(MemStream).GetSize() - 1);
+    IFacesImpl::IStreamHelper(MemStream).Write("++\0", 3);
+    std::cout << (const char* )IFacesImpl::StreamToBuf<System::Mutex>(MemStream)->GetData() << std::endl;*/
 
-    //FWLoader(*LoadConfig(argv[1]).get());
+    FWLoader(*LoadConfig(argv[1]).get());
   }
   catch (std::exception &e)
   {
