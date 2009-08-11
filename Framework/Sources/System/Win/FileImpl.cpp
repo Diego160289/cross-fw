@@ -30,13 +30,13 @@ namespace System
       ShareMode = FILE_SHARE_WRITE;
       break;
     case fmReadWrite :
-      ShareMode = FILE_SHARE_WRITE;
+      ShareMode = FILE_SHARE_READ | FILE_SHARE_WRITE;
       break;
     default :
       throw FileException("Unknown file mode");
     }
     if ((FileHandle = CreateFileA(fileName, Access, ShareMode, NULL,
-      mode == fmRead ? OPEN_EXISTING : CREATE_ALWAYS,
+      mode == fmRead ? OPEN_EXISTING : OPEN_ALWAYS,
       FILE_ATTRIBUTE_NORMAL, NULL)) == INVALID_HANDLE_VALUE)
     {
       throw FileException("Can't open file");
@@ -51,7 +51,7 @@ namespace System
   unsigned long File::FileImpl::GetSize() const
   {
     DWORD Size = 0;
-    if (GetFileSize(FileHandle, &Size) == INVALID_FILE_SIZE)
+    if ((Size = GetFileSize(FileHandle, 0)) == INVALID_FILE_SIZE)
       throw FileException("Can't get file size");
     return static_cast<unsigned long>(Size);
   }
