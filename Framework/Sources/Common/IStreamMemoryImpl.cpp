@@ -1,5 +1,4 @@
 #include "IStreamMemoryImpl.h"
-#include "RefObjQIPtr.h"
 
 
 namespace IFacesImpl
@@ -50,9 +49,9 @@ namespace IFacesImpl
     Common::ISyncObject Locker(GetSynObj());
     unsigned long Size = IRawDataBufferImpl::GetSize();
     char *Data = reinterpret_cast<char *>(GetData());
-    if (!Data || bytes >= Cursor + Size)
+    if (!Data || bytes >= Size - Cursor)
     {
-      Resize(bytes);
+      Resize(bytes + Cursor);
       Data = reinterpret_cast<char *>(GetData());
     }
     const char *InputBuf = reinterpret_cast<const char *>(buf);

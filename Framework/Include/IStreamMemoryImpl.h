@@ -4,6 +4,7 @@
 #include "IFacesTools.h"
 #include "Exceptions.h"
 #include "IRawDataBufferImpl.h"
+#include "RefObjQIPtr.h"
 
 namespace IFacesImpl
 {
