@@ -48,7 +48,9 @@ namespace IFaces
     : public IBase
   {
     DECLARE_UUID(97835a53-8f31-4eeb-9485-d7b62da5d146)
+    virtual RetCode SetDataSource(IStorage *dataSource) = 0;
+    virtual RetCode PlayMovie(const char *movieName) = 0;
   };
 }
 
-#endif // !__WFEXTENSIONS_H__
+#endif // !__WFEXTENSIONS_H_
