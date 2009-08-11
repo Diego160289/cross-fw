@@ -58,6 +58,20 @@ namespace IFacesImpl
     return Ret;
   }
 
+  Common::RefObjPtr<IFaces::IRawDataBuffer>
+    StreamToBuf(Common::RefObjPtr<IFaces::IStream> stream, const Common::ISynObj &syn);
+
+  template <typename TSyn>
+  Common::RefObjPtr<IFaces::IRawDataBuffer>
+    StreamToBuf(Common::RefObjPtr<IFaces::IStream> stream)
+  {
+    Common::RefObjPtr<IFaces::IStream> NewStream =
+      Common::IBaseImpl<IStreamMemoryImpl>::Create<TSyn>();
+    if (stream->CopyTo(NewStream.Get()) != retOk)
+      return Common::RefObjPtr<IFaces::IRawDataBuffer>();
+    return Common::RefObjQIPtr<IFaces::IRawDataBuffer>(NewStream);
+  }
+
 }
 
 #endif // !__ISTREAMMEMORYIMPL_H__

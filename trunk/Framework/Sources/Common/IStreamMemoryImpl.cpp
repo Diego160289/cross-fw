@@ -1,4 +1,5 @@
 #include "IStreamMemoryImpl.h"
+#include "RefObjQIPtr.h"
 
 
 namespace IFacesImpl
@@ -37,7 +38,8 @@ namespace IFacesImpl
     *readBytes = Dif < bufSize ? Dif : bufSize;
     const char *Data = reinterpret_cast<const char *>(GetData());
     char *OutputBuf = reinterpret_cast<char *>(buf);
-    for (unsigned i = 0 ; i < *readBytes ; *OutputBuf++ = *Data++);
+    for (unsigned i = 0 ; i < *readBytes ; ++i)
+      OutputBuf[i] = Data[Cursor + i];
     return retOk;
   }
 
@@ -49,9 +51,13 @@ namespace IFacesImpl
     unsigned long Size = IRawDataBufferImpl::GetSize();
     char *Data = reinterpret_cast<char *>(GetData());
     if (!Data || bytes >= Cursor + Size)
+    {
       Resize(bytes);
+      Data = reinterpret_cast<char *>(GetData());
+    }
     const char *InputBuf = reinterpret_cast<const char *>(buf);
-    for (unsigned i = 0 ; i < bytes ; *Data++ = *InputBuf++);
+    for (unsigned i = 0 ; i < bytes ; ++i)
+      Data[Cursor + i] = InputBuf[i];
     return retOk;
   }
 
@@ -107,6 +113,16 @@ namespace IFacesImpl
     Common::RefObjPtr<IFaces::IStream> Ret;
     Common::IBaseImpl<IStreamMemoryImpl>::CreateWithSyn(syn).QueryInterface(Ret.GetPPtr());
     return Ret;
+  }
+
+  Common::RefObjPtr<IFaces::IRawDataBuffer>
+    StreamToBuf(Common::RefObjPtr<IFaces::IStream> stream, const Common::ISynObj &syn)
+  {
+    Common::RefObjPtr<IFaces::IStream> NewStream =
+      Common::IBaseImpl<IStreamMemoryImpl>::CreateWithSyn(syn);
+    if (stream->CopyTo(NewStream.Get()) != retOk)
+      return Common::RefObjPtr<IFaces::IRawDataBuffer>();
+    return Common::RefObjQIPtr<IFaces::IRawDataBuffer>(NewStream);
   }
 
 }

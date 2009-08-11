@@ -97,6 +97,7 @@ Common::StringMapPtr LoadConfig(const char *configFileName)
 #include "IStorageFileImpl.h"
 #include "IStorageHelper.h"
 #include "IStreamHelper.h"
+#include "IStreamMemoryImpl.h"
 
 int main(int argc, char *argv[])
 {
@@ -118,6 +119,11 @@ int main(int argc, char *argv[])
     IFacesImpl::IStorageHelper StgH2 = StgH1.CreateStorage("__3");
     const char Str[] = "This is a test";
     IFacesImpl::IStreamHelper(StgH2.CreateStream("test.txt")).Write(Str, sizeof(Str));
+    Common::RefObjPtr<IFaces::IStream> Stream = StgH2.OpenStream("test.txt");
+    std::cout << (const char* )IFacesImpl::StreamToBuf<System::Mutex>(Stream)->GetData() << std::endl;
+    IFacesImpl::IStreamHelper(Stream).SeekTo(5);
+    IFacesImpl::IStreamHelper(Stream).Write("*", 1);
+    std::cout << (const char* )IFacesImpl::StreamToBuf<System::Mutex>(Stream)->GetData() << std::endl;
 
     //FWLoader(*LoadConfig(argv[1]).get());
   }
