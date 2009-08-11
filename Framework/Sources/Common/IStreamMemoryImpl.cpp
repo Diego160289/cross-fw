@@ -37,8 +37,7 @@ namespace IFacesImpl
     *readBytes = Dif < bufSize ? Dif : bufSize;
     const char *Data = reinterpret_cast<const char *>(GetData());
     char *OutputBuf = reinterpret_cast<char *>(buf);
-    for (unsigned i = 0 ; i < *readBytes ; ++i)
-      OutputBuf[i] = Data[Cursor + i];
+    for (unsigned i = 0 ; i < *readBytes ; OutputBuf[i++] = Data[Cursor++]);
     return retOk;
   }
 
@@ -55,8 +54,7 @@ namespace IFacesImpl
       Data = reinterpret_cast<char *>(GetData());
     }
     const char *InputBuf = reinterpret_cast<const char *>(buf);
-    for (unsigned i = 0 ; i < bytes ; ++i)
-      Data[Cursor + i] = InputBuf[i];
+    for (unsigned i = 0 ; i < bytes ; Data[Cursor++] = InputBuf[i++]);
     return retOk;
   }
 
