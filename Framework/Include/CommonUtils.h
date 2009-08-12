@@ -4,6 +4,7 @@
 #include "Typedefs.h"
 
 #include <sstream>
+#include <string>
 
 namespace Common
 {
@@ -19,9 +20,9 @@ namespace Common
                const std::basic_string<T> &str1,
                const std::basic_string<T> &str2)
   {
-    std::basic_string<T>::size_type StrLen =
+    typename std::basic_string<T>::size_type StrLen =
       str1.length() > str2.length() ? str1.length() : str2.length();
-    for (std::basic_string<T>::size_type i = str->find(str1) ;
+    for (typename std::basic_string<T>::size_type i = str->find(str1) ;
       i != std::basic_string<T>::npos ;
       i = str->find(str1, i + StrLen))
     {
