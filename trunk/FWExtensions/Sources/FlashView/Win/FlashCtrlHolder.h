@@ -1,6 +1,8 @@
 #ifndef __FLASHCTRLHOLDER_H__
 #define __FLASHCTRLHOLDER_H__
 
+#include <windows.h>
+
 #include "../../../../Framework/Include/NoCopyable.h"
 #include "../../../../Framework/Include/DllHolder.h"
 #include "../../../../Framework/Include/Pointers.h"
@@ -15,8 +17,6 @@
 #include <map>
 
 //#include "c:/temp/ar1/ar1/flashpresenter/flash/include/f_in_box.h"
-
-#include <windows.h>
 
 class FlashHandle
   : private Common::NoCopyable
@@ -36,8 +36,9 @@ public:
   void SetDataSource(Common::RefObjPtr<IFaces::IStorage> dataSource);
   void PlayMovie(const char *movieName);
   HWND GetHWND();
+  void FlashSetRetValue(const char *value);
 private:
-  typedef struct
+  typedef struct _HFPC
   {
     void* p;
   } *HFPC;
@@ -47,8 +48,8 @@ private:
   DllHolderPtr FInBox;
   Common::RefObjPtr<IFaces::IStorage> DataSource;
   HFPC Flash;
-  DWORD ResourceHandlerID;
   HWND FlashWnd;
+  DWORD ResourceHandlerID;
   typedef HFPC (WINAPI *FPC_LoadOCXCodeFromMemoryPtr)(LPVOID, DWORD);
   FPC_LoadOCXCodeFromMemoryPtr FPC_LoadOCXCodeFromMemory;
   typedef BOOL (WINAPI *FPC_UnloadCodePtr)(HFPC);
@@ -64,6 +65,8 @@ private:
   FPC_AddOnLoadExternalResourceHandlerPtr FPC_AddOnLoadExternalResourceHandler;
   static HRESULT WINAPI OnLoadExternalResource(LPCSTR url, IStream** stream, HFPC flash, LPARAM param);
   HRESULT OnLoadResource(LPCSTR url, IStream** stream);
+  typedef HRESULT (WINAPI *FPCSetReturnValuePtr)(HWND, LPCSTR);
+  FPCSetReturnValuePtr FPCSetReturnValue;
   Common::RefObjPtr<IFaces::IRawDataBuffer> LoadResource(const char *name);
 };
 

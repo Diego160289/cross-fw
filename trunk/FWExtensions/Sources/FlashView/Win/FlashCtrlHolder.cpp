@@ -48,6 +48,7 @@ FlashHandle::FlashHandle(DllHolderPtr finbox)
     FPC_GetClassAtom = finbox->GetProc<FPC_GetClassAtomPtr>("FPC_GetClassAtomA");
     FPC_Play = finbox->GetProc<FPC_PlayPtr>("FPC_Play");
     FPC_AddOnLoadExternalResourceHandler = finbox->GetProc<FPC_AddOnLoadExternalResourceHandlerPtr>("FPC_AddOnLoadExternalResourceHandlerA");
+    FPCSetReturnValue = finbox->GetProc<FPCSetReturnValuePtr>("FPCSetReturnValueA");
 
     if (!(Flash = FPC_LoadOCXCodeFromMemory(NewFlashCtrlData, FlashCtrlFileSize)))
       throw FlashCtrlHolderException("Can't init flash control");
@@ -143,12 +144,19 @@ void FlashHandle::PlayMovie(const char *movieName)
   Movie.lpData = Buf->GetData();
   Movie.dwSize = Buf->GetSize();
   SendMessage(FlashWnd, FPCM_PUTMOVIEFROMMEMORY, 0, reinterpret_cast<LPARAM>(&Movie));
-  FPC_Play(FlashWnd);
+  if (FAILED(FPC_Play(FlashWnd)))
+    throw FlashCtrlHolderException("Can't play movie");
 }
 
 HWND FlashHandle::GetHWND()
 {
   return FlashWnd;
+}
+
+void FlashHandle::FlashSetRetValue(const char *value)
+{
+  if (FAILED(FPCSetReturnValue(FlashWnd, value)))
+    throw FlashCtrlHolderException("Can't set return value");
 }
 
 
@@ -239,10 +247,9 @@ long FlashCtrlHolder::OnNotify(const IFaces::WindowMessage &msg)
       SFPCFlashCallInfoStruct *Info = reinterpret_cast<SFPCFlashCallInfoStruct*>(msg.LParam);
       std::string Request = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 		  Request += Info->request;
-      
 
-      int k = 0;
 
+      Flash->FlashSetRetValue("<string>true</string>");
     }
     catch (std::exception &)
     {
