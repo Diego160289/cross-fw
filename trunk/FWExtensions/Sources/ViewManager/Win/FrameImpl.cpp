@@ -261,7 +261,7 @@ void FrameImpl::Create(Common::SharedPtr<SysDisplays::SysDisplay> display)
     throw FrameImplException("Empty display pointer");
   WndClassHolder::Instance().RegWndClass(FrameClassName);
   LPCRECT Rect = display->GetRect();
-  CreateAndRun(0, FrameClassName, "", WS_POPUP | WS_THICKFRAME,
+  CreateAndRun(0, FrameClassName, "", WS_POPUP,
     Rect->left, Rect->top, Rect->right - Rect->left, Rect->bottom - Rect->top, 0, 0);
 }
 

@@ -15,7 +15,7 @@
 #include "WindowMessage.h"
 
 #include <map>
-
+#include <queue>
 //#include "c:/temp/ar1/ar1/flashpresenter/flash/include/f_in_box.h"
 
 class FlashHandle
@@ -26,8 +26,9 @@ public:
   static const UINT FPCN_FIRST;
   static const UINT FPCM_PUTMOVIEFROMMEMORY;
   static const UINT FPCN_FLASHCALL;
+  static const UINT FPCN_LOADEXTERNALRESOURCE;
   static const UINT FPCS_NEED_ALL_KEYS;
-
+                
   typedef Common::SharedPtr<System::DllHolder> DllHolderPtr;
   FlashHandle(DllHolderPtr finbox);
   ~FlashHandle();
@@ -36,7 +37,9 @@ public:
   void SetDataSource(Common::RefObjPtr<IFaces::IStorage> dataSource);
   void PlayMovie(const char *movieName);
   HWND GetHWND();
-  void FlashSetRetValue(const char *value);
+  void FlashSetRetValue(const wchar_t *value);
+  std::wstring CallFlash(const wchar_t *request);
+  void LoadResource(const wchar_t *name, IStream *stream);
 private:
   typedef struct _HFPC
   {
@@ -60,14 +63,18 @@ private:
   FPC_GetClassAtomPtr FPC_GetClassAtom;
   typedef HRESULT (WINAPI *FPC_PlayPtr)(HWND);
   FPC_PlayPtr FPC_Play;
-  typedef HRESULT (WINAPI *PLOAD_EXTERNAL_RESOURCE_HANDLERA)(LPCSTR, IStream**, HFPC, LPARAM);
-  typedef DWORD (WINAPI *FPC_AddOnLoadExternalResourceHandlerPtr)(HFPC, PLOAD_EXTERNAL_RESOURCE_HANDLERA, LPARAM);
+  typedef HRESULT (WINAPI *PLOAD_EXTERNAL_RESOURCE_HANDLER)(LPCWSTR, IStream**, HFPC, LPARAM);
+  typedef DWORD (WINAPI *FPC_AddOnLoadExternalResourceHandlerPtr)(HFPC, PLOAD_EXTERNAL_RESOURCE_HANDLER, LPARAM);
   FPC_AddOnLoadExternalResourceHandlerPtr FPC_AddOnLoadExternalResourceHandler;
-  static HRESULT WINAPI OnLoadExternalResource(LPCSTR url, IStream** stream, HFPC flash, LPARAM param);
-  HRESULT OnLoadResource(LPCSTR url, IStream** stream);
-  typedef HRESULT (WINAPI *FPCSetReturnValuePtr)(HWND, LPCSTR);
+  static HRESULT WINAPI OnLoadExternalResource(LPCWSTR url, IStream** stream, HFPC flash, LPARAM param);
+  HRESULT OnLoadResource(LPCWSTR url, IStream** stream);
+  typedef HRESULT (WINAPI *FPCSetReturnValuePtr)(HWND, LPCWSTR);
   FPCSetReturnValuePtr FPCSetReturnValue;
-  Common::RefObjPtr<IFaces::IRawDataBuffer> LoadResource(const char *name);
+  typedef HRESULT (WINAPI *FPCCallFunctionPtr)(HWND, LPCWSTR, LPWSTR, DWORD *);
+  FPCCallFunctionPtr FPCCallFunction;
+  typedef HRESULT (WINAPI *FPC_IStream_WritePtr)(IStream *, const void *, ULONG, ULONG *);
+  FPC_IStream_WritePtr FPC_IStream_Write;
+  Common::RefObjPtr<IFaces::IRawDataBuffer> LoadResource(const wchar_t *name);
 };
 
 
@@ -79,6 +86,7 @@ class FlashCtrlHolder
 public:
   static const UINT START_MSG;
   static const UINT PLAY_MOVIE_MSG;
+  static const UINT FLASH_REQUEST_MSG;
   FlashCtrlHolder();
   ~FlashCtrlHolder();
   void Create();
@@ -92,11 +100,13 @@ private:
   typedef long (FlashCtrlHolder::*MsgHandler)(const IFaces::WindowMessage &);
   typedef std::map<UINT, MsgHandler> HandlerPool;
   HandlerPool Handlers;
+  std::queue<std::wstring> FlashRequetsQueue;
   long OnCreate(const IFaces::WindowMessage &msg);
   long OnSize(const IFaces::WindowMessage &msg);
   long OnNotify(const IFaces::WindowMessage &msg);
   long OnPaint(const IFaces::WindowMessage &msg);
   long OnPlayMovieMsg(const IFaces::WindowMessage &msg);
+  long OnFlashRequestMsg(const IFaces::WindowMessage &msg);
 };
 
 #endif // !__FLASHCTRLHOLDER_H__
