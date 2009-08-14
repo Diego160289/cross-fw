@@ -76,8 +76,9 @@ bool IMainServiceImpl::OnInit()
     return false;
   }
   _getch();
-  MarkToDoneService();
-  return true;
+  /*MarkToDoneService();
+  return true;*/
+  return false;
 }
 
 void IMainServiceImpl::OnDone()
