@@ -18,13 +18,15 @@ void IMainServiceImpl::BeforeDestroy()
 #include "../../Framework/Include/IStorageFileImpl.h"
 #include "../../Framework/Include/IStreamFileImpl.h"
 
+#include <conio.h>
+
 bool IMainServiceImpl::OnInit()
 {
   try
   {
     // TODO: убрать в компоненту источника данных. Ее пока нет!
 
-    Common::RefObjPtr<IFaces::IStorage> Stg = IFacesImpl::OpenFileStorage<System::MutexStub>("C:\\Temp\\ar1\\ar1\\FlashData", false);
+    Common::RefObjPtr<IFaces::IStorage> Stg = IFacesImpl::OpenFileStorage<System::MutexStub>("./FlashData", false);
     
     ViewManager = CreateObject<IFaces::IViewManager>("dc5597fe-e0ed-4f60-a288-7771b947274c");
     if (!ViewManager->GetDisplayCount())
@@ -73,7 +75,8 @@ bool IMainServiceImpl::OnInit()
   {
     return false;
   }
-  //MarkToDoneService();
+  _getch();
+  MarkToDoneService();
   return true;
 }
 

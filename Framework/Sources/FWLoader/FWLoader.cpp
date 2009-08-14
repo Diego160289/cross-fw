@@ -101,13 +101,13 @@ Common::StringMapPtr LoadConfig(const char *configFileName)
 
 int main(int argc, char *argv[])
 {
-  /*if (argc != 2)
+  if (argc != 2)
   {
     std::cerr
       << "Bad params\n"
       << "FWLoader \"config file\"\n";
     return 1;
-  }*/
+  }
   try
   {
     /*Common::RefObjQIPtr<IFaces::IStorage> Stg =
