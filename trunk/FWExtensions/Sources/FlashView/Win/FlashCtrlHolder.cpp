@@ -14,7 +14,7 @@ const UINT FlashHandle::FPCN_FLASHCALL = FlashHandle::FPCN_FIRST - 5;
 const UINT FlashHandle::FPCN_LOADEXTERNALRESOURCE = FlashHandle::FPCN_FIRST - 2;
 const UINT FlashHandle::FPCS_NEED_ALL_KEYS = 0x00000002L;
 
-FlashHandle::FlashHandle(DllHolderPtr finbox)
+FlashHandle::FlashHandle()
   : File(INVALID_HANDLE_VALUE)
   , FileMapping(0)
   , FlashCtrlData(0)
@@ -22,6 +22,7 @@ FlashHandle::FlashHandle(DllHolderPtr finbox)
   , ResourceHandlerID(0)
 {
   // TODO: с проперти
+  DllHolderPtr finbox(new System::DllHolder("./f_in_box.dll"));
   HANDLE NewFile = CreateFileA("./flash9f.ocx", GENERIC_READ, FILE_SHARE_READ,
     0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);  
   if (NewFile == INVALID_HANDLE_VALUE)
@@ -93,8 +94,8 @@ HRESULT FlashHandle::OnLoadResource(LPCWSTR url, IStream** stream)
 
 void FlashHandle::Create(HWND parent)
 {
-  if (FAILED(CoInitialize(0)))
-    throw FlashCtrlHolderException("Can't COM init");
+  /*if (FAILED(CoInitialize(0)))
+    throw FlashCtrlHolderException("Can't COM init");*/
   if (!(FlashWnd = CreateWindowW(reinterpret_cast<LPCWSTR>(FPC_GetClassAtom(Flash)), 0, 
     WS_CHILD | WS_VISIBLE | FPCS_NEED_ALL_KEYS, 0,  0, 100, 100, parent, 0, 0, 0)))
   {
@@ -221,26 +222,19 @@ FlashCtrlHolder::FlashCtrlHolder()
   : Wnd(0)
 {
   Handlers[WM_CREATE] = &FlashCtrlHolder::OnCreate;
+  Handlers[WM_DESTROY] = &FlashCtrlHolder::OnDestroy;
   Handlers[WM_SIZE] = &FlashCtrlHolder::OnSize;
   Handlers[WM_NOTIFY] = &FlashCtrlHolder::OnNotify;
   Handlers[WM_PAINT] = &FlashCtrlHolder::OnPaint;
   Handlers[PLAY_MOVIE_MSG] = &FlashCtrlHolder::OnPlayMovieMsg;
   Handlers[FLASH_REQUEST_MSG] = &FlashCtrlHolder::OnFlashRequestMsg;
+
+  NotifyHandlers[FlashHandle::FPCN_LOADEXTERNALRESOURCE] = &FlashCtrlHolder::OnLoadExternalResource;
+  NotifyHandlers[FlashHandle::FPCN_FLASHCALL] = &FlashCtrlHolder::OnFlashRequest;
 }
 
 FlashCtrlHolder::~FlashCtrlHolder()
 {
-}
-
-void FlashCtrlHolder::Create()
-{
-  Flash = new FlashHandle(FlashHandle::DllHolderPtr(new System::DllHolder("./f_in_box.dll"))); // TODO: в пропертя
-}
-
-
-void FlashCtrlHolder::Destroy()
-{
-  Flash.Release();
 }
 
 void FlashCtrlHolder::SetDataSource(Common::RefObjPtr<IFaces::IStorage> dataSource)
@@ -268,6 +262,7 @@ long FlashCtrlHolder::OnCreate(const IFaces::WindowMessage &msg)
   try
   {
     Wnd = msg.Wnd;
+    Flash = new FlashHandle;
     Flash->Create(msg.Wnd);
   }
   catch (std::exception &)
@@ -277,8 +272,16 @@ long FlashCtrlHolder::OnCreate(const IFaces::WindowMessage &msg)
   return 1;
 }
 
+long FlashCtrlHolder::OnDestroy(const IFaces::WindowMessage &msg)
+{
+  Flash.Release();
+  return 1;
+}
+
 long FlashCtrlHolder::OnSize(const IFaces::WindowMessage &msg)
 {
+  if (!Flash.Get())
+    return 0;
   RECT Rect = { 0 };
   if (!GetClientRect(msg.Wnd, &Rect))
     return 0;
@@ -295,37 +298,9 @@ long FlashCtrlHolder::OnNotify(const IFaces::WindowMessage &msg)
   LPNMHDR NMhdr = reinterpret_cast<LPNMHDR>(msg.LParam);
   if (Flash->GetHWND() == NMhdr->hwndFrom)
   {
-    try
-    {
-      if(NMhdr->code == FlashHandle::FPCN_LOADEXTERNALRESOURCE)
-      {
-        struct SFPCLoadExternalResource
-        {    
-          NMHDR hdr;
-          LPCSTR RelativePath;
-          LPSTREAM Stream;
-        };
-        SFPCLoadExternalResource *Res = reinterpret_cast<SFPCLoadExternalResource*>(msg.LParam);
-        Flash->LoadResource(AStringToWString(Res->RelativePath, false).c_str(), Res->Stream);
-        return 1;
-      }
-
-      if(NMhdr->code != FlashHandle::FPCN_FLASHCALL)
-        return 0;
-      struct SFPCFlashCallInfoStruct
-      {
-        NMHDR hdr;
-        LPCWSTR request;
-      };
-      FlashRequetsQueue.push(reinterpret_cast<SFPCFlashCallInfoStruct*>(msg.LParam)->request);
-      PostMessage(Wnd, FLASH_REQUEST_MSG, 0, 0);
-      Flash->FlashSetRetValue(L"<string>true</string>");
-    }
-    catch (std::exception &)
-    {
-      return 0;
-    }
-    return 1;
+    NotifyHandlerPool::iterator Iter = NotifyHandlers.find(NMhdr->code);
+    if (Iter != NotifyHandlers.end())
+      return (this->*Iter->second)(reinterpret_cast<void *>(msg.LParam));
   }
   return 0;
 }
@@ -387,6 +362,46 @@ long FlashCtrlHolder::OnFlashRequestMsg(const IFaces::WindowMessage &msg)
         }
       }
     }
+  }
+  catch (std::exception &)
+  {
+    return 0;
+  }
+  return 1;
+}
+
+long FlashCtrlHolder::OnLoadExternalResource(void *prm)
+{
+  try
+  {
+    struct SFPCLoadExternalResource
+    {    
+      NMHDR hdr;
+      LPCSTR RelativePath;
+      LPSTREAM Stream;
+    };
+    SFPCLoadExternalResource *Res = reinterpret_cast<SFPCLoadExternalResource*>(prm);
+    Flash->LoadResource(AStringToWString(Res->RelativePath, false).c_str(), Res->Stream);
+  }
+  catch (std::exception &)
+  {
+    return 0;
+  }
+  return 1;
+}
+
+long FlashCtrlHolder::OnFlashRequest(void *prm)
+{
+  try
+  {
+    struct SFPCFlashCallInfoStruct
+    {
+      NMHDR hdr;
+      LPCWSTR request;
+    };
+    FlashRequetsQueue.push(reinterpret_cast<SFPCFlashCallInfoStruct*>(prm)->request);
+    PostMessage(Wnd, FLASH_REQUEST_MSG, 0, 0);
+    Flash->FlashSetRetValue(L"<string>true</string>");
   }
   catch (std::exception &)
   {

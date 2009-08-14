@@ -29,8 +29,7 @@ public:
   static const UINT FPCN_LOADEXTERNALRESOURCE;
   static const UINT FPCS_NEED_ALL_KEYS;
                 
-  typedef Common::SharedPtr<System::DllHolder> DllHolderPtr;
-  FlashHandle(DllHolderPtr finbox);
+  FlashHandle();
   ~FlashHandle();
   void Create(HWND parent);
   void Resize(const RECT &r);
@@ -48,6 +47,7 @@ private:
   HANDLE File;
   HANDLE FileMapping;
   LPVOID FlashCtrlData;
+  typedef Common::SharedPtr<System::DllHolder> DllHolderPtr;
   DllHolderPtr FInBox;
   Common::RefObjPtr<IFaces::IStorage> DataSource;
   HFPC Flash;
@@ -89,8 +89,6 @@ public:
   static const UINT FLASH_REQUEST_MSG;
   FlashCtrlHolder();
   ~FlashCtrlHolder();
-  void Create();
-  void Destroy();
   void SetDataSource(Common::RefObjPtr<IFaces::IStorage> dataSource);
   void PlayMovie(const char *movieName);
   long OnMessage(const IFaces::WindowMessage &msg);
@@ -102,11 +100,17 @@ private:
   HandlerPool Handlers;
   std::queue<std::wstring> FlashRequetsQueue;
   long OnCreate(const IFaces::WindowMessage &msg);
+  long OnDestroy(const IFaces::WindowMessage &msg);
   long OnSize(const IFaces::WindowMessage &msg);
   long OnNotify(const IFaces::WindowMessage &msg);
   long OnPaint(const IFaces::WindowMessage &msg);
   long OnPlayMovieMsg(const IFaces::WindowMessage &msg);
   long OnFlashRequestMsg(const IFaces::WindowMessage &msg);
+  typedef long (FlashCtrlHolder::*NotifyHandler)(void *);
+  typedef std::map<UINT, NotifyHandler> NotifyHandlerPool;
+  NotifyHandlerPool NotifyHandlers;
+  long OnLoadExternalResource(void *prm);
+  long OnFlashRequest(void *prm);
 };
 
 #endif // !__FLASHCTRLHOLDER_H__

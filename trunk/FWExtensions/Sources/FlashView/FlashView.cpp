@@ -19,7 +19,7 @@ bool IFlashViewImpl::OnInit()
   Common::SharedPtr<Common::ISynObj> NewDataSourceSynObj(GetSynObj().Clone());
   try
   {
-    (FlashCtrl = new FlashCtrlHolder)->Create();
+    FlashCtrl = new FlashCtrlHolder;
   }
   catch (std::exception &)
   {
@@ -36,7 +36,6 @@ void IFlashViewImpl::OnDone()
     DataSource.Release();
   }
 
-  FlashCtrl->Destroy();
   Common::ISyncObject Locker(GetSynObj());
   FlashCtrl.Release();
 }
