@@ -76,8 +76,8 @@ namespace Common
           TiXmlElement Item(srcNode.GetNodeName());
           if (srcNode.HasProperty())
           {
-            const StringMap &Props = srcNode.GetPropertiesMap();
-            for (StringMap::const_iterator i = Props.begin() ; i != Props.end() ; ++i)
+            const PropertyMap &Props = srcNode.GetPropertiesMap();
+            for (PropertyMap::const_iterator i = Props.begin() ; i != Props.end() ; ++i)
               Item.SetAttribute(i->first, i->second);
           }
           if (srcNode.HasValue())

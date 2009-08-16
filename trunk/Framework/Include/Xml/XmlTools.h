@@ -25,7 +25,94 @@ namespace Common
     class Node;
 
     typedef SharedPtr<Node> NodePtr;
-    typedef std::list<NodePtr> NodeList;
+
+    class Tag
+    {
+    public:
+      Tag(const std::string &name)
+        : Name(name)
+      {
+      }
+      const std::string& GetName() const
+      {
+        return Name;
+      }
+    private:
+      std::string Name;
+    };
+
+    class Attribute
+    {
+    public:
+      Attribute(const std::string &name, const std::string &value = "")
+        : Name(name)
+        , Value(value)
+      {
+      }
+      const std::string& GetName() const
+      {
+        return Name;
+      }
+      const std::string& GetValue() const
+      {
+        return Value;
+      }
+    private:
+      std::string Name;
+      std::string Value;
+    };
+
+
+    DECLARE_LOGIC_EXCEPTION(NodeList)
+
+    class NodeList
+      : private std::list<NodePtr>
+    {
+    public:
+      using std::list<NodePtr>::const_iterator;
+      using std::list<NodePtr>::push_back;
+      using std::list<NodePtr>::begin;
+      using std::list<NodePtr>::end;
+      using std::list<NodePtr>::size;
+
+      NodeList()
+      {
+      }
+      NodeList(const NodePtr node)
+      {
+        push_back(node);
+      }
+      inline NodeList operator [] (const Tag &tag) const;
+      inline NodeList operator [] (const Attribute &attribute) const;
+      inline const NodePtr operator [] (unsigned index) const;
+    };
+
+    DECLARE_LOGIC_EXCEPTION(PropertyMap)
+
+    class PropertyMap
+      : private StringMap
+    {
+    public:
+      using StringMap::const_iterator;
+      using StringMap::begin;
+      using StringMap::end;
+      using StringMap::find;
+
+      void Add(const std::string &name, const std::string &value)
+      {
+        StringMap &Map = *this;
+        Map[name] = value;
+      }
+
+      const std::string& operator [] (const std::string name) const
+      {
+        const_iterator Iter = find(name);
+        if (Iter == end())
+          throw PropertyMapException("Property not found");
+        return Iter->second;
+      }
+    };
+
     typedef SharedPtr<NodeList> NodeListPtr;
 
     class Node
@@ -41,6 +128,8 @@ namespace Common
       }
       void SetValue(const std::wstring &value)
       {
+        if (ChildNodes.Get())
+          throw NodeException("Can't set value. Node has child node");
         if (!Value.Get())
           Value = new std::wstring;
         (*Value.Get()) = value;
@@ -58,10 +147,10 @@ namespace Common
       void AddProperty(const std::string &name, const std::string &value)
       {
         if (!Properties.Get())
-          Properties = new StringMap;
-        (*Properties.Get())[name] = value;
+          Properties = new PropertyMap;
+        Properties->Add(name, value);
       }
-      const StringMap& GetPropertiesMap() const
+      const PropertyMap& GetPropertiesMap() const
       {
         if (!Properties.Get())
           throw NodeException("No properties");
@@ -126,9 +215,54 @@ namespace Common
     private:
       std::string NodeName;
       SharedPtr<std::wstring> Value;
-      SharedPtr<StringMap> Properties;
+      SharedPtr<PropertyMap> Properties;
       NodeListPtr ChildNodes;
     };
+
+    inline NodeList NodeList::operator [] (const Tag &tag) const
+    {
+      NodeList Res;
+      for (const_iterator i = begin() ; i != end() ; ++i)
+      {
+        if ((*i)->GetNodeName() == tag.GetName())
+          Res.push_back(*i);
+      }
+      if (Res.empty())
+        throw NodeListException("Empty list");
+      return Res;
+    }
+
+    inline NodeList NodeList::operator [] (const Attribute &attribute) const
+    {
+      NodeList Res;
+      for (const_iterator i = begin() ; i != end() ; ++i)
+      {
+        if ((*i)->HasProperty())
+        {
+          const PropertyMap &Props = (*i)->GetPropertiesMap();
+          PropertyMap::const_iterator Iter = Props.find(attribute.GetName());
+          if (Iter == Props.end())
+            continue;
+          if (!attribute.GetValue().empty() && Iter->second != attribute.GetValue())
+            continue;
+          Res.push_back(*i);
+        }
+      }
+      if (Res.empty())
+        throw NodeListException("Empty list");
+      return Res;
+    }
+
+    inline const NodePtr NodeList::operator [] (unsigned index) const
+    {
+      unsigned Index = 0;
+      for (const_iterator i = begin() ; i != end() ; ++i)
+      {
+        if (Index++ == index)
+          return *i;
+      }
+      throw NodeListException("Bad index");
+    }
 
     NodePtr XmlToNode(const std::string &xml);
     std::string NodeToUTF8(const Node &node, bool addHeader = true);
