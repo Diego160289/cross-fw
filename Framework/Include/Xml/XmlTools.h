@@ -61,7 +61,7 @@ namespace Common
           Properties = new StringMap;
         (*Properties.Get())[name] = value;
       }
-      const StringMap& GetProperiesMap() const
+      const StringMap& GetPropertiesMap() const
       {
         if (!Properties.Get())
           throw NodeException("No properties");
@@ -83,7 +83,7 @@ namespace Common
           throw NodeException("No child");
         return *ChildNodes.Get();
       }
-      bool HassChild() const
+      bool HasChildList() const
       {
         return !!ChildNodes.Get();
       }
@@ -110,9 +110,8 @@ namespace Common
         {
           if ((*i)->HasProperty())
           {
-            const StringMap &Props = (*i)->GetProperiesMap();
-            StringMap::const_iterator Iter = Props.find(propName);
-            if (Iter != Props.end())
+            StringMap::const_iterator Iter = Properties->find(propName);
+            if (Iter != Properties->end())
             {
               if (!propValue.empty() && Iter->second != propValue)
                 continue;
@@ -121,7 +120,7 @@ namespace Common
           }
         }
         if (!ResList->size())
-          throw NodeException("Empty list by name");
+          throw NodeException("Empty list by property");
         return ResList;
       }
     private:
@@ -132,7 +131,7 @@ namespace Common
     };
 
     NodePtr XmlToNode(const std::string &xml);
-    std::string NodeToUTF8(const Node &node);
+    std::string NodeToUTF8(const Node &node, bool addHeader = true);
 
   }
 }
