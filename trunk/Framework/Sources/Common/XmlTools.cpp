@@ -67,10 +67,109 @@ namespace Common
       return Ret;
     }
 
-    std::string NodeToUTF8(const Node &node)
+    std::string NodeToUTF8(const Node &node, bool addHeader)
     {
-      throw NodeException("Not implemented");
-      return "";
+      struct
+      {
+        void operator () (const Node &srcNode, TiXmlNode *tiXml)
+        {
+          TiXmlElement Item(srcNode.GetNodeName());
+          if (srcNode.HasProperty())
+          {
+            const StringMap &Props = srcNode.GetPropertiesMap();
+            for (StringMap::const_iterator i = Props.begin() ; i != Props.end() ; ++i)
+              Item.SetAttribute(i->first, i->second);
+          }
+          if (srcNode.HasValue())
+          {
+            const std::wstring &Value = srcNode.GetValue();
+            std::string Utf8Value;
+            utf8::utf16to8(Value.begin(), Value.end(), std::back_inserter(Utf8Value));
+            TiXmlText Text(Utf8Value);
+            Text.SetCDATA(true);
+            if (!Item.InsertEndChild(Text))
+              throw NodeException("Can't add xml node");
+          }
+          if (srcNode.HasChildList())
+          {
+            const NodeList &ChildList = srcNode.GetChildNodes();
+            for (NodeList::const_iterator i = ChildList.begin() ; i != ChildList.end() ; ++i)
+              (*this)(*i->Get(), &Item);
+          }
+          if (!tiXml->InsertEndChild(Item))
+            throw NodeException("Can't add xml node");
+        }
+      } NodeToTiXml;
+      struct
+      {
+        std::string operator () (const TiXmlNode *tiNode, int depth)
+        {
+          struct
+          {
+            std::string operator () (const TiXmlNode *valueNode)
+            {
+              return valueNode->Type() == TiXmlNode::TEXT ?
+                "<![CDATA[" + valueNode->ValueStr() + "]]>" :
+                valueNode->ValueStr();
+            }
+          } ValueToText;
+          std::string RetStr;
+          for (int i = 0 ; i < depth ; ++i)
+            RetStr += " ";
+          std::string BeginTag, BeginTagEx, EndTag, EndTagEx;
+          if (tiNode->Type() == TiXmlNode::TEXT)
+            BeginTag = BeginTagEx = EndTag = EndTag = "";
+          else
+          {
+            BeginTag = "<";
+            BeginTagEx = "</";
+            EndTag = ">";
+            EndTagEx = "/>";
+          }
+          RetStr += BeginTag + ValueToText(tiNode);
+          const TiXmlElement *Element = tiNode->ToElement();
+          if (Element)
+          {
+            for (const TiXmlAttribute *i = Element->FirstAttribute() ; i ; i = i->Next())
+            {
+              RetStr += " ";
+              RetStr += i->Name();
+              RetStr += " = \"" + i->ValueStr() + "\"";
+            }
+          }
+          if (!tiNode->FirstChild())
+            RetStr += EndTagEx;
+          else
+            if (tiNode->FirstChild() == tiNode->LastChild() && tiNode->FirstChild()->ToText())
+            {
+              RetStr += EndTag;
+              RetStr += (*this)(tiNode->FirstChild(), depth + 1);
+              RetStr += BeginTagEx + ValueToText(tiNode) + EndTag;
+            }
+            else
+            {
+              RetStr += ">";
+              for (const TiXmlNode *node = tiNode->FirstChild() ; node ; node = node->NextSibling())
+              {
+                if (!node->ToText())
+                  RetStr += "\n";
+                RetStr += (*this)(node, depth + 1);
+              }
+              RetStr += "\n";
+              for(int i = 0 ; i < depth ; ++i)
+                RetStr += " ";
+              RetStr += BeginTagEx + ValueToText(tiNode) + EndTag;
+            }
+          return RetStr;
+        }
+      } TiXmlToString;
+      TiXmlDocument  Doc;
+      NodeToTiXml(node, &Doc);
+      const TiXmlNode *TiXml = Doc.RootElement();
+      if (!TiXml)
+        throw NodeException("Empty xml document");
+      return (addHeader ? "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" : "") +
+        TiXmlToString(TiXml, 0);
     }
 
   }
