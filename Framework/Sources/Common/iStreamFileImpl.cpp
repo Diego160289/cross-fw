@@ -187,4 +187,14 @@ namespace IFacesImpl
     return Ret;
   }
 
+  Common::RefObjPtr<IFaces::IRawDataBuffer>
+    LoadFileToBuffer(const std::string &fileName, const Common::ISynObj &syn)
+  {
+    Common::RefObjPtr<IFaces::IStream> Stream(OpenFileStream(fileName, false, syn));
+    Common::RefObjPtr<IFaces::IStream> Ret(OpenMemoryStream(syn));
+    IStreamHelper(Stream).CopyTo(Ret);
+    return Common::RefObjQIPtr<IFaces::IRawDataBuffer>(Ret);
+  }
+
+
 }

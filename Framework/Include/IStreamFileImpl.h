@@ -5,7 +5,8 @@
 #include "Exceptions.h"
 #include "File.h"
 #include "Pointers.h"
-
+#include "IStreamMemoryImpl.h"
+#include "IStreamHelper.h"
 
 namespace IFacesImpl
 {
@@ -59,6 +60,18 @@ namespace IFacesImpl
     return Ret;
   }
 
+  Common::RefObjPtr<IFaces::IRawDataBuffer>
+    LoadFileToBuffer(const std::string &fileName, const Common::ISynObj &syn);
+
+  template <typename TSyn>
+  Common::RefObjPtr<IFaces::IRawDataBuffer>
+    LoadFileToBuffer(const std::string &fileName)
+  {
+    Common::RefObjPtr<IFaces::IStream> Stream(OpenFileStream<TSyn>(fileName, false));
+    Common::RefObjPtr<IFaces::IStream> Ret(OpenMemoryStream<TSyn>());
+    IStreamHelper(Stream).CopyTo(Ret);
+    return Common::RefObjQIPtr<IFaces::IRawDataBuffer>(Ret);
+  }
 }
 
 #endif // !__ISTREAMFILEIMPL_H__

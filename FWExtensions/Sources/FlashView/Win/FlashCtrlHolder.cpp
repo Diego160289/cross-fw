@@ -289,10 +289,6 @@ long FlashCtrlHolder::OnSize(const IFaces::WindowMessage &msg)
   return 1;
 }
 
-#include "../../../../Framework/Include/IStorageFileImpl.h"
-#include "../../../../Framework/Include/IStreamFileImpl.h"
-#include "../../../../Framework/Include/MutexStub.h"
-
 long FlashCtrlHolder::OnNotify(const IFaces::WindowMessage &msg)
 {
   LPNMHDR NMhdr = reinterpret_cast<LPNMHDR>(msg.LParam);
@@ -324,6 +320,10 @@ long FlashCtrlHolder::OnPlayMovieMsg(const IFaces::WindowMessage &msg)
   }
   return 1;
 }
+
+#include "../../../../Framework/Include/IStorageFileImpl.h"
+#include "../../../../Framework/Include/IStreamFileImpl.h"
+#include "../../../../Framework/Include/MutexStub.h"
 
 long FlashCtrlHolder::OnFlashRequestMsg(const IFaces::WindowMessage &msg)
 {

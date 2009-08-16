@@ -213,6 +213,10 @@
 			RelativePath="..\..\..\Framework\Sources\Common\RegistryWrappers.cpp"
 			>
 		</File>
+		<File
+			RelativePath="..\..\..\Framework\Sources\Common\XmlTools.cpp"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
