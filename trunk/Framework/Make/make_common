@@ -29,6 +29,8 @@ else
 	CFLAGS = -O3 -Wall -fmessage-length=0
 endif
 
+LINKCXXFLAGS += -static
+
 ifeq ($(OS), Win)
 	EXEFILEEXT := .exe
 	DLLFILEEXT := .dll

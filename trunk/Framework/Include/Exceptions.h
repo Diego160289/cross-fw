@@ -18,6 +18,6 @@
 	DECLARE_EXCEPTION_EX(prefix_class_name_, std::runtime_error)
 
 #define DECLARE_LOGIC_EXCEPTION(prefix_class_name_) \
-  DECLARE_EXCEPTION_EX(prefix_class_name_, std::logic_exception)
+  DECLARE_EXCEPTION_EX(prefix_class_name_, std::logic_error)
 
 #endif	// !__EXCEPTIONS_H__
