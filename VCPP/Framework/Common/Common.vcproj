@@ -166,6 +166,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\Framework\Sources\Common\IFunctionImpl.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\Framework\Sources\Common\INamedVariableImpl.cpp"
 			>
 		</File>
