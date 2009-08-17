@@ -262,13 +262,53 @@ namespace IFaces
     virtual RetCode Enum(IEnum **items) const = 0;
   };
 
+  struct IObjectArgument;
+
+  struct IArrayArgument;
+
+  struct IPropertyArgument
+    : public IBase
+  {
+    DECLARE_UUID(99fc389a-9157-4ef5-9ca5-62bf038ae7bd)
+    virtual const char* GetName() const = 0;
+    virtual RetCode GetValue(IVariant **value) const = 0;
+    virtual RetCode GetObject(IObjectArgument **obj) const = 0;
+    virtual RetCode GetArray(IArrayArgument **arr) const = 0;
+  };
+
+  struct IArrayArgument
+    : public IBase
+  {
+    DECLARE_UUID(3dc2a733-e6a0-4f57-b1fa-37c1570a64b7)
+    virtual unsigned GetCount() const = 0;
+    virtual RetCode GetItem(unsigned index, IPropertyArgument **item) const = 0;
+  };
+
+  struct IObjectArgument
+    : public IBase
+  {
+    DECLARE_UUID(3d06b85b-1a9a-4ded-9726-bfe14aa835b2)
+    virtual RetCode GetProperty(const char *propName, IPropertyArgument **prop) const = 0;
+    virtual RetCode GetArray(IArrayArgument **arr) const = 0;
+  };
+
+  struct IFunction
+    : public IBase
+  {
+    DECLARE_UUID(adf98a92-b1d8-43fb-b0d4-9518b43ed640)
+    virtual const char* GetFunctionName() const = 0;
+    virtual RetCode GetValue(IVariant **value) const = 0;
+    virtual RetCode GetObject(IObjectArgument **obj) const = 0;
+    virtual RetCode GetArray(IArrayArgument **arr) const = 0;
+  };
+
   struct IMessageQueue
     : public IBase
   {
     DECLARE_UUID(cb93b88d-a610-4f9a-9a46-9b63b6935ff1)
     virtual const char* GetQueueId() const = 0;
     virtual bool SetCallback(IBase *callback) = 0;
-    virtual bool Post(/*��������� ���� �� ��������...*/) = 0;
+    virtual bool Post(/**/) = 0;
   };
 
   struct IMessageQueueManager
