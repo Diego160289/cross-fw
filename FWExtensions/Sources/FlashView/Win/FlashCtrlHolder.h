@@ -89,6 +89,7 @@ public:
   static const UINT FLASH_REQUEST_MSG;
   FlashCtrlHolder();
   ~FlashCtrlHolder();
+  void Done();
   void SetDataSource(Common::RefObjPtr<IFaces::IStorage> dataSource);
   void PlayMovie(const char *movieName);
   long OnMessage(const IFaces::WindowMessage &msg);
