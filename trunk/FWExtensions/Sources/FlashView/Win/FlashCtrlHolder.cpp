@@ -237,6 +237,14 @@ FlashCtrlHolder::~FlashCtrlHolder()
 {
 }
 
+void FlashCtrlHolder::Done()
+{
+  Flash.Release();
+  if (Wnd)
+    ::SendMessage(Wnd, WM_CLOSE, 0, 0);
+  Wnd = 0;
+}
+
 void FlashCtrlHolder::SetDataSource(Common::RefObjPtr<IFaces::IStorage> dataSource)
 {
   if (!Flash.Get())
@@ -275,7 +283,8 @@ long FlashCtrlHolder::OnCreate(const IFaces::WindowMessage &msg)
 long FlashCtrlHolder::OnDestroy(const IFaces::WindowMessage &msg)
 {
   Flash.Release();
-  return 1;
+  Wnd = 0;
+  return 0;
 }
 
 long FlashCtrlHolder::OnSize(const IFaces::WindowMessage &msg)
@@ -325,32 +334,41 @@ long FlashCtrlHolder::OnPlayMovieMsg(const IFaces::WindowMessage &msg)
 #include "../../../../Framework/Include/IStreamFileImpl.h"
 #include "../../../../Framework/Include/MutexStub.h"
 
+#include "../../../../Framework/Include/Xml/XmlTools.h"
+#include "../../../../Framework/Include/IFunctionImpl.h"
+#include "../../../../Framework/Include/Mutex.h"
+
 long FlashCtrlHolder::OnFlashRequestMsg(const IFaces::WindowMessage &msg)
 {
   try
   {
     std::vector<std::wstring> Funcs;
-    Funcs.push_back(L"OnGetAnimation");
-    Funcs.push_back(L"OnGetBuildingsByProductId");
-    Funcs.push_back(L"OnGetContent");
-    Funcs.push_back(L"OnGetContentByGroupId");
-    Funcs.push_back(L"OnGetGroups");
-    Funcs.push_back(L"OnGetHallByNavigationId");
-    Funcs.push_back(L"OnGetProductsDetails");
-    Funcs.push_back(L"OnGetSchedule");
-    Funcs.push_back(L"OnGetSegment");
-    Funcs.push_back(L"OnSystemInitialize");
+    Funcs.push_back(L"GetAnimation");
+    Funcs.push_back(L"GetBuildingsByProductId");
+    Funcs.push_back(L"GetContent");
+    Funcs.push_back(L"GetContentByGroupId");
+    Funcs.push_back(L"GetGroups");
+    Funcs.push_back(L"GetHallByNavigationId");
+    Funcs.push_back(L"GetProductsDetails");
+    Funcs.push_back(L"GetSchedule");
+    Funcs.push_back(L"GetSegment");
+    Funcs.push_back(L"SystemInitialize");
 
     while (!FlashRequetsQueue.empty())
     {
       std::wstring Request = L"<?xml version='1.0' encoding='utf-8'?>";
       Request += FlashRequetsQueue.front();
       FlashRequetsQueue.pop();
+
+      Common::XmlTools::NodePtr Node = Common::XmlTools::XmlToNode(WStringToAString(Request, true));
+      Common::RefObjPtr<IFaces::IFunction> Function = IFacesImpl::FunctionFromNode<System::Mutex>(*Node.Get());
+
+      std::wstring FunctionName = AStringToWString(Function->GetFunctionName(), false);
       for (std::vector<std::wstring>::const_iterator i = Funcs.begin() ; i != Funcs.end() ; ++i)
       {
-        if (Request.find(*i) != std::wstring::npos)
+        if (FunctionName == *i)
         {
-          std::wstring Path = (*i) + L".xml";
+          std::wstring Path = L"On" + (*i) + L".xml";
           Common::RefObjPtr<IFaces::IStream> Stream = IFacesImpl::OpenMemoryStream<System::MutexStub>();
           IFacesImpl::IStreamHelper(IFacesImpl::IStorageHelper(IFacesImpl::OpenFileStorage<System::MutexStub>("./FlashData/XmlFuncs", false)).OpenStream(WStringToAString(Path, false))).CopyTo(Stream);
           IFacesImpl::IStreamHelper Sh(Stream);

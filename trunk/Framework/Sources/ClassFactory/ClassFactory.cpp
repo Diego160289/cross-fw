@@ -62,7 +62,7 @@ bool IClassFactoryImpl::FinalizeCreate()
 }
 
 void IClassFactoryImpl::BeforeDestroy()
-{
+  {
   {
     Common::SyncObject<System::Mutex> Locker(RegistryMtx);
     Registry.Release();

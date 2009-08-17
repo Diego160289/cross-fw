@@ -13,6 +13,9 @@ namespace IFacesImpl
   using IFaces::retFalse;
   using IFaces::retFail;
   using IFaces::retNoInterface;
+  using IFaces::retBadParam;
+
+  DECLARE_LOGIC_EXCEPTION(IPropertyArgumentImpl)
 
   class IPropertyArgumentImpl
     : public Common::CoClassBase
@@ -28,8 +31,20 @@ namespace IFacesImpl
     virtual RetCode GetValue(IFaces::IVariant **value) const;
     virtual RetCode GetObject(IFaces::IObjectArgument **obj) const;
     virtual RetCode GetArray(IFaces::IArrayArgument **arr) const;
+
+    void SetName(const std::string &name);
+    void SetObject(Common::RefObjPtr<IFaces::IObjectArgument> obj);
+    void SetArray(Common::RefObjPtr<IFaces::IArrayArgument> arr);
+    void SetValue(Common::RefObjPtr<IFaces::IVariant> val);
+  private:
+    std::string Name;
+    mutable Common::RefObjPtr<IFaces::IObjectArgument> Obj;
+    mutable Common::RefObjPtr<IFaces::IArrayArgument> Arr;
+    mutable Common::RefObjPtr<IFaces::IVariant> Val;
   };
 
+
+  DECLARE_LOGIC_EXCEPTION(IArrayArgumentImpl)
 
   class IArrayArgumentImpl
     : public Common::CoClassBase
@@ -43,8 +58,15 @@ namespace IFacesImpl
     // IArrayArgument
     virtual unsigned GetCount() const;
     virtual RetCode GetItem(unsigned index, IFaces::IPropertyArgument **item) const;
+
+    void AddProperty(Common::RefObjPtr<IFaces::IPropertyArgument> prop);
+  private:
+    typedef std::vector<Common::RefObjPtr<IFaces::IPropertyArgument> > PropPool;
+    PropPool Props;
   };
 
+
+  DECLARE_LOGIC_EXCEPTION(IObjectArgumentImpl)
 
   class IObjectArgumentImpl
     : public Common::CoClassBase
@@ -58,6 +80,13 @@ namespace IFacesImpl
     // IObjectArgument
     virtual RetCode GetProperty(const char *propName, IFaces::IPropertyArgument **prop) const;
     virtual RetCode GetArray(IFaces::IArrayArgument **arr) const;
+
+    void AddProperty(Common::RefObjPtr<IFaces::IPropertyArgument> prop);
+    void SetArray(Common::RefObjPtr<IFaces::IArrayArgument> arr);
+  private:
+    typedef std::vector<Common::RefObjPtr<IFaces::IPropertyArgument> > PropPool;
+    mutable PropPool Props;
+    mutable Common::RefObjPtr<IFaces::IArrayArgument> Arr;
   };
 
 
@@ -75,10 +104,25 @@ namespace IFacesImpl
     virtual RetCode GetValue(IFaces::IVariant **value) const;
     virtual RetCode GetObject(IFaces::IObjectArgument **obj) const;
     virtual RetCode GetArray(IFaces::IArrayArgument **arr) const;
+
+    void SetFunctionName(const std::string &name);
+    void SetObject(Common::RefObjPtr<IFaces::IObjectArgument> obj);
+    void SetArray(Common::RefObjPtr<IFaces::IArrayArgument> arr);
+    void SetValue(Common::RefObjPtr<IFaces::IVariant> val);
+  private:
+    std::string FunctionName;
   };
 
   Common::RefObjPtr<IFaces::IFunction>
     FunctionFromNode(const Common::XmlTools::Node &node, Common::ISynObj &syn);
+
+  template <typename TSyn>
+  Common::RefObjPtr<IFaces::IFunction>
+    FunctionFromNode(const Common::XmlTools::Node &node)
+  {
+    return FunctionFromNode(node, Common::ISynObjImpl<TSyn>());
+  }
+
 }
 
 #endif  // !__IFUNCTIONIMPL_H__

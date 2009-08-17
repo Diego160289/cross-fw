@@ -75,10 +75,11 @@ bool IMainServiceImpl::OnInit()
   {
     return false;
   }
-  _getch();
   /*MarkToDoneService();
   return true;*/
-  return false;
+  _getch();
+  MarkToDoneService();
+  return true;
 }
 
 void IMainServiceImpl::OnDone()

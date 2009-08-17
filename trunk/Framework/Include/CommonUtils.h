@@ -16,6 +16,14 @@ namespace Common
   const std::string GetValueSromStringMap(const std::string &key, const StringMap &m);
 
   template <typename T>
+  std::string ToString(const T &val)
+  {
+    std::stringstream Io;
+    Io << val;
+    return Io.str();
+  }
+
+  template <typename T>
   void Replace(std::basic_string<T> *str,
                const std::basic_string<T> &str1,
                const std::basic_string<T> &str2)

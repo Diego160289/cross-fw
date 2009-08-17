@@ -36,6 +36,7 @@ void IFlashViewImpl::OnDone()
     DataSource.Release();
   }
 
+  FlashCtrl->Done();
   Common::ISyncObject Locker(GetSynObj());
   FlashCtrl.Release();
 }
