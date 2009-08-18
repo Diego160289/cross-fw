@@ -1,11 +1,14 @@
 #include "FlashCtrlHolder.h"
 
 #include "../../../../Framework/Include/IStreamMemoryImpl.h"
-#include "../../../../Framework/Include/IStorageHelper.h"
 #include "../../../../Framework/Include/IStreamHelper.h"
 #include "../../../../Framework/Include/CommonUtils.h"
 #include "../../../../Framework/Include/Typedefs.h"
 #include "../../../../Framework/Include/Mutex.h"
+#include "../../../../Framework/Include/RefObjQIPtr.h"
+#include "../../../../Framework/Include/Xml/XmlTools.h"
+#include "../../../../Framework/Include/IFunctionImpl.h"
+
 
 const UINT FlashHandle::FPCM_FIRST = WM_USER + 0x1000;
 const UINT FlashHandle::FPCN_FIRST = FlashHandle::FPCM_FIRST - 1;
@@ -19,7 +22,6 @@ FlashHandle::FlashHandle()
   , FileMapping(0)
   , FlashCtrlData(0)
   , FlashWnd(0)
-  , ResourceHandlerID(0)
 {
   // TODO: с проперти
   DllHolderPtr finbox(new System::DllHolder("./f_in_box.dll"));
@@ -49,7 +51,6 @@ FlashHandle::FlashHandle()
     FPC_SetContext = finbox->GetProc<FPC_SetContextPtr>("FPC_SetContext");
     FPC_GetClassAtom = finbox->GetProc<FPC_GetClassAtomPtr>("FPC_GetClassAtomW");
     FPC_Play = finbox->GetProc<FPC_PlayPtr>("FPC_Play");
-    FPC_AddOnLoadExternalResourceHandler = finbox->GetProc<FPC_AddOnLoadExternalResourceHandlerPtr>("FPC_AddOnLoadExternalResourceHandlerW");
     FPCSetReturnValue = finbox->GetProc<FPCSetReturnValuePtr>("FPCSetReturnValueW");
     FPCCallFunction = finbox->GetProc<FPCCallFunctionPtr>("FPCCallFunctionW");
     FPC_IStream_Write = finbox->GetProc<FPC_IStream_WritePtr>("FPC_IStream_Write");
@@ -82,27 +83,14 @@ FlashHandle::~FlashHandle()
   CloseHandle(File);
 }
 
-HRESULT WINAPI FlashHandle::OnLoadExternalResource(LPCWSTR url, IStream** stream, HFPC flash, LPARAM param)
-{
-  return reinterpret_cast<FlashHandle*>(param)->OnLoadResource(url, stream);
-}
-
-HRESULT FlashHandle::OnLoadResource(LPCWSTR url, IStream** stream)
-{
-  return E_FAIL;
-}
-
 void FlashHandle::Create(HWND parent)
 {
-  /*if (FAILED(CoInitialize(0)))
-    throw FlashCtrlHolderException("Can't COM init");*/
   if (!(FlashWnd = CreateWindowW(reinterpret_cast<LPCWSTR>(FPC_GetClassAtom(Flash)), 0, 
     WS_CHILD | WS_VISIBLE | FPCS_NEED_ALL_KEYS, 0,  0, 100, 100, parent, 0, 0, 0)))
   {
     throw FlashCtrlHolderException("Can't create flash control window");
   }
   FPC_SetContext(FlashWnd, ""); 
-  ResourceHandlerID = FPC_AddOnLoadExternalResourceHandler(Flash, &FlashHandle::OnLoadExternalResource, reinterpret_cast<LPARAM>(this));
 }
 
 void FlashHandle::Resize(const RECT &r)
@@ -111,11 +99,6 @@ void FlashHandle::Resize(const RECT &r)
     return;
   MoveWindow(FlashWnd, r.left, r.top, r.right - r.left, r.bottom - r.top,
               IsWindowVisible(FlashWnd));
-}
-
-void FlashHandle::SetDataSource(Common::RefObjPtr<IFaces::IStorage> dataSource)
-{
-  DataSource = dataSource;
 }
 
   std::wstring AStringToWString(const std::string &s, bool fromUTF8)
@@ -139,36 +122,17 @@ void FlashHandle::SetDataSource(Common::RefObjPtr<IFaces::IStorage> dataSource)
     return &Buffer.front();
   }
 
-Common::RefObjPtr<IFaces::IRawDataBuffer> FlashHandle::LoadResource(const wchar_t *name)
-{
-  if (!name)
-    throw FlashCtrlHolderException("Empty resource name");
-  std::string Name = WStringToAString(name, false);
-  Common::Replace<char>(&Name, "\\", "/");
-  Common::StringVectorPtr StgNames = Common::SplitString(Name, '/');
-  Common::RefObjPtr<IFaces::IStorage> Stg = DataSource;
-  if (StgNames->size() > 1)
-  {
-    for (Common::StringVector::const_iterator i = StgNames->begin() ; i != StgNames->end() - 1 ; ++i)
-    {
-      if (!i->length())
-        continue;
-      Stg = IFacesImpl::IStorageHelper(Stg).OpenStorage(*i);
-    }
-  }
-  if (!Stg.Get())
-    throw FlashCtrlHolderException("Empty data source");
-  return IFacesImpl::StreamToBuf<System::Mutex>(IFacesImpl::IStorageHelper(Stg).OpenStream(StgNames->back()));
-}
-
-void FlashHandle::PlayMovie(const char *movieName)
+  void FlashHandle::PlayMovie(Common::RefObjPtr<IFaces::IStream> stream)
 {
   struct
   {
     LPVOID lpData;
     DWORD dwSize;
   } Movie;
-  Common::RefObjPtr<IFaces::IRawDataBuffer> Buf = LoadResource(AStringToWString(movieName, false).c_str());
+  Common::RefObjPtr<IFaces::IStream> Stream =
+    IFacesImpl::OpenMemoryStream<System::MutexStub>();
+  IFacesImpl::IStreamHelper(stream).CopyTo(Stream);
+  Common::RefObjQIPtr<IFaces::IRawDataBuffer> Buf(Stream);
   Movie.lpData = Buf->GetData();
   Movie.dwSize = Buf->GetSize();
   SendMessage(FlashWnd, FPCM_PUTMOVIEFROMMEMORY, 0, reinterpret_cast<LPARAM>(&Movie));
@@ -196,18 +160,12 @@ std::wstring FlashHandle::CallFlash(const wchar_t *request)
   return &Response[0];
 }
 
-void FlashHandle::LoadResource(const wchar_t *name, IStream *stream)
+void FlashHandle::PutResource(IStream *stream, Common::RefObjPtr<IFaces::IStream> resStream)
 {
-  std::wstring Name = name;
-  while (Name[0] == L' ')
-    Name = Name.substr(1);
-  while (Name[Name.length() - 1] == L' ' ||
-         Name[Name.length() - 1] == L'\r' ||
-         Name[Name.length() - 1] == L'\n')
-  {
-    Name = Name.substr(0, Name.length() - 1);
-  }
-  Common::RefObjPtr<IFaces::IRawDataBuffer> Buffer = LoadResource(Name.c_str());
+  Common::RefObjPtr<IFaces::IStream> MemStream =
+    IFacesImpl::OpenMemoryStream<System::MutexStub>();
+  IFacesImpl::IStreamHelper(resStream).CopyTo(MemStream);
+  Common::RefObjQIPtr<IFaces::IRawDataBuffer> Buffer(MemStream);
   ULONG Written = 0;
   if (FAILED(FPC_IStream_Write(stream, Buffer->GetData(), Buffer->GetSize(), &Written)))
     throw FlashCtrlHolderException("Can't load resource");
@@ -243,13 +201,12 @@ void FlashCtrlHolder::Done()
   if (Wnd)
     ::SendMessage(Wnd, WM_CLOSE, 0, 0);
   Wnd = 0;
+  ViewCallback.Release();
 }
 
-void FlashCtrlHolder::SetDataSource(Common::RefObjPtr<IFaces::IStorage> dataSource)
+void FlashCtrlHolder::SetViewCallback(Common::RefObjPtr<IFaces::IViewCallback> callback)
 {
-  if (!Flash.Get())
-    throw FlashCtrlHolderException("Can't play movie");
-  Flash->SetDataSource(dataSource);
+  ViewCallback = callback;
 }
 
 void FlashCtrlHolder::PlayMovie(const char *movieName)
@@ -322,7 +279,13 @@ long FlashCtrlHolder::OnPlayMovieMsg(const IFaces::WindowMessage &msg)
 {
   try
   {
-    Flash->PlayMovie(reinterpret_cast<const char *>(msg.WParam));
+    Common::RefObjPtr<IFaces::IViewCallback> Callback = ViewCallback;
+    if (!Callback.Get())
+      return 0;
+    Common::RefObjPtr<IFaces::IStream> ResStream;
+    if (Callback->QueryExternalResource(reinterpret_cast<const char *>(msg.WParam), ResStream.GetPPtr()))
+      return 0;
+    Flash->PlayMovie(ResStream);
   }
   catch (std::exception &)
   {
@@ -330,30 +293,10 @@ long FlashCtrlHolder::OnPlayMovieMsg(const IFaces::WindowMessage &msg)
   return 1;
 }
 
-#include "../../../../Framework/Include/IStorageFileImpl.h"
-#include "../../../../Framework/Include/IStreamFileImpl.h"
-#include "../../../../Framework/Include/MutexStub.h"
-
-#include "../../../../Framework/Include/Xml/XmlTools.h"
-#include "../../../../Framework/Include/IFunctionImpl.h"
-#include "../../../../Framework/Include/Mutex.h"
-
 long FlashCtrlHolder::OnFlashRequestMsg(const IFaces::WindowMessage &msg)
 {
   try
   {
-    std::vector<std::wstring> Funcs;
-    Funcs.push_back(L"GetAnimation");
-    Funcs.push_back(L"GetBuildingsByProductId");
-    Funcs.push_back(L"GetContent");
-    Funcs.push_back(L"GetContentByGroupId");
-    Funcs.push_back(L"GetGroups");
-    Funcs.push_back(L"GetHallByNavigationId");
-    Funcs.push_back(L"GetProductsDetails");
-    Funcs.push_back(L"GetSchedule");
-    Funcs.push_back(L"GetSegment");
-    Funcs.push_back(L"SystemInitialize");
-
     while (!FlashRequetsQueue.empty())
     {
       std::wstring Request = L"<?xml version='1.0' encoding='utf-8'?>";
@@ -364,21 +307,11 @@ long FlashCtrlHolder::OnFlashRequestMsg(const IFaces::WindowMessage &msg)
       Common::RefObjPtr<IFaces::IFunction> Function = IFacesImpl::FunctionFromNode<System::Mutex>(*Node.Get());
 
       std::wstring FunctionName = AStringToWString(Function->GetFunctionName(), false);
-      for (std::vector<std::wstring>::const_iterator i = Funcs.begin() ; i != Funcs.end() ; ++i)
-      {
-        if (FunctionName == *i)
-        {
-          std::wstring Path = L"On" + (*i) + L".xml";
-          Common::RefObjPtr<IFaces::IStream> Stream = IFacesImpl::OpenMemoryStream<System::MutexStub>();
-          IFacesImpl::IStreamHelper(IFacesImpl::IStorageHelper(IFacesImpl::OpenFileStorage<System::MutexStub>("./FlashData/XmlFuncs", false)).OpenStream(WStringToAString(Path, false))).CopyTo(Stream);
-          IFacesImpl::IStreamHelper Sh(Stream);
-          Sh.SeekToEnd();
-          Sh.Write("\0", 1);
-          Sh.SeekToBegin();
-          Flash->CallFlash(AStringToWString((const char *)Common::RefObjQIPtr<IFaces::IRawDataBuffer>(Stream)->GetData(), true).c_str());
-          break;
-        }
-      }
+
+      Common::RefObjPtr<IFaces::IViewCallback> Callback = ViewCallback;
+      if (!Callback.Get())
+        return 0;
+      Callback->Execute(Function.Get());
     }
   }
   catch (std::exception &)
@@ -392,6 +325,9 @@ long FlashCtrlHolder::OnLoadExternalResource(void *prm)
 {
   try
   {
+    Common::RefObjPtr<IFaces::IViewCallback> Callback = ViewCallback;
+    if (!Callback.Get())
+      return 0;
     struct SFPCLoadExternalResource
     {    
       NMHDR hdr;
@@ -399,7 +335,20 @@ long FlashCtrlHolder::OnLoadExternalResource(void *prm)
       LPSTREAM Stream;
     };
     SFPCLoadExternalResource *Res = reinterpret_cast<SFPCLoadExternalResource*>(prm);
-    Flash->LoadResource(AStringToWString(Res->RelativePath, false).c_str(), Res->Stream);
+    std::string ResName = Res->RelativePath;
+    while (ResName[0] == L' ')
+      ResName = ResName.substr(1);
+    while (ResName[ResName.length() - 1] == L' ' ||
+           ResName[ResName.length() - 1] == L'\r' ||
+           ResName[ResName.length() - 1] == L'\n')
+    {
+      ResName = ResName.substr(0, ResName.length() - 1);
+    }
+    Common::Replace<char>(&ResName, "\\", "/");
+    Common::RefObjPtr<IFaces::IStream> ResStream;
+    if (Callback->QueryExternalResource(ResName.c_str(), ResStream.GetPPtr()))
+      return 0;
+    Flash->PutResource(Res->Stream, ResStream);
   }
   catch (std::exception &)
   {
@@ -427,3 +376,4 @@ long FlashCtrlHolder::OnFlashRequest(void *prm)
   }
   return 1;
 }
+      

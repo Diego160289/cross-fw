@@ -16,7 +16,7 @@ void IFlashViewImpl::BeforeDestroy()
 
 bool IFlashViewImpl::OnInit()
 {
-  Common::SharedPtr<Common::ISynObj> NewDataSourceSynObj(GetSynObj().Clone());
+  Common::SharedPtr<Common::ISynObj> NewViewCbSynObj(GetSynObj().Clone());
   try
   {
     FlashCtrl = new FlashCtrlHolder;
@@ -25,34 +25,35 @@ bool IFlashViewImpl::OnInit()
   {
     return false;
   }
-  DataSourceSynObj = NewDataSourceSynObj;
+  ViewCbSynObj = NewViewCbSynObj;
   return true;
 }
 
 void IFlashViewImpl::OnDone()
 {
   {
-    Common::ISyncObject Locker(*DataSourceSynObj.Get());
-    DataSource.Release();
+    FlashCtrl->Done();
+    Common::ISyncObject Locker(GetSynObj());
+    FlashCtrl.Release();
   }
-
-  FlashCtrl->Done();
-  Common::ISyncObject Locker(GetSynObj());
-  FlashCtrl.Release();
+  {
+    Common::ISyncObject Locker(*ViewCbSynObj.Get());
+    ViewCallback.Release();
+  }
 }
 
-RetCode IFlashViewImpl::SetDataSource(IFaces::IStorage *dataSource)
+RetCode IFlashViewImpl::SetViewCallback(IFaces::IViewCallback *callback)
 {
   {
-    if (!DataSourceSynObj.Get())
+    if (!ViewCbSynObj.Get())
       return retFail;
-    Common::ISyncObject Locker(*DataSourceSynObj.Get());
-    DataSource = dataSource;
+    Common::ISyncObject Locker(*ViewCbSynObj.Get());
+    ViewCallback = callback;
   }
   try
   {
     Common::ISyncObject Locker(GetSynObj());
-    FlashCtrl->SetDataSource(DataSource);
+    FlashCtrl->SetViewCallback(ViewCallback);
   }
   catch (std::exception &)
   {

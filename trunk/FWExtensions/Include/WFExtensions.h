@@ -44,11 +44,19 @@ namespace IFaces
     virtual RetCode GetDisplay(unsigned index, IDisplay **display) = 0;
   };
 
+  struct IViewCallback
+    : public IBase
+  {
+    DECLARE_UUID(398d8f8c-3aac-4c5b-ac70-a1cbdce9c3c6)
+    virtual RetCode QueryExternalResource(const char *resName, IStream **resStream) = 0;
+    virtual void Execute(IFunction *func) = 0;
+  };
+
   struct IFlashView
     : public IBase
   {
     DECLARE_UUID(97835a53-8f31-4eeb-9485-d7b62da5d146)
-    virtual RetCode SetDataSource(IStorage *dataSource) = 0;
+    virtual RetCode SetViewCallback(IViewCallback *callback) = 0;
     virtual RetCode PlayMovie(const char *movieName) = 0;
   };
 }
