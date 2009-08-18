@@ -58,7 +58,7 @@ ifeq ($(TARGETTYPE), Dll)
 
 	LIBSDIR += ./Libs/$(MAKETYPE)
 
-	LIBS += Common System
+	LIBS += Common System $(LIBSDEP)
 endif
 
 ifeq ($(TARGETTYPE), Exe)

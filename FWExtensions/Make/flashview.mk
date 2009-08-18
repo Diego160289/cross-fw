@@ -2,7 +2,7 @@ PROJECT := FlashView
 
 include ./Make/extensions_common
 
-LIBS += TinyXml
+LIBSDEP += TinyXml
 
 ifeq ($(OS),Nix)
 	SYSLIBS += pthread

@@ -293,6 +293,16 @@ long FlashCtrlHolder::OnPlayMovieMsg(const IFaces::WindowMessage &msg)
   return 1;
 }
 
+void FlashCtrlHolder::CallFunction(IFaces::IFunction *func)
+{
+  if (!Flash.Get())
+    return;
+  using namespace Common::XmlTools;
+  NodePtr FuncNode = IFacesImpl::NodeFromFunction(Common::RefObjPtr<IFaces::IFunction>(func));
+  std::string Xml = NodeToUTF8(*FuncNode.Get(), false);
+  Flash->CallFlash(AStringToWString(Xml.c_str(), true).c_str());
+}
+
 long FlashCtrlHolder::OnFlashRequestMsg(const IFaces::WindowMessage &msg)
 {
   try
@@ -304,7 +314,8 @@ long FlashCtrlHolder::OnFlashRequestMsg(const IFaces::WindowMessage &msg)
       FlashRequetsQueue.pop();
 
       Common::XmlTools::NodePtr Node = Common::XmlTools::XmlToNode(WStringToAString(Request, true));
-      Common::RefObjPtr<IFaces::IFunction> Function = IFacesImpl::FunctionFromNode<System::Mutex>(*Node.Get());
+      Common::RefObjPtr<IFaces::IFunction> Function =
+        IFacesImpl::FunctionFromNode<System::Mutex>(*Node.Get());
 
       std::wstring FunctionName = AStringToWString(Function->GetFunctionName(), false);
 
