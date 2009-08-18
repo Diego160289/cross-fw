@@ -33,12 +33,11 @@ public:
   ~FlashHandle();
   void Create(HWND parent);
   void Resize(const RECT &r);
-  void SetDataSource(Common::RefObjPtr<IFaces::IStorage> dataSource);
-  void PlayMovie(const char *movieName);
+  void PlayMovie(Common::RefObjPtr<IFaces::IStream> stream);
   HWND GetHWND();
   void FlashSetRetValue(const wchar_t *value);
   std::wstring CallFlash(const wchar_t *request);
-  void LoadResource(const wchar_t *name, IStream *stream);
+  void PutResource(IStream *stream, Common::RefObjPtr<IFaces::IStream> resStream);
 private:
   typedef struct _HFPC
   {
@@ -49,10 +48,8 @@ private:
   LPVOID FlashCtrlData;
   typedef Common::SharedPtr<System::DllHolder> DllHolderPtr;
   DllHolderPtr FInBox;
-  Common::RefObjPtr<IFaces::IStorage> DataSource;
   HFPC Flash;
   HWND FlashWnd;
-  DWORD ResourceHandlerID;
   typedef HFPC (WINAPI *FPC_LoadOCXCodeFromMemoryPtr)(LPVOID, DWORD);
   FPC_LoadOCXCodeFromMemoryPtr FPC_LoadOCXCodeFromMemory;
   typedef BOOL (WINAPI *FPC_UnloadCodePtr)(HFPC);
@@ -63,18 +60,12 @@ private:
   FPC_GetClassAtomPtr FPC_GetClassAtom;
   typedef HRESULT (WINAPI *FPC_PlayPtr)(HWND);
   FPC_PlayPtr FPC_Play;
-  typedef HRESULT (WINAPI *PLOAD_EXTERNAL_RESOURCE_HANDLER)(LPCWSTR, IStream**, HFPC, LPARAM);
-  typedef DWORD (WINAPI *FPC_AddOnLoadExternalResourceHandlerPtr)(HFPC, PLOAD_EXTERNAL_RESOURCE_HANDLER, LPARAM);
-  FPC_AddOnLoadExternalResourceHandlerPtr FPC_AddOnLoadExternalResourceHandler;
-  static HRESULT WINAPI OnLoadExternalResource(LPCWSTR url, IStream** stream, HFPC flash, LPARAM param);
-  HRESULT OnLoadResource(LPCWSTR url, IStream** stream);
   typedef HRESULT (WINAPI *FPCSetReturnValuePtr)(HWND, LPCWSTR);
   FPCSetReturnValuePtr FPCSetReturnValue;
   typedef HRESULT (WINAPI *FPCCallFunctionPtr)(HWND, LPCWSTR, LPWSTR, DWORD *);
   FPCCallFunctionPtr FPCCallFunction;
   typedef HRESULT (WINAPI *FPC_IStream_WritePtr)(IStream *, const void *, ULONG, ULONG *);
   FPC_IStream_WritePtr FPC_IStream_Write;
-  Common::RefObjPtr<IFaces::IRawDataBuffer> LoadResource(const wchar_t *name);
 };
 
 
@@ -90,11 +81,12 @@ public:
   FlashCtrlHolder();
   ~FlashCtrlHolder();
   void Done();
-  void SetDataSource(Common::RefObjPtr<IFaces::IStorage> dataSource);
+  void SetViewCallback(Common::RefObjPtr<IFaces::IViewCallback> callback);
   void PlayMovie(const char *movieName);
   long OnMessage(const IFaces::WindowMessage &msg);
 private:
   HWND Wnd;
+  Common::RefObjPtr<IFaces::IViewCallback> ViewCallback;
   Common::SharedPtr<FlashHandle> Flash;
   typedef long (FlashCtrlHolder::*MsgHandler)(const IFaces::WindowMessage &);
   typedef std::map<UINT, MsgHandler> HandlerPool;

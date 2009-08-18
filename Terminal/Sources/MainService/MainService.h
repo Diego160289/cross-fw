@@ -14,7 +14,10 @@ using IFaces::retNotImpl;
 
 
 class IMainServiceImpl
-  : public Common::ServiceBase<>
+  : public Common::ServiceBase
+      <
+        TYPE_LIST_1(IFaces::IViewCallback)
+      >
 {
 public:
   DECLARE_UUID(1a35f7c9-b563-46f2-9ba5-461f57055901)
@@ -27,7 +30,12 @@ public:
   virtual bool OnInit();
   virtual void OnDone();
 
+  // !IViewCallback
+  virtual RetCode QueryExternalResource(const char *resName, IFaces::IStream **resStream);
+  virtual void Execute(IFaces::IFunction *func);
+
 private:
+  Common::RefObjPtr<IFaces::IStorage> DataSrc;
   unsigned FlashServiceHandle;
   Common::RefObjPtr<IFaces::IViewManager> ViewManager;
 };

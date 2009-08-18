@@ -39,7 +39,7 @@ public:
   virtual void OnDone();
 
   // IFlashView
-  virtual RetCode SetDataSource(IFaces::IStorage *dataSource);
+  virtual RetCode SetViewCallback(IFaces::IViewCallback *callback);
   virtual RetCode PlayMovie(const char *movieName);
 
   // IWndMessageHandler
@@ -48,8 +48,8 @@ public:
 private:
   typedef Common::SharedPtr<FlashCtrlHolder> FlashCtrlHolderPtr;
   FlashCtrlHolderPtr FlashCtrl;
-  Common::SharedPtr<Common::ISynObj> DataSourceSynObj;
-  Common::RefObjPtr<IFaces::IStorage> DataSource;
+  Common::SharedPtr<Common::ISynObj> ViewCbSynObj;
+  Common::RefObjPtr<IFaces::IViewCallback> ViewCallback;
 };
 
 #endif  // !__FLASHVIEW_H__
