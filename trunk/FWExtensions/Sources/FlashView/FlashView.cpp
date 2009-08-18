@@ -82,6 +82,26 @@ RetCode IFlashViewImpl::PlayMovie(const char *movieName)
   return retOk;
 }
 
+RetCode IFlashViewImpl::CallFunction(IFaces::IFunction *func)
+{
+  FlashCtrlHolderPtr Ctrl;
+  {
+    Common::ISyncObject Locker(GetSynObj());
+    if (!FlashCtrl.Get())
+      return retFail;
+    Ctrl = FlashCtrl;
+  }
+  try
+  {
+    Ctrl->CallFunction(func);
+  }
+  catch (std::exception &)
+  {
+    return retFail;
+  }
+  return retOk;
+}
+
 long IFlashViewImpl::OnMessage(const IFaces::WindowMessage &msg)
 {
   FlashCtrlHolderPtr Ctrl;

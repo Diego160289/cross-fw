@@ -2,6 +2,7 @@
 #include "IVariantImpl.h"
 #include "RefObjQIPtr.h"
 #include "CommonUtils.h"
+#include "IEnumImpl.h"
 
 
 namespace IFacesImpl
@@ -22,7 +23,7 @@ namespace IFacesImpl
   RetCode IPropertyArgumentImpl::GetObject(IFaces::IObjectArgument **obj) const
   {
     Common::ISyncObject Locker(GetSynObj());
-    return Obj.Get() ? Val.QueryInterface(obj) : retNoInterface;
+    return Obj.Get() ? Obj.QueryInterface(obj) : retNoInterface;
   }
 
   RetCode IPropertyArgumentImpl::GetArray(IFaces::IArrayArgument **arr) const
@@ -104,6 +105,22 @@ namespace IFacesImpl
     return retFail;
   }
 
+  RetCode IObjectArgumentImpl::EnumProperties(IFaces::IEnum **props) const
+  {
+    Common::ISyncObject Locker(GetSynObj());
+    if (Arr.Get())
+      return retNoInterface;
+    Common::RefObjPtr<IEnumImpl> RetProps = CreateEnum(GetSynObj());
+    for (PropPool::iterator i = Props.begin() ; i != Props.end() ; ++i)
+    {
+      Common::RefObjQIPtr<IFaces::IBase> Item(*i);
+      if (!Item.Get())
+        return retFail;
+      RetProps->AddItem(Item);
+    }
+    return RetProps.QueryInterface(props);
+  }
+
   RetCode IObjectArgumentImpl::GetArray(IFaces::IArrayArgument **arr) const
   {
     Common::ISyncObject Locker(GetSynObj());
@@ -140,19 +157,19 @@ namespace IFacesImpl
   RetCode IFunctionImpl::GetValue(IFaces::IVariant **value) const
   {
     Common::ISyncObject Locker(GetSynObj());
-    return retFail;
+    return Val.Get() ? Val.QueryInterface(value) : retNoInterface;
   }
 
   RetCode IFunctionImpl::GetObject(IFaces::IObjectArgument **obj) const\
   {
     Common::ISyncObject Locker(GetSynObj());
-    return retFail;
+    return Obj.Get() ? Obj.QueryInterface(obj) : retNoInterface;
   }
 
   RetCode IFunctionImpl::GetArray(IFaces::IArrayArgument **arr) const
   {
     Common::ISyncObject Locker(GetSynObj());
-    return retFail;
+    return Arr.Get() ? Arr.QueryInterface(arr) : retNoInterface;
   }
 
   void IFunctionImpl::SetFunctionName(const std::string &name)
@@ -163,14 +180,26 @@ namespace IFacesImpl
 
   void IFunctionImpl::SetObject(Common::RefObjPtr<IFaces::IObjectArgument> obj)
   {
+    Common::ISyncObject Locker(GetSynObj());
+    if (Arr.Get() || Val.Get())
+      throw IFunctionImplException("Can't set object");
+    Obj = obj;
   }
 
   void IFunctionImpl::SetArray(Common::RefObjPtr<IFaces::IArrayArgument> arr)\
   {
+    Common::ISyncObject Locker(GetSynObj());
+    if (Obj.Get() || Val.Get())
+      throw IFunctionImplException("Can't set array");
+    Arr = arr;
   }
 
   void IFunctionImpl::SetValue(Common::RefObjPtr<IFaces::IVariant> val)
   {
+    Common::ISyncObject Locker(GetSynObj());
+    if (Obj.Get() || Arr.Get())
+      throw IFunctionImplException("Can't set value");
+    Val = val;;
   }
 
 
@@ -219,18 +248,21 @@ namespace IFacesImpl
       {
         Common::RefObjPtr<IObjectArgumentImpl> NewObject =
           Common::IBaseImpl<IObjectArgumentImpl>::CreateWithSyn(syn);
-        using namespace Common::XmlTools;
-        const NodeList &List = node->GetChildNodes();
-        for (NodeList::const_iterator i = List.begin() ; i != List.end() ; ++i)
+        if (node->HasChildList())
         {
-          std::string NodeName = (*i)->GetNodeName();
-          if (NodeName == "property")
-            NewObject->AddProperty(ExtractProperty(*i, syn));
-          else
-            if (NodeName == "array")
-              NewObject->SetArray(ExtractArray(*i, syn));
+          using namespace Common::XmlTools;
+          const NodeList &List = node->GetChildNodes();
+          for (NodeList::const_iterator i = List.begin() ; i != List.end() ; ++i)
+          {
+            std::string NodeName = (*i)->GetNodeName();
+            if (NodeName == "property")
+              NewObject->AddProperty(ExtractProperty(*i, syn));
             else
-              throw FunctionCreatorException("Bad object item");
+              if (NodeName == "array")
+                NewObject->SetArray(ExtractArray(*i, syn));
+              else
+                throw FunctionCreatorException("Bad object item");
+          }
         }
         return NewObject;
       }
@@ -240,6 +272,8 @@ namespace IFacesImpl
         Common::RefObjPtr<IPropertyArgumentImpl> NewProperty =
           Common::IBaseImpl<IPropertyArgumentImpl>::CreateWithSyn(syn);
         NewProperty->SetName(node->GetPropertiesMap()["id"]);
+        if (!node->HasChildList())
+          return NewProperty;
         using namespace Common::XmlTools;
         const NodeList &List = node->GetChildNodes();
         for (NodeList::const_iterator i = List.begin() ; i != List.end() ; ++i)
@@ -263,15 +297,18 @@ namespace IFacesImpl
       {
         Common::RefObjPtr<IArrayArgumentImpl> NewArray =
           Common::IBaseImpl<IArrayArgumentImpl>::CreateWithSyn(syn);
-        using namespace Common::XmlTools;
-        const NodeList &List = node->GetChildNodes();
-        for (NodeList::const_iterator i = List.begin() ; i != List.end() ; ++i)
+        if (node->HasChildList())
         {
-          std::string NodeName = (*i)->GetNodeName();
-          if (NodeName == "property")
-            NewArray->AddProperty(ExtractProperty(*i, syn));
-          else
-            throw FunctionCreatorException("Bad array item");
+          using namespace Common::XmlTools;
+          const NodeList &List = node->GetChildNodes();
+          for (NodeList::const_iterator i = List.begin() ; i != List.end() ; ++i)
+          {
+            std::string NodeName = (*i)->GetNodeName();
+            if (NodeName == "property")
+              NewArray->AddProperty(ExtractProperty(*i, syn));
+            else
+              throw FunctionCreatorException("Bad array item");
+          }
         }
         return NewArray;
       }
@@ -280,6 +317,8 @@ namespace IFacesImpl
       {
         Common::RefObjPtr<IVariantImpl> NewValue =
           Common::IBaseImpl<IVariantImpl>::CreateWithSyn(syn);
+        if (!node->HasValue())
+          return NewValue;
         IVariantHelper Helper(NewValue);
         Helper = node->GetValue().c_str();
         return NewValue;
@@ -291,6 +330,129 @@ namespace IFacesImpl
     FunctionFromNode(const Common::XmlTools::Node &node, Common::ISynObj &syn)
   {
     return FunctionCreator::Create(node, syn);
+  }
+
+  namespace
+  {
+    DECLARE_LOGIC_EXCEPTION(NodeCreator)
+
+    class NodeCreator
+    {
+    public:
+      static Common::XmlTools::NodePtr Create(Common::RefObjPtr<IFaces::IFunction> func)
+      {
+        using namespace Common::XmlTools;
+        NodePtr RetNode(new Node("invoke"));
+        RetNode->AddProperty("name", func->GetFunctionName());
+        RetNode->AddProperty("returntype", "xml");
+        NodePtr ArgNode(new Node("arguments"));
+        RetNode->AddChildNode(ArgNode);
+        Common::RefObjPtr<IFaces::IVariant> Value;
+        if (func->GetValue(Value.GetPPtr()) == retOk)
+          ArgNode->AddChildNode(ExtractValue(Value));
+        else
+        {
+          Common::RefObjPtr<IFaces::IObjectArgument> Obj;
+          if (func->GetObject(Obj.GetPPtr()) == retOk)
+            ArgNode->AddChildNode(ExtractObject(Obj));
+          else
+          {
+            Common::RefObjPtr<IFaces::IArrayArgument> Arr;
+            if (func->GetArray(Arr.GetPPtr()) == retOk)
+              ArgNode->AddChildNode(ExtractArray(Arr));
+            else
+              throw NodeCreatorException("Bad argument");
+          }
+        }
+        return RetNode;
+      }
+    private:
+      static Common::XmlTools::NodePtr
+        ExtractObject(Common::RefObjPtr<IFaces::IObjectArgument> obj)
+      {
+        using namespace Common::XmlTools;
+        NodePtr NewObj(new Node("object"));
+        Common::RefObjPtr<IFaces::IArrayArgument> Arr;
+        if (obj->GetArray(Arr.GetPPtr()) == retOk)
+          NewObj->AddChildNode(ExtractArray(Arr));
+        else
+        {
+          Common::RefObjPtr<IFaces::IEnum> Props;
+          if (obj->EnumProperties(Props.GetPPtr()) == retOk)
+          {
+            IFacesImpl::IEnumHelper Enum(Props);
+            for (Common::RefObjPtr<IFaces::IBase> i = Enum.First() ; i.Get() ; i= Enum.Next())
+            {
+              Common::RefObjQIPtr<IFaces::IPropertyArgument> Prop(i);
+              if (!Prop.Get())
+                throw NodeCreatorException("Bad property");
+              NewObj->AddChildNode(ExtractProperty(Prop));
+            }
+          }
+          else
+            throw NodeCreatorException("Bad object");
+        }
+        return NewObj;
+      }
+      static Common::XmlTools::NodePtr
+        ExtractProperty(Common::RefObjPtr<IFaces::IPropertyArgument> prop)
+      {
+        using namespace Common::XmlTools;
+        NodePtr NewProp(new Node("property"));
+        NewProp->AddProperty("id", prop->GetName());
+        Common::RefObjPtr<IFaces::IVariant> Value;
+        if (prop->GetValue(Value.GetPPtr()) == retOk)
+          NewProp->AddChildNode(ExtractValue(Value));
+        else
+        {
+          Common::RefObjPtr<IFaces::IObjectArgument> Obj;
+          if (prop->GetObject(Obj.GetPPtr()) == retOk)
+            NewProp->AddChildNode(ExtractObject(Obj));
+          else
+          {
+            Common::RefObjPtr<IFaces::IArrayArgument> Arr;
+            if (prop->GetArray(Arr.GetPPtr()) == retOk)
+              NewProp->AddChildNode(ExtractArray(Arr));
+          }
+        }
+        return NewProp;
+      }
+      static Common::XmlTools::NodePtr
+        ExtractArray(Common::RefObjPtr<IFaces::IArrayArgument> arr)
+      {
+        using namespace Common::XmlTools;
+        NodePtr NewArr(new Node("array"));
+        unsigned Count = arr->GetCount();
+        for (unsigned i = 0 ; i < Count ; ++i)
+        {
+          Common::RefObjPtr<IFaces::IPropertyArgument> Prop;
+          if (arr->GetItem(i, Prop.GetPPtr()) != retOk)
+            throw NodeCreatorException("Bad array item");
+          NewArr->AddChildNode(ExtractProperty(Prop));
+        }
+        return NewArr;
+      }
+      static Common::XmlTools::NodePtr
+        ExtractValue(Common::RefObjPtr<IFaces::IVariant> val)
+      {
+        using namespace Common::XmlTools;
+        NodePtr NewVal(new Node("string"));
+        IFacesImpl::IVariantHelper Helper(val);
+        if (!Helper.IsEmpty())
+        {
+          if (Helper.GetType() != IFaces::IVariant::vtWString)
+            throw NodeCreatorException("Bad value");
+          NewVal->SetValue((const wchar_t  *)Helper);
+        }
+        return NewVal;
+      }
+    };
+  }
+
+  Common::XmlTools::NodePtr
+    NodeFromFunction(Common::RefObjPtr<IFaces::IFunction> func)
+  {
+    return NodeCreator::Create(func);
   }
 
 }

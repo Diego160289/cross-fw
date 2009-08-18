@@ -2,6 +2,8 @@ PROJECT := MainService
 
 include ./Make/extensions_common
 
+LIBSDEP += TinyXml
+
 ifeq ($(OS),Nix)
 	SYSLIBS += pthread
 else

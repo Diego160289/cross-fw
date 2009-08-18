@@ -83,6 +83,7 @@ public:
   void Done();
   void SetViewCallback(Common::RefObjPtr<IFaces::IViewCallback> callback);
   void PlayMovie(const char *movieName);
+  void CallFunction(IFaces::IFunction *func);
   long OnMessage(const IFaces::WindowMessage &msg);
 private:
   HWND Wnd;

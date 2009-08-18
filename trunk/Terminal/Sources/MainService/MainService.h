@@ -36,6 +36,7 @@ public:
 
 private:
   Common::RefObjPtr<IFaces::IStorage> DataSrc;
+  Common::RefObjPtr<IFaces::IFlashView> FlashView;
   unsigned FlashServiceHandle;
   Common::RefObjPtr<IFaces::IViewManager> ViewManager;
 };

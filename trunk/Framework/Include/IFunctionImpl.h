@@ -79,6 +79,7 @@ namespace IFacesImpl
 
     // IObjectArgument
     virtual RetCode GetProperty(const char *propName, IFaces::IPropertyArgument **prop) const;
+    virtual RetCode EnumProperties(IFaces::IEnum **props) const;
     virtual RetCode GetArray(IFaces::IArrayArgument **arr) const;
 
     void AddProperty(Common::RefObjPtr<IFaces::IPropertyArgument> prop);
@@ -89,6 +90,8 @@ namespace IFacesImpl
     mutable Common::RefObjPtr<IFaces::IArrayArgument> Arr;
   };
 
+
+  DECLARE_LOGIC_EXCEPTION(IFunctionImpl)
 
   class IFunctionImpl
     : public Common::CoClassBase
@@ -111,6 +114,9 @@ namespace IFacesImpl
     void SetValue(Common::RefObjPtr<IFaces::IVariant> val);
   private:
     std::string FunctionName;
+    mutable Common::RefObjPtr<IFaces::IObjectArgument> Obj;
+    mutable Common::RefObjPtr<IFaces::IArrayArgument> Arr;
+    mutable Common::RefObjPtr<IFaces::IVariant> Val;
   };
 
   Common::RefObjPtr<IFaces::IFunction>
@@ -120,8 +126,12 @@ namespace IFacesImpl
   Common::RefObjPtr<IFaces::IFunction>
     FunctionFromNode(const Common::XmlTools::Node &node)
   {
-    return FunctionFromNode(node, Common::ISynObjImpl<TSyn>());
+    Common::ISynObjImpl<TSyn> Syn;
+    return FunctionFromNode(node, Syn);
   }
+
+  Common::XmlTools::NodePtr
+    NodeFromFunction(Common::RefObjPtr<IFaces::IFunction> func);
 
 }
 

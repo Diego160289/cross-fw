@@ -58,6 +58,7 @@ namespace IFaces
     DECLARE_UUID(97835a53-8f31-4eeb-9485-d7b62da5d146)
     virtual RetCode SetViewCallback(IViewCallback *callback) = 0;
     virtual RetCode PlayMovie(const char *movieName) = 0;
+    virtual RetCode CallFunction(IFunction *func) = 0;
   };
 }
 

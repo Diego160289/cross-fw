@@ -41,6 +41,7 @@ public:
   // IFlashView
   virtual RetCode SetViewCallback(IFaces::IViewCallback *callback);
   virtual RetCode PlayMovie(const char *movieName);
+  virtual RetCode CallFunction(IFaces::IFunction *func);
 
   // IWndMessageHandler
   virtual long OnMessage(const IFaces::WindowMessage &msg);

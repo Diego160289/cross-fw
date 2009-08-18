@@ -289,6 +289,7 @@ namespace IFaces
   {
     DECLARE_UUID(3d06b85b-1a9a-4ded-9726-bfe14aa835b2)
     virtual RetCode GetProperty(const char *propName, IPropertyArgument **prop) const = 0;
+    virtual RetCode EnumProperties(IEnum **props) const = 0;
     virtual RetCode GetArray(IArrayArgument **arr) const = 0;
   };
 

@@ -19,16 +19,17 @@ void IMainServiceImpl::BeforeDestroy()
 #include "../../Framework/Include/IStreamFileImpl.h"
 #include "../../Framework/Include/IStorageHelper.h"
 #include "../../Framework/Include/IStreamHelper.h"
+#include "../../Framework/Include/Xml/XmlTools.h"
+#include "../../Framework/Include/IFunctionImpl.h"
 
 #include <conio.h>
+#include <iostream>
 
 bool IMainServiceImpl::OnInit()
 {
   try
   {
-    // TODO: убрать в компоненту источника данных. Ее пока нет!
-
-    DataSrc = IFacesImpl::OpenFileStorage<System::MutexStub>("./FlashData", false);
+    Common::RefObjPtr<IFaces::IStorage> NewDataSrc = IFacesImpl::OpenFileStorage<System::MutexStub>("./FlashData", false);
     
     ViewManager = CreateObject<IFaces::IViewManager>("dc5597fe-e0ed-4f60-a288-7771b947274c");
     if (!ViewManager->GetDisplayCount())
@@ -50,8 +51,8 @@ bool IMainServiceImpl::OnInit()
     {
       return false;
     }
-    Common::RefObjQIPtr<IFaces::IFlashView> FlashView(FlashCtrl);
-    if (!FlashView.Get())
+    Common::RefObjQIPtr<IFaces::IFlashView> NewFlashView(FlashCtrl);
+    if (!NewFlashView.Get())
     {
       return false;
     }
@@ -69,9 +70,13 @@ bool IMainServiceImpl::OnInit()
     {
       return false;
     }
+
+    FlashView = NewFlashView;
+    DataSrc = NewDataSrc;
+
     Frame->Show(true);
-    FlashView->SetViewCallback(Common::RefObjQIPtr<IFaces::IViewCallback>(GetThisIBase()).Get());
-    FlashView->PlayMovie("test.swf");
+    NewFlashView->SetViewCallback(Common::RefObjQIPtr<IFaces::IViewCallback>(GetThisIBase()).Get());
+    NewFlashView->PlayMovie("test.swf");
   }
   catch (std::exception &)
   {
@@ -88,7 +93,9 @@ void IMainServiceImpl::OnDone()
 {
   if (FlashServiceHandle)
     GetServiceManager()->StopService(FlashServiceHandle);
+  FlashView.Release();
   ViewManager.Release();
+  DataSrc.Release();
 }
 
 RetCode IMainServiceImpl::QueryExternalResource(const char *resName, IFaces::IStream **resStream)
@@ -97,11 +104,11 @@ RetCode IMainServiceImpl::QueryExternalResource(const char *resName, IFaces::ISt
   {
     Common::RefObjPtr<IFaces::IStream> Stream = IFacesImpl::OpenMemoryStream<System::MutexStub>();
     IFacesImpl::IStreamHelper(IFacesImpl::IStorageHelper(DataSrc).OpenStream(resName)).CopyTo(Stream);
-    IFacesImpl::IStreamHelper Sh(Stream);
     return Stream.QueryInterface(resStream);
   }
   catch (std::exception &)
   {
+    int k = 0;
   }
   return retFail;
 }
@@ -136,12 +143,20 @@ void IMainServiceImpl::Execute(IFaces::IFunction *func)
         Sh.SeekToEnd();
         Sh.Write("\0", 1);
         Sh.SeekToBegin();
-        //Flash->CallFlash(AStringToWString((const char *)Common::RefObjQIPtr<IFaces::IRawDataBuffer>(Stream)->GetData(), true).c_str());
+        Common::XmlTools::NodePtr Node = Common::XmlTools::XmlToNode((const char *)Common::RefObjQIPtr<IFaces::IRawDataBuffer>(Stream)->GetData());
+        Common::RefObjPtr<IFaces::IFunction> Function =
+          IFacesImpl::FunctionFromNode(*Node.Get(), GetSynObj());
+        Common::RefObjPtr<IFaces::IFlashView> View = FlashView;
+        if (View.Get() && View->CallFunction(Function.Get()) != IFaces::retOk)
+        {
+          std::cerr << "Error call: " << i->c_str() << std::endl;
+        }
         break;
       }
     }
   }
-  catch (std::exception &)
+  catch (std::exception &e)
   {
+    std::cout << e.what() << std::endl;
   }
 }
