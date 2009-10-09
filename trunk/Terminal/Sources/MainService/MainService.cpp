@@ -117,6 +117,20 @@ void IMainServiceImpl::Execute(IFaces::IFunction *func)
 {
   try
   {
+    {
+      using namespace Common::XmlTools;
+      // Function to node
+      NodePtr Root = IFacesImpl::NodeFromFunction(Common::RefObjPtr<IFaces::IFunction>(func));
+      // Get function name
+      std::string FuncName = Root->GetPropertiesMap()["name"];
+      // Get properties map
+      NodeListPtr Props = Root->GetChildNodes()[Tag("arguments")][0]->GetChildNodes()[Tag("object")][0]->GetChildListByName("property");
+      // Get callback name from properties map
+      std::wstring CallbackProp = (*Props.Get())[Attribute("id", "Callback")][0]->GetChildNodes()[Tag("string")][0]->GetValue();
+      // Get invoker name from properties map
+      std::wstring InvokerProp = (*Props.Get())[Attribute("id", "Invoker")][0]->GetChildNodes()[Tag("string")][0]->GetValue();
+    }
+
     std::vector<std::string> Funcs;
     Funcs.push_back("GetAnimation");
     Funcs.push_back("GetBuildingsByProductId");
