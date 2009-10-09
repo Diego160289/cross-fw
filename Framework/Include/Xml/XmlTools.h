@@ -178,7 +178,7 @@ namespace Common
       }
       const NodeListPtr GetChildListByName(const std::string &nodeName) const
       {
-        if (ChildNodes.Get())
+        if (!ChildNodes.Get())
           throw NodeException("No child");
         NodeListPtr ResList(new NodeList);
         for (NodeList::const_iterator i = ChildNodes->begin() ; i != ChildNodes->end() ; ++i)
