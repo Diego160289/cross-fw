@@ -299,7 +299,7 @@ void FlashCtrlHolder::CallFunction(IFaces::IFunction *func)
     return;
   using namespace Common::XmlTools;
   NodePtr FuncNode = IFacesImpl::NodeFromFunction(Common::RefObjPtr<IFaces::IFunction>(func));
-  std::string Xml = NodeToUTF8(*FuncNode.Get(), false);
+  std::string Xml = NodeToUTF8(*FuncNode.Get(), false, false);
   Flash->CallFlash(AStringToWString(Xml.c_str(), true).c_str());
 }
 

@@ -76,7 +76,7 @@ bool IMainServiceImpl::OnInit()
 
     Frame->Show(true);
     NewFlashView->SetViewCallback(Common::RefObjQIPtr<IFaces::IViewCallback>(GetThisIBase()).Get());
-    NewFlashView->PlayMovie("test.swf");
+    NewFlashView->PlayMovie("NewTest.swf");
   }
   catch (std::exception &)
   {
