@@ -67,7 +67,7 @@ namespace Common
       return Ret;
     }
 
-    std::string NodeToUTF8(const Node &node, bool addHeader)
+    std::string NodeToUTF8(const Node &node, bool addHeader, bool useFormat)
     {
       struct
       {
@@ -102,7 +102,7 @@ namespace Common
       } NodeToTiXml;
       struct
       {
-        std::string operator () (const TiXmlNode *tiNode, int depth)
+        std::string operator () (const TiXmlNode *tiNode, int depth, bool useFormat)
         {
           struct
           {
@@ -114,8 +114,11 @@ namespace Common
             }
           } ValueToText;
           std::string RetStr;
-          for (int i = 0 ; i < depth ; ++i)
-            RetStr += " ";
+          if (useFormat)
+          {
+            for (int i = 0 ; i < depth ; ++i)
+              RetStr += " ";
+          }
           std::string BeginTag, BeginTagEx, EndTag, EndTagEx;
           if (tiNode->Type() == TiXmlNode::TEXT)
             BeginTag = BeginTagEx = EndTag = EndTag = "";
@@ -134,7 +137,7 @@ namespace Common
             {
               RetStr += " ";
               RetStr += i->Name();
-              RetStr += " = \"" + i->ValueStr() + "\"";
+              RetStr += "=\"" + i->ValueStr() + "\"";
             }
           }
           if (!tiNode->FirstChild())
@@ -143,7 +146,7 @@ namespace Common
             if (tiNode->FirstChild() == tiNode->LastChild() && tiNode->FirstChild()->ToText())
             {
               RetStr += EndTag;
-              RetStr += (*this)(tiNode->FirstChild(), depth + 1);
+              RetStr += (*this)(tiNode->FirstChild(), depth + 1, useFormat);
               RetStr += BeginTagEx + ValueToText(tiNode) + EndTag;
             }
             else
@@ -151,13 +154,19 @@ namespace Common
               RetStr += ">";
               for (const TiXmlNode *node = tiNode->FirstChild() ; node ; node = node->NextSibling())
               {
-                if (!node->ToText())
-                  RetStr += "\n";
-                RetStr += (*this)(node, depth + 1);
+                if (useFormat)
+                {
+                  if (!node->ToText())
+                    RetStr += "\n";
+                }
+                RetStr += (*this)(node, depth + 1, useFormat);
               }
-              RetStr += "\n";
-              for(int i = 0 ; i < depth ; ++i)
-                RetStr += " ";
+              if (useFormat)
+              {
+                RetStr += "\n";
+                for(int i = 0 ; i < depth ; ++i)
+                  RetStr += " ";
+              }
               RetStr += BeginTagEx + ValueToText(tiNode) + EndTag;
             }
           return RetStr;
@@ -169,7 +178,7 @@ namespace Common
       if (!TiXml)
         throw NodeException("Empty xml document");
       return (addHeader ? "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" : "") +
-        TiXmlToString(TiXml, 0);
+        TiXmlToString(TiXml, 0, useFormat);
     }
 
   }

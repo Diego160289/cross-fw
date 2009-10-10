@@ -265,7 +265,7 @@ namespace Common
     }
 
     NodePtr XmlToNode(const std::string &xml);
-    std::string NodeToUTF8(const Node &node, bool addHeader = true);
+    std::string NodeToUTF8(const Node &node, bool addHeader = true, bool useFormat = true);
 
   }
 }
