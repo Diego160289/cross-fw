@@ -26,7 +26,7 @@
 			{
 				InvokeHelper.sendAndForget("BusinessCategorySelected", 
 											{
-												businessCategoryId : TileList(event.target).selectedItem.Id  
+												businessCategoryId : TileList(event.target).selectedItem.id  
 											},
 											ApplicationModelLocator.ITEM_CLICKED_EVENT,
 											this.modelLocator.frameId,

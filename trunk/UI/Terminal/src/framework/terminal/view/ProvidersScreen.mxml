@@ -42,7 +42,7 @@
 			
 			private function onDataLoaded(data : Object) : Boolean
 			{
-				modelLocator.providers.source = data.Arguments as Array;
+				modelLocator.providers.source = data.arguments as Array;
 				//
 				return true;
 			}

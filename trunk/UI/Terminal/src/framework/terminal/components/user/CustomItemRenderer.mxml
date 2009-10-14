@@ -3,8 +3,8 @@
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
 	horizontalAlign="center" verticalAlign="middle" horizontalScrollPolicy="off" verticalScrollPolicy="off">
 
-    <mx:Image source="@Embed('assets/img/ai_appicon-tn.gif')" />
+    <mx:Image source="{data.resource}" />
 
-    <mx:Label text="{data.Name}" />
+    <mx:Label text="{data.name}" />
 
 </mx:VBox>

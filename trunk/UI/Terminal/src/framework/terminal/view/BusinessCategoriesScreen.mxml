@@ -34,7 +34,7 @@
 			
 			private function onDataLoaded(data : Object) : Boolean
 			{
-				modelLocator.businessCategories.source = data.Arguments as Array;
+				modelLocator.businessCategories.source = data.arguments as Array;
 				//
 				return true;
 			}
