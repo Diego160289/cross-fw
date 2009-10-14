@@ -18,13 +18,11 @@
         </object>
       </property>
       <property id="arguments">
-          <property id="0">
-            <object>
-              <property id="frameId">
-                <string></string>
-              </property>
-            </object>
+        <object>
+          <property id="frameId">
+            <string></string>
           </property>
+        </object>
       </property>
     </object>
   </arguments>
