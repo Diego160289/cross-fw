@@ -40,7 +40,7 @@ package framework.terminal.business
 														pServiceId
 													);
 				
-				serviceProvider.registerContext(context);
+				serviceProvider.registerContext(context); 
 				//
 				serviceProvider.invoke(new CallbackDelegate(context));
 		}

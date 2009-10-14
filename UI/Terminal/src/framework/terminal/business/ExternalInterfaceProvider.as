@@ -63,10 +63,6 @@ package framework.terminal.business
 			data.serviceId	= delegate.context.serviceId;
 			data.frameId 	= delegate.context.frameId;
 			data.objectId 	= delegate.context.objectId;
-			
-			data.Invoker = delegate.context.methodName;
-			data.Callback = delegate.context.callbackName;
-			 
 			//
 			try
 			{

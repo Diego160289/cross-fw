@@ -26,7 +26,7 @@
 			{
 				InvokeHelper.sendAndForget("ProviderSelected", 
 											{
-												providerId : TileList(event.target).selectedItem.ProductId  
+												providerId : TileList(event.target).selectedItem.id  
 											},
 											ApplicationModelLocator.ITEM_CLICKED_EVENT,
 											this.modelLocator.frameId,
