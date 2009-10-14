@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:user="framework.terminal.components.user.*" 
+	creationComplete="creationComplete()">
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Button;
+			import framework.terminal.business.InvokeHelper;
+			import framework.terminal.model.ApplicationModelLocator;
+			
+			[Bindable]
+			private var modelLocator : ApplicationModelLocator = ApplicationModelLocator.getInstance();
+
+			//*******************************************************************************************
+
+			private function creationComplete() : void
+			{
+				this.footer.next.addEventListener(MouseEvent.CLICK, onNext);
+			}
+			
+			private function onNext(event : MouseEvent) : void
+			{
+				this.modelLocator.amount = this.tbAmount.text;
+				//
+				InvokeHelper.sendAndForget("ProcessPayment",
+											{
+												amount : this.tbAmount.text  
+											},
+											Button(event.target).id,
+											this.modelLocator.frameId,
+											""											
+											);
+				//
+				this.modelLocator.workflowState = ApplicationModelLocator.THANK_YOU_SCREEN;
+			}
+			
+		]]>
+	</mx:Script>
+
+<user:Header text="Оплата" height="20%" />
+
+<mx:Panel width="100%" height="60%" >
+
+	<mx:Label text="Введенная сумма:" />
+				
+	<mx:TextInput id="tbAmount" />
+
+</mx:Panel>
+
+<user:Footer id="footer" width="100%" height="20%" 
+	showNext="true" />
+	
+</mx:VBox>

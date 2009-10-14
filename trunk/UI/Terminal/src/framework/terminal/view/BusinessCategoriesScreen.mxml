@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:user="framework.terminal.components.user.*" 
+	xmlns:menus="framework.terminal.components.user.menus.*">
+	
+	<mx:Script>
+		<![CDATA[
+			import framework.terminal.business.InvokeHelper;
+			import mx.controls.Alert;
+			import framework.terminal.model.ApplicationModelLocator;
+
+			[Bindable]
+			private var modelLocator : ApplicationModelLocator = ApplicationModelLocator.getInstance();
+
+			//*******************************************************************************************
+
+			override public function set visible(value : Boolean):void
+			{
+				if (value) loadData();
+				//
+				super.visible = value;
+			}
+			
+			private function loadData() : void
+			{
+				InvokeHelper.sendAndLoad("GetBusinessCategories", 
+										 onDataLoaded,
+										 null,
+										 ApplicationModelLocator.DATA_LOADING_EVENT,
+										 this.modelLocator.frameId,
+										 "");
+			}
+			
+			private function onDataLoaded(data : Object) : Boolean
+			{
+				modelLocator.businessCategories.source = data.Arguments as Array;
+				//
+				return true;
+			}
+			
+		]]>
+	</mx:Script>
+	
+	<user:Header text="Выберите тип оплаты" width="100%" height="20%"/>
+	
+	<user:BusinessCategoriesList id="businessCategoriesList" width="100%" height="60%" 
+		itemRenderer="framework.terminal.components.user.CustomItemRenderer"/> 
+		
+	<user:Footer id="footer" width="100%" height="20%" />
+	
+</mx:VBox>
