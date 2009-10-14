@@ -1,0 +1,48 @@
+<invoke name="OnGetProviders" returntype="xml">
+  <arguments>
+    <object>
+      <property id="manifest">
+        <object>
+          <property id="stateInfo">
+            <object>
+              <property id="code">
+                <string>0</string>
+              </property>
+              <property id="description">
+                <string>
+                  <![CDATA[ Success ]]>
+                </string>
+              </property>
+            </object>
+          </property>
+        </object>
+      </property>
+      <property id="arguments">
+        <array>
+          <property id="0">
+            <object>
+              <property id="id">
+                <string>50</string>
+              </property>
+              <property id="name">
+                <string>
+                  <![CDATA[ Провайдер 1 ]]>
+                </string>
+              </property>
+              <property id="description">
+                <string>
+                  <![CDATA[ Описание ]]>
+                </string>
+              </property>
+              <property id="resource">
+                <string>
+                  <![CDATA[ imdId ]]>
+                </string>
+              </property>
+            </object>
+          </property>
+        </array>
+      </property>
+    </object>
+  </arguments>
+</invoke>
