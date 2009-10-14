@@ -29,7 +29,7 @@ bool IMainServiceImpl::OnInit()
 {
   try
   {
-    Common::RefObjPtr<IFaces::IStorage> NewDataSrc = IFacesImpl::OpenFileStorage<System::MutexStub>("./FlashData", false);
+    Common::RefObjPtr<IFaces::IStorage> NewDataSrc = IFacesImpl::OpenFileStorage<System::MutexStub>("../../FlashData", false);
     
     ViewManager = CreateObject<IFaces::IViewManager>("dc5597fe-e0ed-4f60-a288-7771b947274c");
     if (!ViewManager->GetDisplayCount())
@@ -76,7 +76,7 @@ bool IMainServiceImpl::OnInit()
 
     Frame->Show(true);
     NewFlashView->SetViewCallback(Common::RefObjQIPtr<IFaces::IViewCallback>(GetThisIBase()).Get());
-    NewFlashView->PlayMovie("NewTest.swf");
+    NewFlashView->PlayMovie("Terminal.swf");
   }
   catch (std::exception &)
   {
@@ -117,7 +117,7 @@ void IMainServiceImpl::Execute(IFaces::IFunction *func)
 {
   try
   {
-    {
+    /*{
       using namespace Common::XmlTools;
       // Function to node
       NodePtr Root = IFacesImpl::NodeFromFunction(Common::RefObjPtr<IFaces::IFunction>(func));
@@ -129,7 +129,7 @@ void IMainServiceImpl::Execute(IFaces::IFunction *func)
       std::wstring CallbackProp = (*Props.Get())[Attribute("id", "Callback")][0]->GetChildNodes()[Tag("string")][0]->GetValue();
       // Get invoker name from properties map
       std::wstring InvokerProp = (*Props.Get())[Attribute("id", "Invoker")][0]->GetChildNodes()[Tag("string")][0]->GetValue();
-    }
+    }*/
 
     std::vector<std::string> Funcs;
     Funcs.push_back("GetAnimation");
