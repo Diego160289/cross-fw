@@ -132,6 +132,7 @@ void IMainServiceImpl::Execute(IFaces::IFunction *func)
     }*/
 
     std::vector<std::string> Funcs;
+    Funcs.push_back("GetBusinessCategories");
     Funcs.push_back("GetAnimation");
     Funcs.push_back("GetBuildingsByProductId");
     Funcs.push_back("GetContent");
