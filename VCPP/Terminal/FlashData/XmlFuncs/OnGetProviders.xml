@@ -19,10 +19,11 @@
       </property>
       <property id="arguments">
         <array>
+
           <property id="0">
             <object>
               <property id="id">
-                <string>50</string>
+                <string>10</string>
               </property>
               <property id="name">
                 <string>
@@ -31,16 +32,40 @@
               </property>
               <property id="description">
                 <string>
-                  <![CDATA[ Описание ]]>
+                  <![CDATA[ Описание Провайдер 1]]>
                 </string>
               </property>
               <property id="resource">
                 <string>
-                  <![CDATA[ imdId ]]>
+                  <![CDATA[ pics/lr_appicon-tn.gif ]]>
                 </string>
               </property>
             </object>
           </property>
+
+          <property id="1">
+            <object>
+              <property id="id">
+                <string>20</string>
+              </property>
+              <property id="name">
+                <string>
+                  <![CDATA[ Провайдер 2 ]]>
+                </string>
+              </property>
+              <property id="description">
+                <string>
+                  <![CDATA[ Описание Провайдер 2]]>
+                </string>
+              </property>
+              <property id="resource">
+                <string>
+                  <![CDATA[ pics/fl_player_appicon-tn.gif ]]>
+                </string>
+              </property>
+            </object>
+          </property>
+
         </array>
       </property>
     </object>

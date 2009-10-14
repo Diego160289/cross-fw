@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<invoke name="CellPhoneNumberEntered" returntype="xml">
+  <arguments>
+    <object>
+      <property id="objectId">
+        <string>next</string>
+      </property>
+      <property id="params">
+        <object>
+          <property id="cellPhoneNumber">
+            <string>9998877</string>
+          </property>
+        </object>
+      </property>
+      <property id="callback">
+        <string></string>
+      </property>
+      <property id="method">
+        <string>CellPhoneNumberEntered</string>
+      </property>
+      <property id="serviceId">
+        <string></string>
+      </property>
+      <property id="frameId">
+        <string>EnterCellPhoneNumberScreen</string>
+      </property>
+    </object>
+  </arguments>
+</invoke>
