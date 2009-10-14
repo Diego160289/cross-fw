@@ -26,7 +26,7 @@
               </property>
               <property id="name">
                 <string>
-                  <![CDATA[ name ]]>
+                  <![CDATA[ Телефоны ]]>
                 </string>
               </property>
               <property id="description">
@@ -36,11 +36,35 @@
               </property>
               <property id="resource">
                 <string>
-                  <![CDATA[ imdId ]]>
+                  <![CDATA[ pics/ai_appicon-tn.gif ]]>
                 </string>
               </property>
             </object>
           </property>
+
+          <property id="1">
+            <object>
+              <property id="id">
+                <string>50</string>
+              </property>
+              <property id="name">
+                <string>
+                  <![CDATA[ ЖКХ ]]>
+                </string>
+              </property>
+              <property id="description">
+                <string>
+                  <![CDATA[ description ]]>
+                </string>
+              </property>
+              <property id="resource">
+                <string>
+                  <![CDATA[ pics/dw_appicon-tn.gif ]]>
+                </string>
+              </property>
+            </object>
+          </property>
+
         </array>
       </property>
     </object>
