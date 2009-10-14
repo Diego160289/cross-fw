@@ -1,4 +1,4 @@
-<invoke name="GetBusinessCategories" returntype="xml">
+<invoke name="OnGetBusinessCategories" returntype="xml">
   <arguments>
     <object>
       <property id="manifest">
