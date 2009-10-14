@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+    creationComplete="init()">
+<mx:Script>
+<![CDATA[
+    import mx.managers.IFocusManagerComponent;
+    import mx.events.FlexEvent;
+    import mx.controls.Button;
+    import mx.core.UIComponent;
+    import mx.controls.Alert;
+    
+    [Bindable]
+    public var inputControl:Object;
+    
+    public var isShifted:Boolean = false;
+    
+    private var _tabOrder:Array = new Array();
+    
+    public var currentTab:Number = 0;
+    
+    public function get tabOrder():Array
+    {
+        return this._tabOrder;
+    }
+    public function set tabOrder(value:Array):void
+    {
+        this._tabOrder = value;
+    }
+    
+    private var keysRowA:Array = [
+        {label:'1'},{label:'2'},{label:'3'},{label:'4'},{label:'5'},{label:'6'},{label:'7'},{label:'8'},
+        {label:'9'},{label:'0'},{label:'Delete',w:90}
+    ];
+    private var keysRowB:Array = [
+        {label:'q'},{label:'w'},{label:'e'},{label:'r'},{label:'t'},{label:'y'},{label:'u'},{label:'i'},
+        {label:'o'},{label:'p'}
+    ];
+    private var keysRowC:Array = [
+        {label:'a'},{label:'s'},{label:'d'},{label:'f'},{label:'g'},{label:'h'},
+        {label:'j'},{label:'k'},{label:'l'}
+    ];
+    private var keysRowD:Array = [
+        {label:'Tab',flex:true},{label:'z'},{label:'x'},{label:'c'},{label:'v'},{label:'b'},
+        {label:'n'},{label:'m'},{label:'shift',flex:true}
+    ];
+    private var keysRowE:Array = [
+        {label:'.com',w:70},{label:'.ca',w:65},{label:'@'},{label:'Space',flex:true},{label:'.'},{label:'_'},{label:'-'}
+    ];
+    
+    private function init():void
+    {
+        var o:Object;
+        var k:UIComponent;
+        // Build Row A
+        for each ( o in this.keysRowA )
+        {
+            k = buildKey(o);
+            rowA.addChild(k);
+        }
+        for each ( o in this.keysRowB )
+        {
+            k = buildKey(o);
+            rowB.addChild(k);
+        }
+        for each ( o in this.keysRowC )
+        {
+            k = buildKey(o);
+            rowC.addChild(k);
+        }
+        for each ( o in this.keysRowD )
+        {
+            k = buildKey(o);
+            rowD.addChild(k);
+        }
+        for each ( o in this.keysRowE )
+        {
+            k = buildKey(o);
+            rowE.addChild(k);
+        }
+    }
+    
+    public function newFocus(o:UIComponent):void
+    {
+        this.inputControl = o;
+    }
+    
+    public function focusNext():void
+    {
+        var n:Number = this.currentTab + 1;
+        if ( n >= this.tabOrder.length ) n = 0;
+        this.currentTab = n;
+        this.newFocus( this.tabOrder[n] );        
+    }
+    
+    private function buildKey(o:Object):UIComponent
+    {
+        var key:Button = new Button();
+        key.label = o.label;
+        key.setStyle('textAlign','center');
+        if ( o.flex ) key.percentWidth = 100;
+        if ( o.w ) {
+            key.width = o.w;
+        } else if ( ! o.flex ) {
+            key.width = 70;
+        }
+        key.height = 50;
+        key.addEventListener(MouseEvent.CLICK,handleKeyClick);
+        return key;
+    }
+    
+    private function handleKeyClick(event:Event):void
+    {
+        // 
+        switch ( Button(event.target).label )
+        {
+            case 'shift':
+                this.toggleCapsKey(false);
+                this.isShifted = true;
+            break;
+            case 'SHIFT':
+                this.toggleCapsKey(true);
+                this.isShifted = false;
+            break;
+            case 'caps lock':
+                this.toggleCapsKey(false);
+            break;
+            case 'CAPS LOCK':
+                this.toggleCapsKey(true);
+            break;
+            case 'Clear':
+                this.inputControl.text = '';
+            break;
+            case 'Space':
+                this.inputControl.text += ' ';
+            break;
+            case 'Delete':
+                var value:String = this.inputControl.text;
+                this.inputControl.text = value.substr(0,value.length-1);
+            break;
+            case 'Tab':
+                this.focusNext();
+            break;
+            default:
+                this.addToString( Button(event.target).label );
+                if ( this.isShifted ) this.toggleCapsKey(true);
+                this.isShifted = false;
+            break;
+            
+        }
+        returnFocus();
+    }
+    
+    private function addToString( text:String ):void
+    {
+        this.inputControl.text += text;
+    }
+    
+    private function toggleCapsKey(toLower:Boolean):void
+    {
+        this.toggleUpperLower(rowA,toLower);
+        this.toggleUpperLower(rowB,toLower);
+        this.toggleUpperLower(rowC,toLower);
+        this.toggleUpperLower(rowD,toLower);
+     }
+     private function toggleUpperLower(row:Object,toLower:Boolean):void
+     {
+        var kid:Object;
+        var kidLabel:String;
+        for (var i:Number=0;i<row.getChildren().length;i++) {
+            kid = row.getChildAt(i);
+            kidLabel = kid.label;
+            if ( kidLabel == 'Tab' || kidLabel == 'Delete' ) continue;
+            if ( toLower ){
+                kid.label = kidLabel.toLowerCase();
+            } else {
+                kid.label = kidLabel.toUpperCase();
+            }
+        }                 
+     }    
+     private function returnFocus():void
+     {
+         focusManager.setFocus( inputControl as IFocusManagerComponent );
+         inputControl.setSelection(inputControl.length, inputControl.length);
+     }
+]]>
+</mx:Script>
+<mx:VBox id="keyContainer"
+    paddingTop="5" paddingLeft="5" paddingBottom="5" paddingRight="5"  verticalGap="2">
+    <mx:HBox width="100%" id="rowA" horizontalAlign="center" horizontalGap="2"/>
+    <mx:HBox width="100%" id="rowB" horizontalAlign="center" horizontalGap="2"/>
+    <mx:HBox width="100%" id="rowC" horizontalAlign="center" horizontalGap="2"/>
+    <mx:HBox width="100%" id="rowD" horizontalAlign="center" horizontalGap="2"/>
+    <mx:HBox width="100%" id="rowE" horizontalAlign="center" horizontalGap="2"/>    
+</mx:VBox>
+</mx:Canvas>
