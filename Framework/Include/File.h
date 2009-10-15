@@ -22,11 +22,12 @@ namespace System
     void SeekToEnd();
     void SeekTo(unsigned long pos);
     unsigned long GetPos() const;
-    static void Remove(const char *fileName);
   private:
     class FileImpl;
     FileImpl *Impl;
   };
+  
+  void RemoveFile(const char *fileName);
 }
 
 #endif  // !__FILE_H__
