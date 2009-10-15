@@ -42,7 +42,7 @@
 		]]>
 	</mx:Script>
 	
-	<user:Header text="Выберите" width="100%" height="20%"/>
+	<user:Header text="Выберите тип услуги" width="100%" height="20%"/>
 	
 	<user:BusinessCategoriesList width="100%" height="60%" 
 		itemRenderer="framework.terminal.components.user.CustomItemRenderer"/>
