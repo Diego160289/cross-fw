@@ -12,8 +12,6 @@
 #include <sstream>
 
 
-#include <iostream>
-
 namespace System
 {
 
@@ -75,18 +73,13 @@ namespace System
 	  NewPath += "/";
 	  NewPath += i->first;
 	  if (i->second)
-	  {
-	    std::cout << "Rec" << std::endl;
 	    (*this)(NewPath);
-	  }
 	  else
 	  {
-	    std::cout << "File  " << NewPath << std::endl;
 	    if (unlink(NewPath.c_str()))
 	      return false;
 	  }
 	}
-	std::cout << path << std::endl;
 	return RemoveDir(path.c_str());
       }
     } RemoveRecurcive;
@@ -106,7 +99,14 @@ namespace System
       if (CurDirName == "." || CurDirName == "..")
         continue;
       struct stat ItemInfo = { 0 };
-      stat(DirData->d_name, &ItemInfo);
+      std::string FullItemName = dirName;
+      FullItemName += "/";
+      FullItemName += DirData->d_name;
+      if (stat(FullItemName.c_str(), &ItemInfo) == -1)
+      {
+        DirItems.reset(0);
+        break;
+      }
       DirItems->push_back(std::make_pair(CurDirName, (ItemInfo.st_mode & S_IFMT) == S_IFDIR));
     }
     if (DirItems.get())
