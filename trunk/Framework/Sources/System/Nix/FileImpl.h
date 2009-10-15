@@ -20,10 +20,11 @@ namespace System
     void SeekToEnd();
     void SeekTo(unsigned long pos);
     unsigned long GetPos() const;
-    static void Remove(const char *fileName);
   private:
     FILE *FileHandle;
   };
+  
+  void RemoveFileImpl(const char *fileName);
 }
 
 #endif  // !__FILEIMPL_H__

@@ -105,7 +105,8 @@ namespace System
     return static_cast<unsigned long>(CurPos);
   }
 
-  void File::FileImpl::Remove(const char *fileName)
+
+  void RemoveFileImpl(const char *fileName)
   {
     if (!::DeleteFileA(fileName))
       throw FileException("Can't remove file");

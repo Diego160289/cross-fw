@@ -48,8 +48,9 @@ namespace System
     return Impl->GetPos();
   }
 
-  void File::Remove(const char *fileName)
+  
+  void RemoveFile(const char *fileName)
   {
-    FileImpl::Remove(fileName);
+    RemoveFileImpl(fileName);
   }
 }

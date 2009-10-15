@@ -56,7 +56,7 @@ RetCode IRegistryImpl::Remove(const char *registryPath)
   IsModifiedState = false;
   try
   {
-    System::File::Remove(registryPath);
+    System::RemoveFile(registryPath);
   }
   catch (std::exception &)
   {

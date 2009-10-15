@@ -94,7 +94,8 @@ namespace System
     return static_cast<unsigned long>(Pos);
   }
 
-  void File::FileImpl::Remove(const char *fileName)
+
+  void RemoveFileImpl(const char *fileName)
   {
     if (unlink(fileName))
       throw FileException("Can't remove file");
