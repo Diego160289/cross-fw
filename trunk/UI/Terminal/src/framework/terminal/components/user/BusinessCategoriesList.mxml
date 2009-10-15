@@ -5,9 +5,9 @@
 	columnWidth="200"
     rowCount="2"
     rowHeight="100"
+    verticalScrollPolicy="off"
     dataProvider="{modelLocator.businessCategories}"
-    itemClick="businessCategorySelected(event)" 
-    xmlns:user="framework.terminal.components.user.*">
+    itemClick="businessCategorySelected(event)"> 
 	
 	<mx:Script>
 		<![CDATA[
@@ -37,11 +37,5 @@
 
 		]]>
 	</mx:Script>
-	
-	<mx:itemRenderer>
-		<mx:Component>
-			<user:CustomItemRenderer/>
-		</mx:Component>
-	</mx:itemRenderer>
 	
 </mx:TileList>

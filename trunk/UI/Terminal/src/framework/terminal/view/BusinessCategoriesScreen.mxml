@@ -2,8 +2,7 @@
 <mx:VBox 
 	xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:user="framework.terminal.components.user.*" 
-	xmlns:menus="framework.terminal.components.user.menus.*"
-	initialize="init()">
+	xmlns:menus="framework.terminal.components.user.menus.*">
 	
 	<mx:Script>
 		<![CDATA[
@@ -21,10 +20,6 @@
 				if (value) loadData();
 				//
 				super.visible = value;
-			}
-			
-			private function init() : void
-			{
 			}
 			
 			private function loadData() : void
@@ -49,7 +44,8 @@
 	
 	<user:Header text="Выберите тип оплаты" width="100%" height="20%"/>
 	
-	<user:BusinessCategoriesList id="businessCategoriesList" width="100%" height="60%" /> 
+	<user:BusinessCategoriesList width="100%" height="60%" 
+		itemRenderer="framework.terminal.components.user.CustomItemRenderer"/> 
 		
 	<user:Footer id="footer" width="100%" height="20%" />
 	
