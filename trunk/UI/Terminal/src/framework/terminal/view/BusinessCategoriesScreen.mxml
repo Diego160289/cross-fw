@@ -42,10 +42,10 @@
 		]]>
 	</mx:Script>
 	
-	<user:Header text="Выберите тип оплаты" width="100%" height="20%"/>
+	<user:Header text="Выберите" width="100%" height="20%"/>
 	
 	<user:BusinessCategoriesList width="100%" height="60%" 
-		itemRenderer="framework.terminal.components.user.CustomItemRenderer"/> 
+		itemRenderer="framework.terminal.components.user.CustomItemRenderer"/>
 		
 	<user:Footer id="footer" width="100%" height="20%" />
 	

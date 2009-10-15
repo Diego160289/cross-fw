@@ -3,22 +3,17 @@
 	xmlns:control="framework.terminal.control.*"
 	xmlns:business="framework.terminal.business.*"
 	xmlns:view="framework.terminal.view.*"
-	xmlns:mx="http://www.adobe.com/2006/mxml"
-	creationComplete="creationComplete()" > 
+	xmlns:mx="http://www.adobe.com/2006/mxml">
 	
 	<mx:Script>
 		<![CDATA[
+			import com.adobe.cairngorm.CairngormError;
 			import mx.core.UIComponent;
 			import mx.controls.Alert;
 			import framework.terminal.model.ApplicationModelLocator;
 			//
 			[Bindable]
 			private var modelLocator : ApplicationModelLocator = ApplicationModelLocator.getInstance();
-			
-			private function creationComplete() : void
-			{
-				modelLocator.businessCategories.addItem({name : "sdds"})
-			}
 			
 			private function vsStateChanged(event : Event) : void
 			{
