@@ -19,7 +19,6 @@
 			private function init() : void
 			{
 		        this.qwerty.inputControl = this.tbPhoneNumber;
-		        this.qwerty.inputControl = this.tbPhoneNumber;
 		        //
 		        this.footer.back.addEventListener(MouseEvent.CLICK, onBack);
 		        this.footer.start.addEventListener(MouseEvent.CLICK, onStart);
