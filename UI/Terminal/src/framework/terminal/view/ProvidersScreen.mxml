@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:VBox 
 	xmlns:mx="http://www.adobe.com/2006/mxml"
-	initialize="init()" 
 	xmlns:user="framework.terminal.components.user.*">
 	
 	<mx:Script>
@@ -66,9 +65,10 @@
 	
 	<user:Header text="Выберите провайдера" width="100%" height="20%"/>
 	
-	<user:ProvidersList id="providersList" width="100%" height="60%" /> 
+	<user:ProvidersList id="providersList" width="100%" height="60%" 
+		itemRenderer="framework.terminal.components.user.CustomItemRenderer"/> 
 	
-	<user:Footer id="footer" width="100%" height="20%" 
+	<user:Footer id="footer" width="100%" height="20%"
 		showBack="true" showStart="true"/>
 
 </mx:VBox>

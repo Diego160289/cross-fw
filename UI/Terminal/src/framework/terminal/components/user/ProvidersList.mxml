@@ -36,11 +36,5 @@
 
 		]]>
 	</mx:Script>
-	
-	<mx:itemRenderer>
-		<mx:Component>
-			<user:CustomItemRenderer/>
-		</mx:Component>
-	</mx:itemRenderer>
 
 </mx:TileList>
