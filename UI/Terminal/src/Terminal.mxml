@@ -17,15 +17,15 @@
 			
 			private function vsStateChanged(event : Event) : void
 			{
-				this.modelLocator.frameId = ViewStack(event.target).selectedChild.id;
+				this.modelLocator.frameId = ViewStack(event.target).selectedChild.className;
 			}
 
 		]]>
 	</mx:Script>
 	
 	<!--
-	<mx:Style source="assets/css/main.css" />
 	<mx:Style source="assets/skins/flekristal/src/flekristal.css" />
+	<mx:Style source="assets/skins/bluevista/style.css" />
 	-->
 
 	<business:RegisterExternalCallFunctions />
