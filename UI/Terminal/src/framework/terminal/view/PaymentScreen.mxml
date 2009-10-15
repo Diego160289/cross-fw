@@ -2,7 +2,7 @@
 <mx:VBox 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
 	xmlns:user="framework.terminal.components.user.*" 
-	creationComplete="creationComplete()">
+	initialize="init()">
 	
 	<mx:Script>
 		<![CDATA[
@@ -15,7 +15,7 @@
 
 			//*******************************************************************************************
 
-			private function creationComplete() : void
+			private function init() : void
 			{
 				this.footer.next.addEventListener(MouseEvent.CLICK, onNext);
 			}
@@ -25,9 +25,7 @@
 				this.modelLocator.amount = this.tbAmount.text;
 				//
 				InvokeHelper.sendAndForget("ProcessPayment",
-											{
-												amount : this.tbAmount.text  
-											},
+											null,
 											Button(event.target).id,
 											this.modelLocator.frameId,
 											""											
@@ -39,7 +37,7 @@
 		]]>
 	</mx:Script>
 
-<user:Header text="Оплата" height="20%" />
+<user:Header text="Оплата" width="100%" height="20%" />
 
 <mx:Panel width="100%" height="60%" >
 

@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TileList 
 	xmlns:mx="http://www.adobe.com/2006/mxml"
-	dataProvider="{modelLocator.providers}"
 	change="providerSelected(event)"
 	columnCount="6"
 	columnWidth="250"
     rowCount="2"
-    rowHeight="100"
-    themeColor="haloSilver"
-    verticalScrollPolicy="on">
+	dataProvider="{modelLocator.providers}"
+    rowHeight="100" xmlns:user="framework.terminal.components.user.*">
 	
 	<mx:Script>
 		<![CDATA[
@@ -24,9 +22,9 @@
 
 			public function providerSelected(event : ListEvent) : void
 			{
-				InvokeHelper.sendAndForget("ProviderSelected", 
+				InvokeHelper.sendAndForget("ProviderSelected",
 											{
-												providerId : TileList(event.target).selectedItem.id  
+												providerId : TileList(event.target).selectedItem.id 
 											},
 											ApplicationModelLocator.ITEM_CLICKED_EVENT,
 											this.modelLocator.frameId,
@@ -39,4 +37,10 @@
 		]]>
 	</mx:Script>
 	
+	<mx:itemRenderer>
+		<mx:Component>
+			<user:CustomItemRenderer/>
+		</mx:Component>
+	</mx:itemRenderer>
+
 </mx:TileList>
