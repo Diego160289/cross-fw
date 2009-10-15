@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TileList 
 	xmlns:mx="http://www.adobe.com/2006/mxml"
-	dataProvider="{modelLocator.businessCategories}"
 	columnCount="6"
 	columnWidth="200"
     rowCount="2"
     rowHeight="100"
-    themeColor="haloSilver"
-    verticalScrollPolicy="on"
-    itemClick="businessCategorySelected(event)">
+    dataProvider="{modelLocator.businessCategories}"
+    itemClick="businessCategorySelected(event)" 
+    xmlns:user="framework.terminal.components.user.*">
 	
 	<mx:Script>
 		<![CDATA[
@@ -38,5 +37,11 @@
 
 		]]>
 	</mx:Script>
+	
+	<mx:itemRenderer>
+		<mx:Component>
+			<user:CustomItemRenderer/>
+		</mx:Component>
+	</mx:itemRenderer>
 	
 </mx:TileList>

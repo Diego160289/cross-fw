@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:VBox 
 	xmlns:mx="http://www.adobe.com/2006/mxml"
-	creationComplete="creationComplete()" 
+	initialize="init()" 
 	xmlns:user="framework.terminal.components.user.*" 
 	xmlns:keyboards="framework.terminal.components.custom.keyboards.*">
 	
@@ -16,7 +16,7 @@
 
 			//*******************************************************************************************
 
-			private function creationComplete() : void
+			private function init() : void
 			{
 		        this.qwerty.inputControl = this.tbPhoneNumber;
 		        //
@@ -58,7 +58,7 @@
 		]]>
 	</mx:Script>
 	
-	<user:Header text="Введите номер" height="20%"/>
+	<user:Header text="Введите номер" width="100%" height="20%"/>
 	
 	<mx:HBox width="100%" height="60%">
 		
