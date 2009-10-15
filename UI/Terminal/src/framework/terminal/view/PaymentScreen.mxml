@@ -2,7 +2,7 @@
 <mx:VBox 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
 	xmlns:user="framework.terminal.components.user.*" 
-	initialize="init()">
+	creationComplete="creationComplete()">
 	
 	<mx:Script>
 		<![CDATA[
@@ -15,7 +15,7 @@
 
 			//*******************************************************************************************
 
-			private function init() : void
+			private function creationComplete() : void
 			{
 				this.footer.next.addEventListener(MouseEvent.CLICK, onNext);
 			}

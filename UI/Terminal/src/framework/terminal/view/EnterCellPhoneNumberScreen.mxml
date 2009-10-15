@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:VBox 
 	xmlns:mx="http://www.adobe.com/2006/mxml"
-	initialize="init()" 
+	creationComplete="creationComplete()" 
 	xmlns:user="framework.terminal.components.user.*" 
 	xmlns:keyboards="framework.terminal.components.custom.keyboards.*">
 	
@@ -16,7 +16,7 @@
 
 			//*******************************************************************************************
 
-			private function init() : void
+			private function creationComplete() : void
 			{
 		        this.qwerty.inputControl = this.tbPhoneNumber;
 		        //

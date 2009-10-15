@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:UIComponent 
 	xmlns:mx="http://www.adobe.com/2006/mxml"
-	creationComplete="init()">
+	creationComplete="creationComplete()">
 	
 	<mx:Script>
 		<![CDATA[
@@ -9,7 +9,7 @@
 			
 			private var serviceProvider : ExternalInterfaceProvider = ExternalInterfaceProvider.getInstance();
 			//
-			private function init() : void
+			private function creationComplete() : void
 			{
 				registerMethods();
 			}
