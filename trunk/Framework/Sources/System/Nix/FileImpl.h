@@ -2,7 +2,7 @@
 #define __FILEIMPL_H__
 
 #include "File.h"
-#include <unistd.h>
+#include <stdio.h>
 
 
 namespace System
@@ -22,7 +22,7 @@ namespace System
     unsigned long GetPos() const;
     static void Remove(const char *fileName);
   private:
-    //HANDLE FileHandle;
+    FILE *FileHandle;
   };
 }
 
