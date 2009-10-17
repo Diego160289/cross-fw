@@ -51,11 +51,6 @@ namespace System
 
   bool RemoveDirImpl(const char *dirName)
   {
-    std::vector<std::string> Dirs;
-    std::stringstream Path;
-    Path << dirName;
-    std::string StartDir;
-    std::getline(Path, StartDir, '/');
     struct
     {
       bool RemoveDir(const char *name) const
@@ -83,7 +78,7 @@ namespace System
 	return RemoveDir(path.c_str());
       }
     } RemoveRecurcive;
-    return RemoveRecurcive(StartDir);
+    return RemoveRecurcive(dirName);
   }
 
   DirItemPoolPtr EnumDirImpl(const char *dirName)
