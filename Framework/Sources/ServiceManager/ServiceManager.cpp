@@ -5,8 +5,6 @@
 #include "ServiceParamNames.h"
 
 #include <algorithm>
-#include <functional>
-
 
 const unsigned IServiceManagerImpl::ServiceCleanerTimeout = 5000;
 
@@ -19,28 +17,31 @@ IServiceManagerImpl::~IServiceManagerImpl()
 {
 }
 
-unsigned long IServiceManagerImpl::StartService(const char *serviceId, IFaces::IBase **service)
+unsigned long IServiceManagerImpl::StartService(const char *serviceId,
+                                                IFaces::IBase *parent,
+                                                IFaces::IBase **newServiceInstance)
 {
   if (!serviceId)
     return retBadParam;
   unsigned long NewInstanceId = 0;
-  IServicePtr NewService = InternalStartService(serviceId, &NewInstanceId);
+  IServicePtr NewService = InternalStartService(serviceId, parent, &NewInstanceId);
   if (!NewService.Get())
     return 0;
-  if (NewService.QueryInterface(service) != retOk)
+  if (NewService.QueryInterface(newServiceInstance) != retOk)
   {
-    DoneService(NewService);
+    DoneService(ServicePair(NewService, std::vector<unsigned long>()));
     return 0;
   }
   return NewInstanceId;
 }
 
-unsigned long IServiceManagerImpl::StartService(const char *serviceId)
+unsigned long IServiceManagerImpl::StartService(const char *serviceId,
+                                                IFaces::IBase *parent)
 {
   if (!serviceId)
     return retBadParam;
   unsigned long NewInstanceId = 0;
-  IServicePtr NewService = InternalStartService(serviceId, &NewInstanceId);
+  IServicePtr NewService = InternalStartService(serviceId, parent, &NewInstanceId);
   return !NewService.Get() ? 0 : NewInstanceId;
 }
 
@@ -48,7 +49,7 @@ RetCode IServiceManagerImpl::StopService(unsigned long instanceId)
 {
   if (!instanceId)
     return retBadParam;
-  Common::SyncObject<System::Mutex> Locker(ServicesMtx);
+  Common::ISyncObject Locker(GetSynObj());
   for (ServiceMap::iterator i = Services.begin() ; i != Services.end() ; ++i)
   {
     ServicePool::iterator InstanceIter = i->second->find(instanceId);
@@ -63,25 +64,17 @@ RetCode IServiceManagerImpl::StopService(unsigned long instanceId)
 
 RetCode IServiceManagerImpl::PostStopToService(unsigned long instanceId)
 {
-  ServicesVector StoppingServicesPool;
   if (!instanceId)
     return retBadParam;
+  Common::ISyncObject Locker(GetSynObj());
+  for (ServiceMap::iterator i = Services.begin() ; i != Services.end() ; ++i)
   {
-    Common::SyncObject<System::Mutex> Locker(ServicesMtx);
-    for (ServiceMap::iterator i = Services.begin() ; i != Services.end() ; ++i)
-    {
-      ServicePool::iterator InstanceIter = i->second->find(instanceId);
-      if (InstanceIter == i->second->end())
-        continue;
-      StoppingServicesPool.push_back(InstanceIter->second);
-      i->second->erase(InstanceIter);
-      break;
-    }
-  }
-  {
-    Common::SyncObject<System::Mutex> Locker(StoppingServicesMtx);
-    std::copy(StoppingServicesPool.begin(), StoppingServicesPool.end(),
-      std::back_inserter(StoppingServices));
+    ServicePool::iterator InstanceIter = i->second->find(instanceId);
+    if (InstanceIter == i->second->end())
+      continue;
+    StoppingServices.push_back(InstanceIter->second);
+    i->second->erase(InstanceIter);
+    break;
   }
   try
   {
@@ -97,7 +90,7 @@ RetCode IServiceManagerImpl::StopServiceGroup(const char *serviceId)
 {
   if (!serviceId)
     return retBadParam;
-  Common::SyncObject<System::Mutex> Locker(ServicesMtx);
+  Common::ISyncObject Locker(GetSynObj());
   ServiceMap::iterator ServiceGroup = Services.find(serviceId);
   if (ServiceGroup == Services.end())
     return retFail;
@@ -109,24 +102,15 @@ RetCode IServiceManagerImpl::StopServiceGroup(const char *serviceId)
 
 RetCode IServiceManagerImpl::PostStopToServiceGroup(const char *serviceId)
 {
-  ServicesVector StoppingServicesPool;
+  Common::ISyncObject Locker(GetSynObj());
   if (!serviceId)
     return retBadParam;
-  {
-    Common::SyncObject<System::Mutex> Locker(ServicesMtx);
-    ServiceMap::iterator ServiceGroup = Services.find(serviceId);
-    if (ServiceGroup == Services.end())
-      return retFail;
-    for (ServicePool::const_iterator i = ServiceGroup->second->begin() ; i != ServiceGroup->second->end() ; ++i)
-      StoppingServicesPool.push_back(i->second);
-    Services.erase(ServiceGroup);
-    return retOk;
-  }
-  {
-    Common::SyncObject<System::Mutex> Locker(StoppingServicesMtx);
-    std::copy(StoppingServicesPool.begin(), StoppingServicesPool.end(),
-      std::back_inserter(StoppingServices));
-  }
+  ServiceMap::iterator ServiceGroup = Services.find(serviceId);
+  if (ServiceGroup == Services.end())
+    return retFail;
+  for (ServicePool::const_iterator i = ServiceGroup->second->begin() ; i != ServiceGroup->second->end() ; ++i)
+    StoppingServices.push_back(i->second);
+  Services.erase(ServiceGroup);
   try
   {
     StopServiceThread->Resume();
@@ -156,7 +140,7 @@ RetCode IServiceManagerImpl::GetServicePool(const char *serviceId, IFaces::IEnum
   {
     if (!serviceId)
       return retBadParam;
-    Common::SyncObject<System::Mutex> Locker(ServicesMtx);
+    Common::ISyncObject Locker(GetSynObj());
     ServiceMap::iterator Iter = Services.find(serviceId);
     if (Iter == Services.end())
       return retFalse;
@@ -165,7 +149,7 @@ RetCode IServiceManagerImpl::GetServicePool(const char *serviceId, IFaces::IEnum
     ServicePoolPtr SrvPool = Iter->second;
     for (ServicePool::iterator i = SrvPool->begin() ; i != SrvPool->end() ; ++i)
     {
-      Common::RefObjQIPtr<IFaces::IBase> CurService(i->second);
+      Common::RefObjQIPtr<IFaces::IBase> CurService(i->second.first);
       if (!CurService.Get())
         return retFail;
       ServiceEnum->AddItem(CurService);
@@ -181,14 +165,14 @@ RetCode IServiceManagerImpl::GetServicePool(const char *serviceId, IFaces::IEnum
 
 RetCode IServiceManagerImpl::SetRegistry(IFaces::IRegistry *registry)
 {
-  Common::SyncObject<System::Mutex> Locker(RegistryMtx);
+  Common::ISyncObject Locker(GetSynObj());
   Registry = registry;
   return retOk;
 }
 
 RetCode IServiceManagerImpl::SetClassFactory(IFaces::IClassFactory *factory)
 {
-  Common::SyncObject<System::Mutex> Locker(FactoryMtx);
+  Common::ISyncObject Locker(GetSynObj());
   Factory = factory;
   return retOk;
 }
@@ -200,7 +184,7 @@ RetCode IServiceManagerImpl::Run(const char *startServiceId)
   if (!startServiceId)
     return retFail;
   unsigned long NewInstanceId = 0;
-  if (!(StartedFirstService = !!InternalStartService(startServiceId, &NewInstanceId).Get()))
+  if (!(StartedFirstService = !!InternalStartService(startServiceId, 0, &NewInstanceId).Get()))
     return retFail;
   try
   {
@@ -249,31 +233,29 @@ bool IServiceManagerImpl::FinalizeCreate()
   return true;
 }
 
-IServiceManagerImpl::IServicePtr IServiceManagerImpl::InternalStartService(const std::string &serviceId, unsigned long *instanceId)
+IServiceManagerImpl::IServicePtr IServiceManagerImpl::InternalStartService(const std::string &serviceId,
+                                                                           IFaces::IBase *parent,
+                                                                           unsigned long *instanceId)
 {
+  Common::ISyncObject Locker(GetSynObj());
   try
   {
     Common::RefObjPtr<IFaces::IBase> SrvObj;
-    {
-      Common::SyncObject<System::Mutex> Locker(FactoryMtx);
-      if (Factory->CreateObject(serviceId.c_str(), SrvObj.GetPPtr()) != retOk)
-        return IServicePtr();
-    }
+    if (Factory->CreateObject(serviceId.c_str(), SrvObj.GetPPtr()) != retOk)
+      return IServicePtr();
     Common::RefObjQIPtr<IFaces::IService> NewService(SrvObj);
-    if (!NewService.Get() ||!BuildService(NewService))
-      return IServicePtr();;
+    ServicePair NewServicePair = std::make_pair(NewService, std::vector<unsigned long>());
+    if (!NewService.Get() ||!BuildService(NewServicePair))
+      return IServicePtr();
     if (NewService->Init() != retOk)
     {
-      UnbuildService(NewService);
+      UnbuildService(NewServicePair);
       return IServicePtr();
     }
-    {
-      Common::SyncObject<System::Mutex> Locker(ServicesMtx);
-      ServicePoolPtr &SrvPool = Services[serviceId];
-      if (!SrvPool.Get())
-        SrvPool.Reset(new ServicePool);
-      (*SrvPool.Get())[(*instanceId = ++InstanceId)] = NewService;
-    }
+    ServicePoolPtr &SrvPool = Services[serviceId];
+    if (!SrvPool.Get())
+      SrvPool.Reset(new ServicePool);
+    (*SrvPool.Get())[(*instanceId = ++InstanceId)] = NewServicePair;
     return NewService;
   }
   catch (std::exception &)
@@ -283,11 +265,11 @@ IServiceManagerImpl::IServicePtr IServiceManagerImpl::InternalStartService(const
   return IServicePtr();
 }
 
-bool IServiceManagerImpl::BuildService(IServicePtr service)
+bool IServiceManagerImpl::BuildService(const ServicePair &service)
 {
   try
   {
-    Common::RefObjQIPtr<IFaces::IEnvironment> ServiceEnvironment(service);
+    Common::RefObjQIPtr<IFaces::IEnvironment> ServiceEnvironment(service.first);
     if (ServiceEnvironment.Get())
     {
       int k = 0;
@@ -296,7 +278,7 @@ bool IServiceManagerImpl::BuildService(IServicePtr service)
     IFacesImpl::IVarMapHelper Params(VarMap);
     Params.AddVariable(IFacesImpl::PrmClassFactorry, Common::RefObjQIPtr<IFaces::IBase>(Factory).Get());
     Params.AddVariable(IFacesImpl::PrmServiceManager, GetThisIBase().Get());
-    if (service->SetParams(VarMap.Get()) != retOk)
+    if (service.first->SetParams(VarMap.Get()) != retOk)
     {
       UnbuildService(service);
       return false;
@@ -311,48 +293,40 @@ bool IServiceManagerImpl::BuildService(IServicePtr service)
   return true;
 }
 
-void IServiceManagerImpl::UnbuildService(IServicePtr service)
+void IServiceManagerImpl::UnbuildService(const ServicePair &service)
 {
-  service->SetParams(0);
+  service.first->SetParams(0);
 }
 
 void IServiceManagerImpl::StopManager()
 {
   CleanThread.Release();
   StopServiceThread.Release();
-  {
-    Common::SyncObject<System::Mutex> Locker(FactoryMtx);
-    Factory.Release();
-  }
-  {
-    Common::SyncObject<System::Mutex> Locker(RegistryMtx);
-    Registry.Release();
-  }
+  Common::ISyncObject Locker(GetSynObj());
+  Factory.Release();
+  Registry.Release();
 
+  for (ServiceMap::iterator i = Services.begin() ; i != Services.end() ; ++i)
   {
-    Common::SyncObject<System::Mutex> Locker(ServicesMtx);
-    for (ServiceMap::iterator i = Services.begin() ; i != Services.end() ; ++i)
-    {
-      for (ServicePool::iterator j = i->second->begin() ; j != i->second->end() ; ++j)
-        DoneService(j->second);
-    }
-    Services.clear();
+    for (ServicePool::iterator j = i->second->begin() ; j != i->second->end() ; ++j)
+      DoneService(j->second);
   }
-  
+  Services.clear();
   StoppingServicesFunc();
 }
 
-void IServiceManagerImpl::DoneService(IServicePtr service)
+void IServiceManagerImpl::DoneService(const ServicePair &service)
 {
-  service->Done();
+  // TODO: done childs
+  service.first->Done();
   UnbuildService(service);
 }
 
 void IServiceManagerImpl::StoppingServicesFunc()
 {
-  Common::SyncObject<System::Mutex> Locker(StoppingServicesMtx);
-  std::for_each(StoppingServices.begin(), StoppingServices.end(),
-    std::bind1st(std::mem_fun(&IServiceManagerImpl::DoneService), this));
+  Common::ISyncObject Locker(GetSynObj());
+  for(ServicesVector::iterator i = StoppingServices.begin() ; i != StoppingServices.end() ; ++i)
+    DoneService(*i);
   StoppingServices.clear();
 }
 
@@ -360,38 +334,32 @@ void IServiceManagerImpl::ServiceCleanerFunc()
 {
   try
   {
-    ServicesVector AllStoppingServices;
+    Common::ISyncObject Locker(GetSynObj());
+    Common::StringVector StoppingServiceKeys;
+    for (ServiceMap::iterator i = Services.begin() ; i != Services.end() ; ++i)
     {
-      Common::SyncObject<System::Mutex> Locler(ServicesMtx);
-      Common::StringVector StoppingServiceKeys;
-      for (ServiceMap::iterator i = Services.begin() ; i != Services.end() ; ++i)
+      ServicesVector GroupStoppingServices;
+      std::vector<unsigned long> GroupStoppingServiceKeys;
+      ServicePoolPtr ServiceGroup = i->second;
+      for (ServicePool::iterator j = ServiceGroup->begin() ; j != ServiceGroup->end() ; ++j)
       {
-        ServicesVector GroupStoppingServices;
-        std::vector<unsigned long> GroupStoppingServiceKeys;
-        ServicePoolPtr ServiceGroup = i->second;
-        for (ServicePool::iterator j = ServiceGroup->begin() ; j != ServiceGroup->end() ; ++j)
+        if (j->second.first->CanDone())
         {
-          if (j->second->CanDone())
-          {
-            GroupStoppingServices.push_back(j->second);
-            GroupStoppingServiceKeys.push_back(j->first);
-          }
+          GroupStoppingServices.push_back(j->second);
+          GroupStoppingServiceKeys.push_back(j->first);
         }
-        for (std::vector<unsigned long>::const_iterator j = GroupStoppingServiceKeys.begin() ; j != GroupStoppingServiceKeys.end() ; ++j)
-          ServiceGroup->erase(*j);
-        if (ServiceGroup->empty())
-          StoppingServiceKeys.push_back(i->first);
-        std::copy(GroupStoppingServices.begin(), GroupStoppingServices.end(),
-          std::back_inserter(AllStoppingServices));
       }
-      for (Common::StringVector::const_iterator i = StoppingServiceKeys.begin() ; i != StoppingServiceKeys.end() ; ++i)
-        Services.erase(*i);
-      if (Services.empty())
-        RunEvent.Set();
+      for (std::vector<unsigned long>::const_iterator j = GroupStoppingServiceKeys.begin() ; j != GroupStoppingServiceKeys.end() ; ++j)
+        ServiceGroup->erase(*j);
+      if (ServiceGroup->empty())
+        StoppingServiceKeys.push_back(i->first);
+      std::copy(GroupStoppingServices.begin(), GroupStoppingServices.end(),
+        std::back_inserter(StoppingServices));
     }
-    Common::SyncObject<System::Mutex> Locker(StoppingServicesMtx);
-    std::copy(AllStoppingServices.begin(), AllStoppingServices.end(),
-      std::back_inserter(StoppingServices));
+    for (Common::StringVector::const_iterator i = StoppingServiceKeys.begin() ; i != StoppingServiceKeys.end() ; ++i)
+      Services.erase(*i);
+    if (Services.empty())
+      RunEvent.Set();
     StopServiceThread->Resume();
   }
   catch (std::exception &)

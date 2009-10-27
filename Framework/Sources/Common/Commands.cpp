@@ -1,7 +1,5 @@
 #include "Xml/Commands.h"
 
-#include <sstream>
-
 
 namespace Common
 {

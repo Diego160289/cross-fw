@@ -46,13 +46,13 @@ void ITestServiceImpl::OnTimer()
   if (Ticks == 5)
   {
     std::cout
-      << (GetServiceManager()->StartService("725d19bb-e6bc-4a42-986d-721f0fb1c5d6") ? "TestService1 started" : "TestService1 can't started")
+      << (GetServiceManager()->StartService("725d19bb-e6bc-4a42-986d-721f0fb1c5d6", 0) ? "TestService1 started" : "TestService1 can't started")
       << std::endl;
   }
   if (Ticks == 7)
   {
     std::cout
-      << (GetServiceManager()->StartService("12457697-5839-4bb4-926a-8b5e37abcd6c") ? "TestService2 started" : "TestService1 can't started")
+      << (GetServiceManager()->StartService("12457697-5839-4bb4-926a-8b5e37abcd6c", 0) ? "TestService2 started" : "TestService1 can't started")
       << std::endl;
   }
 }
