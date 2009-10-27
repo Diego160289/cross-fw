@@ -189,6 +189,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\Framework\Sources\System\Win\SystemUtilsImpl.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Framework\Sources\System\Win\ThreadImpl.cpp"
 				>
 			</File>
@@ -227,6 +231,10 @@
 		</File>
 		<File
 			RelativePath="..\..\..\Framework\Sources\System\PulsedLoop.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\Framework\Sources\System\SystemUtils.cpp"
 			>
 		</File>
 		<File

@@ -73,6 +73,7 @@ namespace Common
       using std::list<NodePtr>::push_back;
       using std::list<NodePtr>::begin;
       using std::list<NodePtr>::end;
+      using std::list<NodePtr>::front;
       using std::list<NodePtr>::size;
 
       NodeList()

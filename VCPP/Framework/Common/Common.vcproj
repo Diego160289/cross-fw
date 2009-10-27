@@ -154,6 +154,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\Framework\Sources\Common\Commands.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\Framework\Sources\Common\CommonUtils.cpp"
 			>
 		</File>

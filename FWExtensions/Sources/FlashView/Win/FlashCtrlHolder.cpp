@@ -8,6 +8,7 @@
 #include "../../../../Framework/Include/RefObjQIPtr.h"
 #include "../../../../Framework/Include/Xml/XmlTools.h"
 #include "../../../../Framework/Include/IFunctionImpl.h"
+#include "../../../../Framework/Include/SystemUtils.h"
 
 
 const UINT FlashHandle::FPCM_FIRST = WM_USER + 0x1000;
@@ -101,28 +102,7 @@ void FlashHandle::Resize(const RECT &r)
               IsWindowVisible(FlashWnd));
 }
 
-  std::wstring AStringToWString(const std::string &s, bool fromUTF8)
-  {
-    size_t Len = s.length() + 1;
-    Len = ::MultiByteToWideChar(fromUTF8 ? CP_UTF8 : CP_ACP, 0, s.c_str(),
-      static_cast<int>(s.length()), 0, 0);
-    std::vector<wchar_t> Buffer(Len + 1, 0);
-    Len = ::MultiByteToWideChar(fromUTF8 ? CP_UTF8 : CP_ACP, 0, s.c_str(),
-      static_cast<int>(s.length()), &Buffer.front(), static_cast<int>(Len));
-    return &Buffer.front();
-  }
-
-  std::string WStringToAString(const std::wstring &s, bool toUTF8)
-  {
-    size_t Len = s.length() + 1;
-    Len = ::WideCharToMultiByte(toUTF8 ? CP_UTF8 : CP_ACP, 0, s.c_str(), -1, 0, 0, NULL, NULL);
-    std::vector<char> Buffer(Len, 0);
-    ::WideCharToMultiByte(toUTF8 ? CP_UTF8 : CP_ACP, 0, s.c_str(), -1, &Buffer.front(),
-      static_cast<int>(Len), NULL, NULL);
-    return &Buffer.front();
-  }
-
-  void FlashHandle::PlayMovie(Common::RefObjPtr<IFaces::IStream> stream)
+void FlashHandle::PlayMovie(Common::RefObjPtr<IFaces::IStream> stream)
 {
   struct
   {
@@ -300,7 +280,7 @@ void FlashCtrlHolder::CallFunction(IFaces::IFunction *func)
   using namespace Common::XmlTools;
   NodePtr FuncNode = IFacesImpl::NodeFromFunction(Common::RefObjPtr<IFaces::IFunction>(func));
   std::string Xml = NodeToUTF8(*FuncNode.Get(), false, false);
-  Flash->CallFlash(AStringToWString(Xml.c_str(), true).c_str());
+  Flash->CallFlash(System::AStringToWString(Xml.c_str(), true).c_str());
 }
 
 long FlashCtrlHolder::OnFlashRequestMsg(const IFaces::WindowMessage &msg)
@@ -313,11 +293,11 @@ long FlashCtrlHolder::OnFlashRequestMsg(const IFaces::WindowMessage &msg)
       Request += FlashRequetsQueue.front();
       FlashRequetsQueue.pop();
 
-      Common::XmlTools::NodePtr Node = Common::XmlTools::XmlToNode(WStringToAString(Request, true));
+      Common::XmlTools::NodePtr Node = Common::XmlTools::XmlToNode(System::WStringToAString(Request, true));
       Common::RefObjPtr<IFaces::IFunction> Function =
         IFacesImpl::FunctionFromNode<System::Mutex>(*Node.Get());
 
-      std::wstring FunctionName = AStringToWString(Function->GetFunctionName(), false);
+      std::wstring FunctionName = System::AStringToWString(Function->GetFunctionName(), false);
 
       Common::RefObjPtr<IFaces::IViewCallback> Callback = ViewCallback;
       if (!Callback.Get())
