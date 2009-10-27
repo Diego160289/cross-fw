@@ -2,7 +2,6 @@
 #define __REGISTRY_H__
 
 #include "IFacesTools.h"
-#include "Mutex.h"
 #include "Pointers.h"
 #include "ThreadLoop.h"
 

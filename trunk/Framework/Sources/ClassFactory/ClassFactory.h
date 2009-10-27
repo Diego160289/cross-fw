@@ -2,7 +2,6 @@
 #define __CLASSFACTORY_H__
 
 #include "IFacesTools.h"
-#include "Mutex.h"
 #include "Pointers.h"
 #include "RefObjPtr.h"
 #include "ModuleHolder.h"
@@ -39,7 +38,6 @@ public:
   virtual void BeforeDestroy();
 
 private:
-  System::Mutex RegistryMtx;
   Common::RefObjPtr<IFaces::IRegistry> Registry;
 
   static const unsigned CleanTimeout;
@@ -49,7 +47,6 @@ private:
   typedef Common::SharedPtr<Common::ModuleHolder> ModuleHolderPtr;
   typedef std::map<std::string, ModuleHolderPtr> ModulePool;
 
-  System::Mutex ModulesMtx;
   ModulePool Modules;
 };
 

@@ -12,18 +12,15 @@ IClassFactoryImpl::IClassFactoryImpl()
 
 RetCode IClassFactoryImpl::CreateObject(const char *classId, IFaces::IBase **obj)
 {
+  Common::ISyncObject Locker(GetSynObj());
   try
   {
     if (!classId)
       return retBadParam;
-    Common::Wrappers::RegistryComponent::ComponentInfoPtr ComponentInfo;
-    {
-      Common::SyncObject<System::Mutex> Locker(RegistryMtx);
-      if (!Registry.Get())
-        return retFail;
-      ComponentInfo = Common::Wrappers::RegistryComponent(Registry).GetComponentInfo(classId);
-    }
-    Common::SyncObject<System::Mutex> Locker(ModulesMtx);
+    if (!Registry.Get())
+      return retFail;
+    Common::Wrappers::RegistryComponent::ComponentInfoPtr ComponentInfo =
+      Common::Wrappers::RegistryComponent(Registry).GetComponentInfo(classId);
     ModulePool::iterator ModulePair = Modules.find(ComponentInfo->GetModuleGuid());
     if (ModulePair == Modules.end())
     {
@@ -50,7 +47,7 @@ RetCode IClassFactoryImpl::CreateObject(const char *classId, IFaces::IBase **obj
 
 RetCode IClassFactoryImpl::SetRegistry(IFaces::IRegistry *reg)
 {
-  Common::SyncObject<System::Mutex> Locker(RegistryMtx);
+  Common::ISyncObject Locker(GetSynObj());
   Registry = reg;
   return retOk;
 }
@@ -62,11 +59,9 @@ bool IClassFactoryImpl::FinalizeCreate()
 }
 
 void IClassFactoryImpl::BeforeDestroy()
-  {
-  {
-    Common::SyncObject<System::Mutex> Locker(RegistryMtx);
-    Registry.Release();
-  }
+{
+  Common::ISyncObject Locker(GetSynObj());
+  Registry.Release();
   CleanLoop.Release();
   Clean();
 }
@@ -74,19 +69,21 @@ void IClassFactoryImpl::BeforeDestroy()
 void IClassFactoryImpl::Clean()
 {
   std::vector<ModuleHolderPtr> RemovedModules;
-  Common::SyncObject<System::Mutex> Locker(ModulesMtx);
   Common::StringVector RemovedKeys;
-  for (ModulePool::iterator i = Modules.begin() ; i != Modules.end() ; ++i)
   {
-    try
+    Common::ISyncObject Locker(GetSynObj());
+    for (ModulePool::iterator i = Modules.begin() ; i != Modules.end() ; ++i)
     {
-      if (i->second->GetModuleCounter())
-        continue;
-      RemovedModules.push_back(i->second);
-      RemovedKeys.push_back(i->first);
-    }
-    catch (std::exception &)
-    {
+      try
+      {
+        if (i->second->GetModuleCounter())
+          continue;
+        RemovedModules.push_back(i->second);
+        RemovedKeys.push_back(i->first);
+      }
+      catch (std::exception &)
+      {
+      }
     }
   }
   for (Common::StringVector::const_iterator i = RemovedKeys.begin() ; i != RemovedKeys.end() ; ++i)

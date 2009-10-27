@@ -146,8 +146,8 @@ namespace IFaces
     : public IBase
   {
     DECLARE_UUID(cfa6a777-bcd2-4c46-aefb-082d192119d4)
-    virtual unsigned long StartService(const char *serviceId, IBase **service) = 0;
-    virtual unsigned long StartService(const char *serviceId) = 0;
+    virtual unsigned long StartService(const char *serviceId, IBase *parent, IBase **newServiceInstance) = 0;
+    virtual unsigned long StartService(const char *serviceId, IBase *parent) = 0;
     virtual RetCode StopService(unsigned long instanceId) = 0;
     virtual RetCode PostStopToService(unsigned long instanceId) = 0;
     virtual RetCode StopServiceGroup(const char *serviceId) = 0;

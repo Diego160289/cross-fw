@@ -2,7 +2,6 @@
 #define __SERVICEMANAGER_H__
 
 #include "IFacesTools.h"
-#include "Mutex.h"
 #include "Pointers.h"
 #include "ManualEvent.h"
 #include "ThreadLoop.h"
@@ -22,7 +21,11 @@ using IFaces::retNotImpl;
 class IServiceManagerImpl
   : public Common::CoClassBase
       <
-        TYPE_LIST_2(IFaces::IServiceManager, IFaces::IServiceManagerCtrl)
+        Common::TypeListAdapter
+          <
+            IFaces::IServiceManager,
+            IFaces::IServiceManagerCtrl
+          >
       >
 {
 public:
@@ -32,8 +35,8 @@ public:
   virtual ~IServiceManagerImpl();
 
   // IServiceManager
-  virtual unsigned long StartService(const char *serviceId, IFaces::IBase **service);
-  virtual unsigned long StartService(const char *serviceId);
+  virtual unsigned long StartService(const char *serviceId, IFaces::IBase *parent, IFaces::IBase **newServiceInstance);
+  virtual unsigned long StartService(const char *serviceId, IFaces::IBase *parent);
   virtual RetCode StopService(unsigned long instanceId);
   virtual RetCode PostStopToService(unsigned long instanceId);
   virtual RetCode StopServiceGroup(const char *serviceId);
@@ -52,13 +55,14 @@ public:
 private:
   static const unsigned ServiceCleanerTimeout;
 
-  System::Mutex RegistryMtx;
   Common::RefObjPtr<IFaces::IRegistry> Registry;
-  System::Mutex FactoryMtx;
   Common::RefObjPtr<IFaces::IClassFactory> Factory;
 
   typedef Common::RefObjPtr<IFaces::IService> IServicePtr;
-  typedef std::map<unsigned long/*Instance Id*/, IServicePtr> ServicePool;
+  typedef std::pair<IServicePtr/*instance*/, std::vector<unsigned long> /*Child Services*/> ServicePair;
+  typedef std::vector<ServicePair> ServicesVector;
+  ServicesVector StoppingServices;
+  typedef std::map<unsigned long/*Instance Id*/, ServicePair> ServicePool;
   typedef Common::SharedPtr<ServicePool> ServicePoolPtr;
   typedef std::map<std::string/*Service UUID*/, ServicePoolPtr> ServiceMap;
 
@@ -67,19 +71,15 @@ private:
   Common::SharedPtr<System::ThreadLoop> StopServiceThread;
   Common::SharedPtr<System::PulsedLoop> CleanThread;
 
-  System::Mutex ServicesMtx;
   unsigned long InstanceId;
   ServiceMap Services;
 
-  System::Mutex StoppingServicesMtx;
-  typedef std::vector<IServicePtr> ServicesVector;
-  ServicesVector StoppingServices;
-
-  IServicePtr InternalStartService(const std::string &serviceId, unsigned long *instanceId);
-  bool BuildService(IServicePtr service);
-  void UnbuildService(IServicePtr service);
+  IServicePtr InternalStartService(const std::string &serviceId,
+    IFaces::IBase *parent, unsigned long *instanceId);
+  bool BuildService(const ServicePair &service);
+  void UnbuildService(const ServicePair &service);
   void StopManager();
-  void DoneService(IServicePtr service);
+  void DoneService(const ServicePair &service);
   void StoppingServicesFunc();
   void ServiceCleanerFunc();
 };
