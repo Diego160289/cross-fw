@@ -3,6 +3,8 @@
 
 #include "../../Framework/Include/ServiceBase.h"
 #include "../../Terminal/Include/Terminal.h"
+#include "Include/MainDataSrcIFaces.h"
+#include "Include/MainViewIFaces.h"
 
 
 using IFaces::RetCode;
@@ -16,7 +18,7 @@ using IFaces::retNotImpl;
 class IMainServiceImpl
   : public Common::ServiceBase
       <
-        TYPE_LIST_1(IFaces::IViewCallback)
+      TYPE_LIST_1(IFaces::IMainViewCallback)
       >
 {
 public:
@@ -30,15 +32,12 @@ public:
   virtual bool OnInit();
   virtual void OnDone();
 
-  // !IViewCallback
-  virtual RetCode QueryExternalResource(const char *resName, IFaces::IStream **resStream);
-  virtual void Execute(IFaces::IFunction *func);
+  // IMainViewCallback
+  virtual RetCode OnQueryExternalResource(const char *resName, IFaces::IStream **stream);
 
 private:
-  Common::RefObjPtr<IFaces::IStorage> DataSrc;
-  Common::RefObjPtr<IFaces::IFlashView> FlashView;
-  unsigned FlashServiceHandle;
-  Common::RefObjPtr<IFaces::IViewManager> ViewManager;
+  Common::RefObjQIPtr<IFaces::IMainDataSource> DataSrc;
+  Common::RefObjQIPtr<IFaces::IMainView> View;
 };
 
 #endif  // !__MAINSERVICE_H__
