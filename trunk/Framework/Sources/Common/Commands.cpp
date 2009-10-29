@@ -152,10 +152,10 @@ namespace Common
       return String;
     }
 
-    static const ArgumentItemType<IArgumentObject> ArgObj;
-    static const ArgumentItemType<IArgumentPropertyList> ArgProp;
-    static const ArgumentItemType<IArgumentString> ArgStr;
-    static const ArgumentItemType<IArgumentArray> ArgArr;
+    const ArgumentItemType<IArgumentObject> ArgObj = ArgumentItemType<IArgumentObject>();
+    const ArgumentItemType<IArgumentPropertyList> ArgProp = ArgumentItemType<IArgumentPropertyList>();
+    const ArgumentItemType<IArgumentString> ArgStr = ArgumentItemType<IArgumentString>();
+    const ArgumentItemType<IArgumentArray> ArgArr = ArgumentItemType<IArgumentArray>();
 
     CommandPtr Command::FromNode(XmlTools::NodePtr node)
     {
