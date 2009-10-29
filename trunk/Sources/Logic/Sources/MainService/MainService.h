@@ -3,8 +3,8 @@
 
 #include "../../Framework/Include/ServiceBase.h"
 #include "../../Terminal/Include/Terminal.h"
-#include "Include/MainDataSrcIFaces.h"
-#include "Include/MainViewIFaces.h"
+#include "MainDataSrcIFaces.h"
+#include "MainViewIFaces.h"
 
 
 using IFaces::RetCode;
