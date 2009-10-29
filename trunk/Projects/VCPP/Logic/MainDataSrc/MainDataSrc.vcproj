@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\..\..\..\Sources\Terminal\Include"
+				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\..\..\..\Sources\Terminal\Include;$(SolutionDir)\..\..\..\Sources\Logic"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;MAINDATASRC_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -117,7 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\..\..\..\Sources\Terminal\Include"
+				AdditionalIncludeDirectories="$(SolutionDir);$(SolutionDir)\..\..\..\Sources\Terminal\Include;$(SolutionDir)\..\..\..\Sources\Logic"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MAINDATASRC_EXPORTS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"

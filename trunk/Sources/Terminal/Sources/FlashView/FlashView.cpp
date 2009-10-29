@@ -109,5 +109,8 @@ long IFlashViewImpl::OnMessage(const IFaces::WindowMessage &msg)
     Common::ISyncObject Locker(GetSynObj());
     Ctrl = FlashCtrl;
   }
-  return Ctrl.Get() ? Ctrl->OnMessage(msg) : 0;
+  long Ret = Ctrl.Get() ? Ctrl->OnMessage(msg) : 0;
+  if (msg.Msg == WM_DESTROY)
+    GetServiceManager()->PostStopToServiceManager();
+  return Ret;
 }

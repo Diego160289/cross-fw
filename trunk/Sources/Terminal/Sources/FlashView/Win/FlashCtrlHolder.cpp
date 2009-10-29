@@ -193,7 +193,7 @@ void FlashCtrlHolder::PlayMovie(const char *movieName)
 {
   if (!Flash.Get())
     throw FlashCtrlHolderException("Can't play movie");
-  SendMessage(Wnd, PLAY_MOVIE_MSG, reinterpret_cast<LPARAM>(movieName), 0);
+  PostMessage(Wnd, PLAY_MOVIE_MSG, reinterpret_cast<LPARAM>(movieName), 0);
 }
 
 long FlashCtrlHolder::OnMessage(const IFaces::WindowMessage &msg)
