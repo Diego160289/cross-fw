@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<invoke name="BusinessCategorySelected" returntype="xml">
+  <arguments>
+    <object>
+      <property id="objectId">
+        <string>ItemClickedEvent</string>
+      </property>
+      <property id="params">
+        <object>
+          <property id="businessCategoryId">
+            <string>11111111</string>
+          </property>
+        </object>
+      </property>
+      <property id="callback">
+        <string></string>
+      </property>
+      <property id="method">
+        <string>BusinessCategorySelected</string>
+      </property>
+      <property id="serviceId">
+        <string></string>
+      </property>
+      <property id="frameId">
+        <string>BusinessCategoriesScreen</string>
+      </property>
+    </object>
+  </arguments>
+</invoke>
