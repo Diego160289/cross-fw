@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TileList 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	columnCount="6"
+	columnWidth="200"
+    rowCount="2"
+    rowHeight="100"
+    verticalScrollPolicy="off"
+    dataProvider="{modelLocator.businessCategories}"
+    itemClick="businessCategorySelected(event)"> 
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import framework.terminal.business.InvokeHelper;
+			import framework.terminal.model.ApplicationModelLocator;
+			import mx.events.ListEvent;
+
+			[Bindable]
+			private var modelLocator : ApplicationModelLocator = ApplicationModelLocator.getInstance();
+
+			//*******************************************************************************************
+
+			private function businessCategorySelected(event : ListEvent) : void
+			{
+				InvokeHelper.sendAndForget("BusinessCategorySelected", 
+											{
+												businessCategoryId : TileList(event.target).selectedItem.id  
+											},
+											ApplicationModelLocator.ITEM_CLICKED_EVENT,
+											this.modelLocator.frameId,
+											""											
+											);
+				//
+				modelLocator.workflowState = ApplicationModelLocator.PROVIDERS_SCREEN;
+			}
+
+		]]>
+	</mx:Script>
+	
+</mx:TileList>

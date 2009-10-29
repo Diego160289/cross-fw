@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TileList 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	change="providerSelected(event)"
+	columnCount="6"
+	columnWidth="250"
+    rowCount="2"
+	dataProvider="{modelLocator.providers}"
+    rowHeight="100" xmlns:user="framework.terminal.components.user.*">
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.binding.utils.BindingUtils;
+			import framework.terminal.business.InvokeHelper;
+			import mx.events.ListEvent;
+			import framework.terminal.model.ApplicationModelLocator;
+		
+			[Bindable]
+			private var modelLocator : ApplicationModelLocator = ApplicationModelLocator.getInstance();
+
+			//*******************************************************************************************
+
+			public function providerSelected(event : ListEvent) : void
+			{
+				InvokeHelper.sendAndForget("ProviderSelected",
+											{
+												providerId : TileList(event.target).selectedItem.id 
+											},
+											ApplicationModelLocator.ITEM_CLICKED_EVENT,
+											this.modelLocator.frameId,
+											""											
+											);
+				//
+				modelLocator.workflowState = ApplicationModelLocator.ENTER_CELL_PHONE_NUMBER_SCREEN;
+			}
+
+		]]>
+	</mx:Script>
+
+</mx:TileList>

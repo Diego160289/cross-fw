@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:UIComponent 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="creationComplete()">
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			
+			private var serviceProvider : ExternalInterfaceProvider = ExternalInterfaceProvider.getInstance();
+			//
+			private function creationComplete() : void
+			{
+				registerMethods();
+			}
+			
+			private function registerMethods() : void
+			{
+				serviceProvider.registerContext(new CallbackContext("ChangeFrame", ChangeFrame));
+			} 
+			
+			private function ChangeFrame(data : Object) : Boolean
+			{
+				Alert.show(data.toString(), "ChangeFrame");
+				//
+				return true;
+			}
+			
+		]]>
+	</mx:Script>
+
+</mx:UIComponent>

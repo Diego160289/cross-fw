@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application
+	xmlns:control="framework.terminal.control.*"
+	xmlns:business="framework.terminal.business.*"
+	xmlns:view="framework.terminal.view.*"
+	xmlns:mx="http://www.adobe.com/2006/mxml">
+	
+	<mx:Script>
+		<![CDATA[
+			import com.adobe.cairngorm.CairngormError;
+			import mx.core.UIComponent;
+			import mx.controls.Alert;
+			import framework.terminal.model.ApplicationModelLocator;
+			//
+			[Bindable]
+			private var modelLocator : ApplicationModelLocator = ApplicationModelLocator.getInstance();
+			
+			private function vsStateChanged(event : Event) : void
+			{
+				this.modelLocator.frameId = ViewStack(event.target).selectedChild.className;
+			}
+
+		]]>
+	</mx:Script>
+	
+	<!--
+	<mx:Style source="assets/skins/flekristal/src/flekristal.css" />
+	<mx:Style source="assets/skins/bluevista/style.css" />
+	-->
+
+	<business:RegisterExternalCallFunctions />
+	
+	<mx:ViewStack 
+		initialize="vsStateChanged(event)"
+		change="vsStateChanged(event)"
+		selectedIndex="{modelLocator.workflowState}"
+		id="vsMain" width="100%" height="100%">
+			
+		<view:BusinessCategoriesScreen />
+		<view:ProvidersScreen />
+		<view:EnterCellPhoneNumberScreen />
+		<view:VerifyCellPhoneNumberScreen />
+		<view:PaymentScreen /> 
+		<view:ThankYouScreen />
+		
+	</mx:ViewStack>
+
+</mx:Application>

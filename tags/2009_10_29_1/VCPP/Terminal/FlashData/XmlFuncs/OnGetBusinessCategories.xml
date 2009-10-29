@@ -1,0 +1,72 @@
+<invoke name="OnGetBusinessCategories" returntype="xml">
+  <arguments>
+    <object>
+      <property id="manifest">
+        <object>
+          <property id="stateInfo">
+            <object>
+              <property id="code">
+                <string>0</string>
+              </property>
+              <property id="description">
+                <string>
+                  <![CDATA[ Success ]]>
+                </string>
+              </property>
+            </object>
+          </property>
+        </object>
+      </property>
+      <property id="arguments">
+        <array>
+          <property id="0">
+            <object>
+              <property id="id">
+                <string>2222222</string>
+              </property>
+              <property id="name">
+                <string>
+                  <![CDATA[ Телефоны ]]>
+                </string>
+              </property>
+              <property id="description">
+                <string>
+                  <![CDATA[ description ]]>
+                </string>
+              </property>
+              <property id="resource">
+                <string>
+                  <![CDATA[ pics/fx_appicon-tn.gif]]>
+                </string>
+              </property>
+            </object>
+          </property>
+
+          <property id="1">
+            <object>
+              <property id="id">
+                <string>11111111</string>
+              </property>
+              <property id="name">
+                <string>
+                  <![CDATA[ ЖКХ ]]>
+                </string>
+              </property>
+              <property id="description">
+                <string>
+                  <![CDATA[ description ]]>
+                </string>
+              </property>
+              <property id="resource">
+                <string>
+                  <![CDATA[ pics/dw_appicon-tn.gif ]]>
+                </string>
+              </property>
+            </object>
+          </property>
+
+        </array>
+      </property>
+    </object>
+  </arguments>
+</invoke>
