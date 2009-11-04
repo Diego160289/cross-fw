@@ -259,9 +259,15 @@ namespace Common
     void Command::ExtractString(XmlTools::NodePtr node, IArgumentPtr arg) const
     {
       if (!node->HasValue())
-        return;
-      SharedPtr<IArgumentString> String(new IArgumentString(node->GetValue()));
-      arg->Add(String);
+      {
+        SharedPtr<IArgumentString> String(new IArgumentString(std::wstring()));
+        arg->Add(String);
+      }
+      else
+      {
+        SharedPtr<IArgumentString> String(new IArgumentString(node->GetValue()));
+        arg->Add(String);
+      }
     }
 
     Array::Array()

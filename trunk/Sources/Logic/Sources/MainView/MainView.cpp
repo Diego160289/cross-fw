@@ -1,11 +1,15 @@
 #include "MainView.h"
 #include "../../Framework/Include/Xml/XmlTools.h"
-#include "../../Framework/Include/Xml/Commands.h"
 #include "../../Framework/Include/IFunctionImpl.h"
 
+using Common::Commands::ArgObj;
+using Common::Commands::ArgProp;
+using Common::Commands::ArgArr;
+using Common::Commands::ArgStr;
 
 IMainViewImpl::IMainViewImpl()
 {
+  Handlers[L"GetBusinessCategories"] = &IMainViewImpl::GetBusinessCategoriesHandler;
 }
 
 bool IMainViewImpl::FinalizeCreate()
@@ -78,15 +82,14 @@ void IMainViewImpl::Execute(IFaces::IFunction *func)
 {
   try
   {
-    {
-      using namespace Common::XmlTools;
-      // Function to node
-      NodePtr Root = IFacesImpl::NodeFromFunction(Common::RefObjPtr<IFaces::IFunction>(func));
-      using namespace Common::Commands;
-      CommandPtr Cmd = Command::FromNode(Root);
-      // Get function name
-      std::wstring FuncName = Cmd->GetName();
-    }
+    using namespace Common::XmlTools;
+    NodePtr Root = IFacesImpl::NodeFromFunction(Common::RefObjPtr<IFaces::IFunction>(func));
+    using namespace Common::Commands;
+    CommandPtr Cmd = Command::FromNode(Root);
+    HandlerPool::iterator Iter = Handlers.find(Cmd->GetName());
+    if (Iter == Handlers.end())
+      throw IMainViewImplException("Handler not found");
+    (this->*Iter->second)((*Cmd.Get())[ArgObj][ArgProp]);
   }
   catch (std::exception &e)
   {
@@ -135,3 +138,18 @@ std::vector<std::string> Funcs;
       }
     }
 */
+
+void IMainViewImpl::GetBusinessCategoriesHandler(const CmdParams &prm)
+{
+  if (!Callback.Get())
+    return;
+  RetCode Ret = Callback->GetBusinessCategories(
+      prm[L"callback"][ArgStr].GetString().c_str(),
+      prm[L"serviceId"][ArgStr].GetString().c_str(),
+      prm[L"method"][ArgStr].GetString().c_str(),
+      prm[L"objectId"][ArgStr].GetString().c_str(),
+      prm[L"frameId"][ArgStr].GetString().c_str()
+    );
+
+  // TODO: проверить ret и что-то с этим сделать :)
+}

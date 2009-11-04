@@ -1,8 +1,11 @@
 #ifndef __MAINVIEW_H__
 #define __MAINVIEW_H__
 
+#include "../../../Framework/Include/Xml/Commands.h"
+
 #include "../../Framework/Include/ServiceBase.h"
 #include "../../Terminal/Include/Terminal.h"
+
 #include "MainViewIFaces.h"
 
 
@@ -13,6 +16,8 @@ using IFaces::retFalse;
 using IFaces::retBadParam;
 using IFaces::retNotImpl;
 
+
+DECLARE_LOGIC_EXCEPTION(IMainViewImpl)
 
 class IMainViewImpl
   : public Common::ServiceBase
@@ -47,6 +52,12 @@ private:
   Common::RefObjPtr<IFaces::IViewManager> ViewManager;
   Common::RefObjPtr<IFaces::IFlashView> FlashView;
   Common::RefObjPtr<IFaces::IMainViewCallback> Callback;
+
+  typedef Common::Commands::IArgumentPropertyList CmdParams;
+  typedef void (IMainViewImpl::*PCmdHandler)(const CmdParams &);
+  typedef std::map<std::wstring, PCmdHandler> HandlerPool;
+  HandlerPool Handlers;
+  void GetBusinessCategoriesHandler(const CmdParams &prm);
 };
 
 #endif  // !__MAINVIEW_H__

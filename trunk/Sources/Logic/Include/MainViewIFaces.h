@@ -22,6 +22,8 @@ namespace IFaces
     DECLARE_UUID(97b825fb-42bb-4598-9472-c47fda66e5a9)
     
     virtual RetCode OnQueryExternalResource(const char *resName, IStream **stream) = 0;
+    virtual RetCode GetBusinessCategories(const wchar_t *callback, const wchar_t *serviceId,
+      const wchar_t *method, const wchar_t *objectId, const wchar_t *frameId) = 0;
   };
 
 }

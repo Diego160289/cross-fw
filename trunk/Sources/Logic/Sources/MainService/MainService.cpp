@@ -42,3 +42,10 @@ RetCode IMainServiceImpl::OnQueryExternalResource(const char *resName, IFaces::I
 {
   return !DataSrc.Get() ? retFail : DataSrc->GetResource(resName, stream);
 }
+
+RetCode IMainServiceImpl::GetBusinessCategories(const wchar_t *callback, const wchar_t *serviceId,
+                                                const wchar_t *method, const wchar_t *objectId,
+                                                const wchar_t *frameId)
+{
+  return retFail;
+}

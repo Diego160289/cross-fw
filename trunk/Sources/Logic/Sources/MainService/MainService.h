@@ -34,6 +34,8 @@ public:
 
   // IMainViewCallback
   virtual RetCode OnQueryExternalResource(const char *resName, IFaces::IStream **stream);
+  virtual RetCode GetBusinessCategories(const wchar_t *callback, const wchar_t *serviceId,
+      const wchar_t *method, const wchar_t *objectId, const wchar_t *frameId);
 
 private:
   Common::RefObjQIPtr<IFaces::IMainDataSource> DataSrc;
