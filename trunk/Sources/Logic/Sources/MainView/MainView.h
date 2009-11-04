@@ -25,7 +25,8 @@ class IMainViewImpl
         Common::TypeListAdapter
           <
             IFaces::IViewCallback,
-            IFaces::IMainView
+            IFaces::IMainView,
+            IFaces::IMainViewFuncs
           >
       >
 {
@@ -48,6 +49,10 @@ public:
   virtual void SetCallback(IFaces::IMainViewCallback *callback);
   virtual RetCode ShowView();
 
+  // IMainViewFuncs
+  virtual RetCode OnGetBusinessCategories(const wchar_t *callbackName,
+    const IFaces::BusinessCategoriesItem *categories, unsigned count,
+    IFaces::ViewRetCode code = IFaces::vrcOk, const wchar_t *codeDescription = 0);
 private:
   Common::RefObjPtr<IFaces::IViewManager> ViewManager;
   Common::RefObjPtr<IFaces::IFlashView> FlashView;

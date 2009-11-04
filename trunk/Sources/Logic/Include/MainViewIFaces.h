@@ -7,6 +7,28 @@ namespace IFaces
 {
   struct IMainViewCallback;
 
+  struct BusinessCategoriesItem
+  {
+    unsigned long Id;
+    std::wstring Name;
+    std::wstring Description;
+    std::wstring Resource;
+  };
+
+  enum ViewRetCode {
+    vrcOk
+  };
+
+  struct IMainViewFuncs
+    : public IBase
+  {
+    DECLARE_UUID(e063c3cf-101d-4412-93fa-faa66b0dd842)
+
+    virtual RetCode OnGetBusinessCategories(const wchar_t *callbackName,
+      const BusinessCategoriesItem *categories, unsigned count, ViewRetCode code = vrcOk,
+      const wchar_t *codeDescription = 0) = 0;
+  };
+
   struct IMainView
     : public IBase
   {
@@ -15,6 +37,7 @@ namespace IFaces
     virtual void SetCallback(IMainViewCallback *callback) = 0;
     virtual RetCode ShowView() = 0;
   };
+
 
   struct IMainViewCallback
     : public IBase

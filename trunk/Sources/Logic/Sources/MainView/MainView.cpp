@@ -153,3 +153,31 @@ void IMainViewImpl::GetBusinessCategoriesHandler(const CmdParams &prm)
 
   // TODO: проверить ret и что-то с этим сделать :)
 }
+
+RetCode IMainViewImpl::OnGetBusinessCategories(const wchar_t *callbackName,
+                                               const IFaces::BusinessCategoriesItem *categories, unsigned count,
+                                               IFaces::ViewRetCode code, const wchar_t *codeDescription)
+{
+  try
+  {
+    Common::Commands::Invoker Inv(callbackName);
+    Common::Commands::ObjectPtr Manifest = Inv.ObjectArg()->AddProperty(L"manifest")->ObjectArg()->AddProperty(L"stateInfo")->ObjectArg();
+    Manifest->AddProperty(L"code")->StringArg(Common::ToWString(static_cast<unsigned>(code)));
+    Manifest->AddProperty(L"description")->StringArg(codeDescription ? codeDescription : L"Success");
+    Common::Commands::ArrayPtr Arr = Inv.ObjectArg()->AddProperty(L"arguments")->ArrayArg();
+    for (unsigned i = 0 ; i < count ; ++i)
+    {
+      Common::Commands::ObjectPtr Item = Arr->AddProperty()->ObjectArg();
+      Item->AddProperty(L"id")->StringArg(Common::ToWString(categories[i].Id));
+      Item->AddProperty(L"name")->StringArg(categories[i].Name);
+      Item->AddProperty(L"description")->StringArg(categories[i].Description);
+      Item->AddProperty(L"resource")->StringArg(categories[i].Resource);
+    }
+    return FlashView->CallFunction(IFacesImpl::FunctionFromNode(*Inv.ToNode().Get(), GetSynObj()).Get());
+  }
+  catch (std::exception &)
+  {
+    return retFail;
+  }
+  return retFail;
+}

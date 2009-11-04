@@ -1,5 +1,6 @@
 #include "MainService.h"
 
+#include "../../../Framework/Include/CommonUtils.h"
 
 IMainServiceImpl::IMainServiceImpl()
 {
@@ -47,5 +48,12 @@ RetCode IMainServiceImpl::GetBusinessCategories(const wchar_t *callback, const w
                                                 const wchar_t *method, const wchar_t *objectId,
                                                 const wchar_t *frameId)
 {
-  return retFail;
+  Common::RefObjQIPtr<IFaces::IMainViewFuncs> Funcs(View);
+  if (!Funcs.Get())
+    return retFail;
+  IFaces::BusinessCategoriesItem Categories[] = {
+    {2222222, L"Òåëåôîíû", L"description", L"pics/fx_appicon-tn.gif"},
+    {11111111, L"ÆÊÕ", L"description", L"pics/dw_appicon-tn.gif"}
+  };
+  return Funcs->OnGetBusinessCategories(callback, &Categories[0], Common::SizeOfArray(Categories));
 }

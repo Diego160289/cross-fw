@@ -24,6 +24,20 @@ namespace Common
   }
 
   template <typename T>
+  std::wstring ToWString(const T &val)
+  {
+    WStringStream Io;
+    Io << val;
+    return Io.str();
+  }
+
+  template <typename T>
+  unsigned SizeOfArray(T &t)
+  {
+    return sizeof(t) / sizeof(t[0]);
+  }
+
+  template <typename T>
   void Replace(std::basic_string<T> *str,
                const std::basic_string<T> &str1,
                const std::basic_string<T> &str2)
