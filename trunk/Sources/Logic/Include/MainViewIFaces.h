@@ -28,6 +28,7 @@ namespace IFaces
       ViewRetCode code = vrcOk, const wchar_t *codeDescription = 0) = 0;
     virtual RetCode OnGetProviders(const BusinessCategoriesItem *providers, unsigned count,
       ViewRetCode code = vrcOk, const wchar_t *codeDescription = 0) = 0;
+    virtual RetCode ChangeFrame(const wchar_t *frameId) = 0;
   };
 
   struct IMainView
@@ -52,6 +53,10 @@ namespace IFaces
     virtual RetCode GetProviders(const wchar_t *objectId, const wchar_t *frameId) = 0;
     virtual RetCode ProviderSelected(const wchar_t *objectId, const wchar_t *frameId,
       const wchar_t *providerId) = 0;
+    virtual RetCode CellPhoneNumberEntered(const wchar_t *objectId, const wchar_t *frameId,
+      const wchar_t *cellPhoneNumber) = 0;
+    virtual RetCode CellPhoneNumberVerified(const wchar_t *objectId, const wchar_t *frameId) = 0;
+    virtual RetCode ProcessPayment(const wchar_t *objectId, const wchar_t *frameId) = 0;
   };
 
 }

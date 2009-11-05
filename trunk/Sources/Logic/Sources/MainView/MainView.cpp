@@ -13,6 +13,9 @@ IMainViewImpl::IMainViewImpl()
   Handlers[L"BusinessCategorySelected"] = &IMainViewImpl::BusinessCategorySelectedHandler;
   Handlers[L"GetProviders"] = &IMainViewImpl::GetProvidersHandler;
   Handlers[L"ProviderSelected"] = &IMainViewImpl::ProviderSelectedHandler;
+  Handlers[L"CellPhoneNumberEntered"] = &IMainViewImpl::CellPhoneNumberEnteredHandler;
+  Handlers[L"CellPhoneNumberVerified"] = &IMainViewImpl::CellPhoneNumberVerifiedHandler;
+  Handlers[L"ProcessPayment"] = &IMainViewImpl::ProcessPaymentHandler;
 }
 
 bool IMainViewImpl::FinalizeCreate()
@@ -202,5 +205,55 @@ void IMainViewImpl::ProviderSelectedHandler(const CmdParams &prm)
       prm[L"objectId"][ArgStr].GetString().c_str(),
       prm[L"frameId"][ArgStr].GetString().c_str(),
       prm[L"params"][ArgObj][ArgProp][L"providerId"][ArgStr].GetString().c_str()
+    );
+}
+
+RetCode IMainViewImpl::ChangeFrame(const wchar_t *frameId)
+{
+  Common::ISyncObject Locker(GetSynObj());
+  try
+  {
+    Common::Commands::Invoker Inv(L"ChangeFrame");
+    Common::Commands::ObjectPtr Manifest = Inv.ObjectArg()->AddProperty(L"manifest")->ObjectArg()->AddProperty(L"stateInfo")->ObjectArg();
+    Manifest->AddProperty(L"code")->StringArg(Common::ToWString(0));
+    Manifest->AddProperty(L"description")->StringArg(L"Success");
+    Inv.ObjectArg()->AddProperty(L"arguments")->ObjectArg()->AddProperty(L"frameId")->StringArg(frameId);
+    return FlashView->CallFunction(IFacesImpl::FunctionFromNode(*Inv.ToNode().Get(), GetSynObj()).Get());
+  }
+  catch (std::exception &)
+  {
+    return retFail;
+  }
+  return retFail;
+}
+
+void IMainViewImpl::CellPhoneNumberEnteredHandler(const CmdParams &prm)
+{
+  if (!Callback.Get())
+    return;
+  RetCode Ret = Callback->CellPhoneNumberEntered(
+      prm[L"objectId"][ArgStr].GetString().c_str(),
+      prm[L"frameId"][ArgStr].GetString().c_str(),
+      prm[L"params"][ArgObj][ArgProp][L"cellPhoneNumber"][ArgStr].GetString().c_str()
+    );
+}
+
+void IMainViewImpl::CellPhoneNumberVerifiedHandler(const CmdParams &prm)
+{
+  if (!Callback.Get())
+    return;
+  RetCode Ret = Callback->CellPhoneNumberVerified(
+      prm[L"objectId"][ArgStr].GetString().c_str(),
+      prm[L"frameId"][ArgStr].GetString().c_str()
+    );
+}
+
+void IMainViewImpl::ProcessPaymentHandler(const CmdParams &prm)
+{
+  if (!Callback.Get())
+    return;
+  RetCode Ret = Callback->ProcessPayment(
+      prm[L"objectId"][ArgStr].GetString().c_str(),
+      prm[L"frameId"][ArgStr].GetString().c_str()
     );
 }

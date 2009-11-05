@@ -40,6 +40,10 @@ public:
   virtual RetCode GetProviders(const wchar_t *objectId, const wchar_t *frameId);
   virtual RetCode ProviderSelected(const wchar_t *objectId, const wchar_t *frameId,
       const wchar_t *providerId);
+  virtual RetCode CellPhoneNumberEntered(const wchar_t *objectId, const wchar_t *frameId,
+      const wchar_t *cellPhoneNumber);
+  virtual RetCode CellPhoneNumberVerified(const wchar_t *objectId, const wchar_t *frameId);
+  virtual RetCode ProcessPayment(const wchar_t *objectId, const wchar_t *frameId);
 private:
   Common::RefObjQIPtr<IFaces::IMainDataSource> DataSrc;
   Common::RefObjQIPtr<IFaces::IMainView> View;

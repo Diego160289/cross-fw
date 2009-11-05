@@ -63,7 +63,11 @@ RetCode IMainServiceImpl::BusinessCategorySelected(const wchar_t *objectId,
                                                    const wchar_t *frameId,
                                                    const wchar_t *businessCategoryId)
 {
-  return retFail;
+  Common::ISyncObject Locker(GetSynObj());
+  Common::RefObjQIPtr<IFaces::IMainViewFuncs> Funcs(View);
+  if (!Funcs.Get())
+    return retFail;
+  return Funcs->ChangeFrame(L"PROVIDERS_SCREEN");
 }
 
 RetCode IMainServiceImpl::GetProviders(const wchar_t *objectId, const wchar_t *frameId)
@@ -80,8 +84,43 @@ RetCode IMainServiceImpl::GetProviders(const wchar_t *objectId, const wchar_t *f
 }
 
 RetCode IMainServiceImpl::ProviderSelected(const wchar_t *objectId,
-                                                  const wchar_t *frameId,
-                                                  const wchar_t *providerId)
+                                           const wchar_t *frameId,
+                                           const wchar_t *providerId)
 {
-  return retFail;
+  Common::ISyncObject Locker(GetSynObj());
+  Common::RefObjQIPtr<IFaces::IMainViewFuncs> Funcs(View);
+  if (!Funcs.Get())
+    return retFail;
+  return Funcs->ChangeFrame(L"ENTER_CELL_PHONE_NUMBER_SCREEN");
+}
+
+RetCode IMainServiceImpl::CellPhoneNumberEntered(const wchar_t *objectId,
+                                                 const wchar_t *frameId,
+                                                 const wchar_t *cellPhoneNumber)
+{
+  Common::ISyncObject Locker(GetSynObj());
+  Common::RefObjQIPtr<IFaces::IMainViewFuncs> Funcs(View);
+  if (!Funcs.Get())
+    return retFail;
+  return Funcs->ChangeFrame(L"VERIFY_CELL_PHONE_NUMBER_SCREEN");
+}
+
+RetCode IMainServiceImpl::CellPhoneNumberVerified(const wchar_t *objectId,
+                                                  const wchar_t *frameId)
+{
+  Common::ISyncObject Locker(GetSynObj());
+  Common::RefObjQIPtr<IFaces::IMainViewFuncs> Funcs(View);
+  if (!Funcs.Get())
+    return retFail;
+  return Funcs->ChangeFrame(L"PAYMENT_SCREEN");
+}
+
+RetCode IMainServiceImpl::ProcessPayment(const wchar_t *objectId,
+                                         const wchar_t *frameId)
+{
+  Common::ISyncObject Locker(GetSynObj());
+  Common::RefObjQIPtr<IFaces::IMainViewFuncs> Funcs(View);
+  if (!Funcs.Get())
+    return retFail;
+  return Funcs->ChangeFrame(L"THANK_YOU_SCREEN");
 }

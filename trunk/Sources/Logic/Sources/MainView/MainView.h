@@ -54,6 +54,7 @@ public:
     IFaces::ViewRetCode code = IFaces::vrcOk, const wchar_t *codeDescription = 0);
   virtual RetCode OnGetProviders(const IFaces::BusinessCategoriesItem *providers,
     unsigned count, IFaces::ViewRetCode code = IFaces::vrcOk, const wchar_t *codeDescription = 0);
+  virtual RetCode ChangeFrame(const wchar_t *frameId);
 private:
   Common::RefObjPtr<IFaces::IViewManager> ViewManager;
   Common::RefObjPtr<IFaces::IFlashView> FlashView;
@@ -67,6 +68,9 @@ private:
   void BusinessCategorySelectedHandler(const CmdParams &prm);
   void GetProvidersHandler(const CmdParams &prm);
   void ProviderSelectedHandler(const CmdParams &prm);
+  void CellPhoneNumberEnteredHandler(const CmdParams &prm);
+  void CellPhoneNumberVerifiedHandler(const CmdParams &prm);
+  void ProcessPaymentHandler(const CmdParams &prm);
 };
 
 #endif  // !__MAINVIEW_H__
