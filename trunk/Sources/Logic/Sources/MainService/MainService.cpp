@@ -41,6 +41,7 @@ void IMainServiceImpl::OnDone()
 
 RetCode IMainServiceImpl::OnQueryExternalResource(const char *resName, IFaces::IStream **stream)
 {
+  Common::ISyncObject Locker(GetSynObj());
   return !DataSrc.Get() ? retFail : DataSrc->GetResource(resName, stream);
 }
 
@@ -48,6 +49,7 @@ RetCode IMainServiceImpl::GetBusinessCategories(const wchar_t *callback, const w
                                                 const wchar_t *method, const wchar_t *objectId,
                                                 const wchar_t *frameId)
 {
+  Common::ISyncObject Locker(GetSynObj());
   Common::RefObjQIPtr<IFaces::IMainViewFuncs> Funcs(View);
   if (!Funcs.Get())
     return retFail;

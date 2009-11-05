@@ -65,21 +65,25 @@ void IMainViewImpl::OnDone()
 
 void IMainViewImpl::SetCallback(IFaces::IMainViewCallback *callback)
 {
+  Common::ISyncObject Locker(GetSynObj());
   Callback = callback;
 }
 
 RetCode IMainViewImpl::ShowView()
 {
+  Common::ISyncObject Locker(GetSynObj());
   return FlashView->PlayMovie("Terminal.swf");
 }
 
 RetCode IMainViewImpl::QueryExternalResource(const char *resName, IFaces::IStream **resStream)
 {
+  Common::ISyncObject Locker(GetSynObj());
   return !Callback.Get() ? retFail : Callback->OnQueryExternalResource(resName, resStream);
 }
 
 void IMainViewImpl::Execute(IFaces::IFunction *func)
 {
+  Common::ISyncObject Locker(GetSynObj());
   try
   {
     using namespace Common::XmlTools;
@@ -96,48 +100,6 @@ void IMainViewImpl::Execute(IFaces::IFunction *func)
     std::cout << e.what() << std::endl;
   }
 }
-
-
-/*
-std::vector<std::string> Funcs;
-    Funcs.push_back("GetBusinessCategories");
-    Funcs.push_back("GetAnimation");
-    Funcs.push_back("GetBuildingsByProductId");
-    Funcs.push_back("GetContent");
-    Funcs.push_back("GetContentByGroupId");
-    Funcs.push_back("GetGroups");
-    Funcs.push_back("GetHallByNavigationId");
-    Funcs.push_back("GetProductsDetails");
-    Funcs.push_back("GetSchedule");
-    Funcs.push_back("GetSegment");
-    Funcs.push_back("SystemInitialize");
-
-
-    std::string FunctionName = func->GetFunctionName();
-
-    for (std::vector<std::string>::const_iterator i = Funcs.begin() ; i != Funcs.end() ; ++i)
-    {
-      if (FunctionName == *i)
-      {
-        std::string Path = "On" + (*i) + ".xml";
-        Common::RefObjPtr<IFaces::IStream> Stream = IFacesImpl::OpenMemoryStream<System::MutexStub>();
-        IFacesImpl::IStreamHelper(IFacesImpl::IStorageHelper(IFacesImpl::IStorageHelper(Common::RefObjQIPtr<IFaces::IStorage>(DataSrc)).OpenStorage("XmlFuncs")).OpenStream(Path)).CopyTo(Stream);
-        IFacesImpl::IStreamHelper Sh(Stream);
-        Sh.SeekToEnd();
-        Sh.Write("\0", 1);
-        Sh.SeekToBegin();
-        Common::XmlTools::NodePtr Node = Common::XmlTools::XmlToNode((const char *)Common::RefObjQIPtr<IFaces::IRawDataBuffer>(Stream)->GetData());
-        Common::RefObjPtr<IFaces::IFunction> Function =
-          IFacesImpl::FunctionFromNode(*Node.Get(), GetSynObj());
-        Common::RefObjPtr<IFaces::IFlashView> View = FlashView;
-        if (View.Get() && View->CallFunction(Function.Get()) != IFaces::retOk)
-        {
-          std::cerr << "Error call: " << i->c_str() << std::endl;
-        }
-        break;
-      }
-    }
-*/
 
 void IMainViewImpl::GetBusinessCategoriesHandler(const CmdParams &prm)
 {
@@ -158,6 +120,7 @@ RetCode IMainViewImpl::OnGetBusinessCategories(const wchar_t *callbackName,
                                                const IFaces::BusinessCategoriesItem *categories, unsigned count,
                                                IFaces::ViewRetCode code, const wchar_t *codeDescription)
 {
+  Common::ISyncObject Locker(GetSynObj());
   try
   {
     Common::Commands::Invoker Inv(callbackName);
