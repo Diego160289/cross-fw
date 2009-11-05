@@ -24,9 +24,10 @@ namespace IFaces
   {
     DECLARE_UUID(e063c3cf-101d-4412-93fa-faa66b0dd842)
 
-    virtual RetCode OnGetBusinessCategories(const wchar_t *callbackName,
-      const BusinessCategoriesItem *categories, unsigned count, ViewRetCode code = vrcOk,
-      const wchar_t *codeDescription = 0) = 0;
+    virtual RetCode OnGetBusinessCategories(const BusinessCategoriesItem *categories, unsigned count,
+      ViewRetCode code = vrcOk, const wchar_t *codeDescription = 0) = 0;
+    virtual RetCode OnGetProviders(const BusinessCategoriesItem *providers, unsigned count,
+      ViewRetCode code = vrcOk, const wchar_t *codeDescription = 0) = 0;
   };
 
   struct IMainView
@@ -45,8 +46,12 @@ namespace IFaces
     DECLARE_UUID(97b825fb-42bb-4598-9472-c47fda66e5a9)
     
     virtual RetCode OnQueryExternalResource(const char *resName, IStream **stream) = 0;
-    virtual RetCode GetBusinessCategories(const wchar_t *callback, const wchar_t *serviceId,
-      const wchar_t *method, const wchar_t *objectId, const wchar_t *frameId) = 0;
+    virtual RetCode GetBusinessCategories(const wchar_t *objectId, const wchar_t *frameId) = 0;
+    virtual RetCode BusinessCategorySelected(const wchar_t *objectId, const wchar_t *frameId,
+      const wchar_t *businessCategoryId) = 0;
+    virtual RetCode GetProviders(const wchar_t *objectId, const wchar_t *frameId) = 0;
+    virtual RetCode ProviderSelected(const wchar_t *objectId, const wchar_t *frameId,
+      const wchar_t *providerId) = 0;
   };
 
 }

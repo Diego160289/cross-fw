@@ -50,9 +50,10 @@ public:
   virtual RetCode ShowView();
 
   // IMainViewFuncs
-  virtual RetCode OnGetBusinessCategories(const wchar_t *callbackName,
-    const IFaces::BusinessCategoriesItem *categories, unsigned count,
+  virtual RetCode OnGetBusinessCategories(const IFaces::BusinessCategoriesItem *categories, unsigned count,
     IFaces::ViewRetCode code = IFaces::vrcOk, const wchar_t *codeDescription = 0);
+  virtual RetCode OnGetProviders(const IFaces::BusinessCategoriesItem *providers,
+    unsigned count, IFaces::ViewRetCode code = IFaces::vrcOk, const wchar_t *codeDescription = 0);
 private:
   Common::RefObjPtr<IFaces::IViewManager> ViewManager;
   Common::RefObjPtr<IFaces::IFlashView> FlashView;
@@ -63,6 +64,9 @@ private:
   typedef std::map<std::wstring, PCmdHandler> HandlerPool;
   HandlerPool Handlers;
   void GetBusinessCategoriesHandler(const CmdParams &prm);
+  void BusinessCategorySelectedHandler(const CmdParams &prm);
+  void GetProvidersHandler(const CmdParams &prm);
+  void ProviderSelectedHandler(const CmdParams &prm);
 };
 
 #endif  // !__MAINVIEW_H__

@@ -10,6 +10,9 @@ using Common::Commands::ArgStr;
 IMainViewImpl::IMainViewImpl()
 {
   Handlers[L"GetBusinessCategories"] = &IMainViewImpl::GetBusinessCategoriesHandler;
+  Handlers[L"BusinessCategorySelected"] = &IMainViewImpl::BusinessCategorySelectedHandler;
+  Handlers[L"GetProviders"] = &IMainViewImpl::GetProvidersHandler;
+  Handlers[L"ProviderSelected"] = &IMainViewImpl::ProviderSelectedHandler;
 }
 
 bool IMainViewImpl::FinalizeCreate()
@@ -106,9 +109,6 @@ void IMainViewImpl::GetBusinessCategoriesHandler(const CmdParams &prm)
   if (!Callback.Get())
     return;
   RetCode Ret = Callback->GetBusinessCategories(
-      prm[L"callback"][ArgStr].GetString().c_str(),
-      prm[L"serviceId"][ArgStr].GetString().c_str(),
-      prm[L"method"][ArgStr].GetString().c_str(),
       prm[L"objectId"][ArgStr].GetString().c_str(),
       prm[L"frameId"][ArgStr].GetString().c_str()
     );
@@ -116,14 +116,13 @@ void IMainViewImpl::GetBusinessCategoriesHandler(const CmdParams &prm)
   // TODO: проверить ret и что-то с этим сделать :)
 }
 
-RetCode IMainViewImpl::OnGetBusinessCategories(const wchar_t *callbackName,
-                                               const IFaces::BusinessCategoriesItem *categories, unsigned count,
+RetCode IMainViewImpl::OnGetBusinessCategories(const IFaces::BusinessCategoriesItem *categories, unsigned count,
                                                IFaces::ViewRetCode code, const wchar_t *codeDescription)
 {
   Common::ISyncObject Locker(GetSynObj());
   try
   {
-    Common::Commands::Invoker Inv(callbackName);
+    Common::Commands::Invoker Inv(L"OnGetBusinessCategories");
     Common::Commands::ObjectPtr Manifest = Inv.ObjectArg()->AddProperty(L"manifest")->ObjectArg()->AddProperty(L"stateInfo")->ObjectArg();
     Manifest->AddProperty(L"code")->StringArg(Common::ToWString(static_cast<unsigned>(code)));
     Manifest->AddProperty(L"description")->StringArg(codeDescription ? codeDescription : L"Success");
@@ -143,4 +142,65 @@ RetCode IMainViewImpl::OnGetBusinessCategories(const wchar_t *callbackName,
     return retFail;
   }
   return retFail;
+}
+
+void IMainViewImpl::BusinessCategorySelectedHandler(const CmdParams &prm)
+{
+  if (!Callback.Get())
+    return;
+  RetCode Ret = Callback->BusinessCategorySelected(
+      prm[L"objectId"][ArgStr].GetString().c_str(),
+      prm[L"frameId"][ArgStr].GetString().c_str(),
+      prm[L"params"][ArgObj][ArgProp][L"businessCategoryId"][ArgStr].GetString().c_str()
+    );
+}
+
+void IMainViewImpl::GetProvidersHandler(const CmdParams &prm)
+{
+  if (!Callback.Get())
+    return;
+  RetCode Ret = Callback->GetProviders(
+      prm[L"objectId"][ArgStr].GetString().c_str(),
+      prm[L"frameId"][ArgStr].GetString().c_str()
+    );
+}
+
+RetCode IMainViewImpl::OnGetProviders(const IFaces::BusinessCategoriesItem *providers,
+                                      unsigned count, IFaces::ViewRetCode code,
+                                      const wchar_t *codeDescription)
+{
+  Common::ISyncObject Locker(GetSynObj());
+  try
+  {
+    Common::Commands::Invoker Inv(L"OnGetProviders");
+    Common::Commands::ObjectPtr Manifest = Inv.ObjectArg()->AddProperty(L"manifest")->ObjectArg()->AddProperty(L"stateInfo")->ObjectArg();
+    Manifest->AddProperty(L"code")->StringArg(Common::ToWString(static_cast<unsigned>(code)));
+    Manifest->AddProperty(L"description")->StringArg(codeDescription ? codeDescription : L"Success");
+    Common::Commands::ArrayPtr Arr = Inv.ObjectArg()->AddProperty(L"arguments")->ArrayArg();
+    for (unsigned i = 0 ; i < count ; ++i)
+    {
+      Common::Commands::ObjectPtr Item = Arr->AddProperty()->ObjectArg();
+      Item->AddProperty(L"id")->StringArg(Common::ToWString(providers[i].Id));
+      Item->AddProperty(L"name")->StringArg(providers[i].Name);
+      Item->AddProperty(L"description")->StringArg(providers[i].Description);
+      Item->AddProperty(L"resource")->StringArg(providers[i].Resource);
+    }
+    return FlashView->CallFunction(IFacesImpl::FunctionFromNode(*Inv.ToNode().Get(), GetSynObj()).Get());
+  }
+  catch (std::exception &)
+  {
+    return retFail;
+  }
+  return retFail;
+}
+
+void IMainViewImpl::ProviderSelectedHandler(const CmdParams &prm)
+{
+  if (!Callback.Get())
+    return;
+  RetCode Ret = Callback->ProviderSelected(
+      prm[L"objectId"][ArgStr].GetString().c_str(),
+      prm[L"frameId"][ArgStr].GetString().c_str(),
+      prm[L"params"][ArgObj][ArgProp][L"providerId"][ArgStr].GetString().c_str()
+    );
 }

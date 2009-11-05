@@ -34,9 +34,12 @@ public:
 
   // IMainViewCallback
   virtual RetCode OnQueryExternalResource(const char *resName, IFaces::IStream **stream);
-  virtual RetCode GetBusinessCategories(const wchar_t *callback, const wchar_t *serviceId,
-      const wchar_t *method, const wchar_t *objectId, const wchar_t *frameId);
-
+  virtual RetCode GetBusinessCategories(const wchar_t *objectId, const wchar_t *frameId);
+  virtual RetCode BusinessCategorySelected(const wchar_t *objectId, const wchar_t *frameId,
+    const wchar_t *businessCategoryId);
+  virtual RetCode GetProviders(const wchar_t *objectId, const wchar_t *frameId);
+  virtual RetCode ProviderSelected(const wchar_t *objectId, const wchar_t *frameId,
+      const wchar_t *providerId);
 private:
   Common::RefObjQIPtr<IFaces::IMainDataSource> DataSrc;
   Common::RefObjQIPtr<IFaces::IMainView> View;
