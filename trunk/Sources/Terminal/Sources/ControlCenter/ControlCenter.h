@@ -4,6 +4,8 @@
 #include "../../Framework/Include/ServiceBase.h"
 #include "../../Framework/Include/OGLUI/UI.h"
 
+#include "Terminal.h"
+
 using IFaces::RetCode;
 using IFaces::retFail;
 using IFaces::retOk;
@@ -13,7 +15,10 @@ using IFaces::retNotImpl;
 
 
 class IControlCenterImpl
-  : public Common::ServiceBase<>
+  : public Common::ServiceBase
+      <
+      TYPE_LIST_1(IFaces::IWndMessageHandler)
+      >
 {
 public:
   DECLARE_UUID(fe5725f6-86db-4e7b-a78f-54bf9cc89bf1)
@@ -26,7 +31,11 @@ public:
   virtual bool OnInit();
   virtual void OnDone();
 
+  // IWndMessageHandler
+  virtual long OnMessage(const IFaces::WindowMessage &msg);
 private:
+  Common::RefObjPtr<IFaces::IViewManager> ViewManager;
+
   Common::SharedPtr<OGLUI::ClientContext> ClientContext;
 };
 

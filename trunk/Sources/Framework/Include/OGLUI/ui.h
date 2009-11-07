@@ -4,6 +4,9 @@
 #include "../NoCopyable.h"
 #include "../Exceptions.h"
 
+#include "UITypes.h"
+#include "../SystemTypes.h"
+
 namespace OGLUI
 {
 
@@ -13,7 +16,7 @@ namespace OGLUI
     : private Common::NoCopyable
   {
   public:
-    ClientContext();
+    ClientContext(System::WindowHandle wnd, const Rect &startRect);
     ~ClientContext();
   private:
     class ClientContextImpl;

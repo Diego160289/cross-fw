@@ -140,7 +140,7 @@ void WndRoot::Show(bool isVisible)
   }
 }
 
-bool WndRoot::GetClientRect(LPRECT r)
+bool WndRoot::GetClientRect(LPRECT r) const
 {
   return !Wnd || !::IsWindow(Wnd) ? false : !!::GetClientRect(Wnd, r);
 }
@@ -207,9 +207,14 @@ long WndRoot::ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam)
 
 const char ChildView::ChildViewClassName[] = "ViewManaqerChildViewWnd";
 
-ChildView::ChildView(IFaces::IWndMessageHandler *handler)
-  : Handler(handler)
+ChildView::ChildView()
+  : Handler(0)
 {
+}
+
+void ChildView::SetHandler(IFaces::IWndMessageHandler *handler)
+{
+  Handler = handler;
 }
 
 void ChildView::Create(LPCRECT r, WndRoot *parent)
@@ -240,6 +245,35 @@ long ChildView::ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam)
   }
   Res = Res | WndRoot::ProcessMsg(msg, wParam, lParam);
   return Res;
+}
+
+RetCode ChildView::GetHandle(System::WindowHandle *handle)
+{
+  HWND CurHandle = GetHWND();
+  if (!CurHandle)
+    return retFail;
+  *handle = System::WindowHandle(CurHandle);
+  return retOk;;
+}
+
+RetCode ChildView::GetPos(int *x, int *y) const
+{
+  RECT R = { 0 };
+  if (!GetClientRect(&R))
+    return retFail;
+  *x = R.left;
+  *y = R.top;
+  return retOk;
+}
+
+RetCode ChildView::GetSize(int *width, int *height) const
+{
+  RECT R = { 0 };
+  if (!GetClientRect(&R))
+    return retFail;
+  *width = R.right - R.left;
+  *height = R.bottom - R.top;
+  return retOk;
 }
 
 
@@ -285,7 +319,8 @@ bool FrameImpl::CreateWnd(unsigned *index, IFaces::IWndMessageHandler *handler)
     return false;
   try
   {
-    ChildViewPtr NewWnd(new ChildView(handler));
+    ChildViewPtr NewWnd(Common::IBaseImpl<ChildView>::Create<System::MutexStub>());
+    NewWnd->SetHandler(handler);
     NewWnd->Create(&Rect, this);
     Wins[*index = WndIdCounter++] = NewWnd;
     CurWnd = Wins.find(*index);
@@ -329,6 +364,13 @@ bool FrameImpl::SetCurWnd(unsigned index)
   CurWnd = Iter;
   CurWnd->second->Show(true);
   return true;
+}
+
+bool FrameImpl::GetView(unsigned wndIndex, IFaces::IView **view)
+{
+  WndPool::iterator Iter = Wins.find(wndIndex);
+  return Iter == Wins.end() ? false :
+    Iter->second.QueryInterface(view) == IFaces::retOk;
 }
 
 long FrameImpl::ProcessMsg(UINT msg, WPARAM wParam, LPARAM lParam)

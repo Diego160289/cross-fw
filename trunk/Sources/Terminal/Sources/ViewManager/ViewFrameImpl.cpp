@@ -74,3 +74,11 @@ RetCode IViewFrameImpl::SetCurWnd(unsigned index)
     return retFail;
   return Frame->SetCurWnd(index) ? retOk : retFail;
 }
+
+RetCode IViewFrameImpl::GetView(unsigned wndIndex, IFaces::IView **view)
+{
+  Common::ISyncObject Locker(GetSynObj());
+  if (!Frame.Get())
+    return retFail;
+  return Frame->GetView(wndIndex, view)  ? retOk : retFail;
+}

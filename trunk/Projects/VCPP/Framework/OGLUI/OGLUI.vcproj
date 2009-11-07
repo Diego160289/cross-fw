@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\..\Sources\Framework\Sources\OGLUI\Win&quot;;&quot;$(SolutionDir)\..\..\..\Sources\Framework\Include\OGLUI&quot;;&quot;$(SolutionDir)\..\..\..\Sources\Framework\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\..\Sources\Framework\Include&quot;;&quot;$(SolutionDir)\..\..\..\Sources\Framework\Include\OGLUI&quot;;&quot;$(SolutionDir)\..\..\..\Sources\Framework\Sources\OGLUI\Win&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -104,7 +104,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\..\Sources\Framework\Sources\OGLUI\Win&quot;;&quot;$(SolutionDir)\..\..\..\Sources\Framework\Include\OGLUI&quot;;&quot;$(SolutionDir)\..\..\..\Sources\Framework\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\..\Sources\Framework\Include&quot;;&quot;$(SolutionDir)\..\..\..\Sources\Framework\Include\OGLUI&quot;;&quot;$(SolutionDir)\..\..\..\Sources\Framework\Sources\OGLUI\Win&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"

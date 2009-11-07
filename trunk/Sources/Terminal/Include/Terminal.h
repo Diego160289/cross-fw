@@ -2,6 +2,7 @@
 #define __TERMINAL_H__
 
 #include "../../Framework/Include/IFaces.h"
+#include "../../Framework/Include/SystemTypes.h"
 
 namespace IFaces
 {
@@ -15,6 +16,16 @@ namespace IFaces
     virtual long OnMessage(const WindowMessage &msg) = 0;
   };
 
+  struct IView
+    : public IBase
+  {
+    DECLARE_UUID(ae7601c6-d3ac-4abd-b84d-f5a1d5d5572a)
+
+    virtual RetCode GetHandle(System::WindowHandle *handle) = 0;
+    virtual RetCode GetPos(int *x, int *y) const = 0;
+    virtual RetCode GetSize(int *width, int *height) const = 0;
+  };
+
   struct IViewFrame
     : public IBase
   {
@@ -25,6 +36,7 @@ namespace IFaces
     virtual RetCode DestroyWnd(unsigned index) = 0;
     virtual RetCode GetCurWnd(unsigned *index) const = 0;
     virtual RetCode SetCurWnd(unsigned index) = 0;
+    virtual RetCode GetView(unsigned wndIndex, IView **view) = 0;
   };
 
   struct IDisplay

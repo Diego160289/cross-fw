@@ -39,6 +39,7 @@ public:
   virtual RetCode DestroyWnd(unsigned index);
   virtual RetCode GetCurWnd(unsigned *index) const;
   virtual RetCode SetCurWnd(unsigned index);
+  virtual RetCode GetView(unsigned wndIndex, IFaces::IView **view);
 
 private:
   Common::SharedPtr<FrameImpl> Frame;

@@ -9,11 +9,14 @@ namespace OGLUI
 {
 
   class ClientContext::ClientContextImpl
+    : private Common::NoCopyable
   {
   public:
-    ClientContextImpl();
+    ClientContextImpl(System::WindowHandle wnd, const Rect &startRect);
     ~ClientContextImpl();
   private:
+    System::WindowHandle Wnd;
+    Rect WndRect;
   };
 
 }

@@ -1,6 +1,7 @@
 #ifndef __FRAMEIMPL_H__
 #define __FRAMEIMPL_H__
 
+#include "../../../../Framework/Include/IFacesTools.h"
 #include "../../../../Framework/Include/NoCopyable.h"
 #include "../../../../Framework/Include/Pointers.h"
 #include "../../../../Framework/Include/Exceptions.h"
@@ -15,6 +16,14 @@
 
 #include "SysDisplays.h"
 
+using IFaces::RetCode;
+using IFaces::retFail;
+using IFaces::retOk;
+using IFaces::retFalse;
+using IFaces::retBadParam;
+using IFaces::retNotImpl;
+
+
 DECLARE_RUNTIME_EXCEPTION(FrameImpl)
 
 class WndRoot
@@ -28,7 +37,7 @@ public:
   void CreateAndRun(DWORD exStyle, LPCSTR className, LPCSTR windowName,
     DWORD style, int x, int y, int width, int height, HWND parent, HMENU menu);
   void Show(bool isVisible);
-  bool GetClientRect(LPRECT r);
+  bool GetClientRect(LPRECT r) const;
   HWND GetHWND() const;
   bool MoveWindow(int x, int y, int width, int height);
 private:
@@ -52,12 +61,23 @@ protected:
 };
 
 class ChildView
-  : public WndRoot
+  : public Common::CoClassBase
+    <
+      TYPE_LIST_1(IFaces::IView)
+    >
+  , public WndRoot
 {
 public:
-  ChildView(IFaces::IWndMessageHandler *handler);
+  ChildView();
+  void SetHandler(IFaces::IWndMessageHandler *handler);
   void Create(LPCRECT r, WndRoot *parent);
   void Destroy();
+
+  // IView
+  virtual RetCode GetHandle(System::WindowHandle *handle);
+  virtual RetCode GetPos(int *x, int *y) const;
+  virtual RetCode GetSize(int *width, int *height) const;
+
 private:
   static const char ChildViewClassName[];
   Common::RefObjPtr<IFaces::IWndMessageHandler> Handler;
@@ -80,12 +100,12 @@ public:
   bool DestroyWnd(unsigned index);
   bool GetCurWnd(unsigned *index) const;
   bool SetCurWnd(unsigned index);
-
+  bool GetView(unsigned wndIndex, IFaces::IView **view);
 
 private:
   static const char FrameClassName[];
 
-  typedef Common::SharedPtr<ChildView> ChildViewPtr;
+  typedef Common::RefObjPtr<ChildView> ChildViewPtr;
   typedef std::map<unsigned/*index*/, ChildViewPtr/*view*/> WndPool;
   static unsigned WndIdCounter;
   WndPool Wins;

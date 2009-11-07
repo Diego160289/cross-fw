@@ -5,8 +5,8 @@
 namespace OGLUI
 {
 
-  ClientContext::ClientContext()
-    : Impl(new ClientContextImpl)
+  ClientContext::ClientContext(System::WindowHandle wnd, const Rect &startRect)
+    : Impl(new ClientContextImpl(wnd, startRect))
   {
   }
 
