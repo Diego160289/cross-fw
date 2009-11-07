@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir)\..\..\..\Sources\Framework\Include\OGLUI;$(SolutionDir)\..\..\..\Sources\Framework\Include"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\..\Sources\Framework\Sources\OGLUI\Win&quot;;&quot;$(SolutionDir)\..\..\..\Sources\Framework\Include\OGLUI&quot;;&quot;$(SolutionDir)\..\..\..\Sources\Framework\Include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -104,7 +104,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir)\..\..\..\Sources\Framework\Include\OGLUI;$(SolutionDir)\..\..\..\Sources\Framework\Include"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\..\Sources\Framework\Sources\OGLUI\Win&quot;;&quot;$(SolutionDir)\..\..\..\Sources\Framework\Include\OGLUI&quot;;&quot;$(SolutionDir)\..\..\..\Sources\Framework\Include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -145,6 +145,22 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="Win"
+			>
+			<File
+				RelativePath="..\..\..\..\Sources\Framework\Sources\OGLUI\Win\UIImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\Sources\Framework\Sources\OGLUI\Win\UIImpl.h"
+				>
+			</File>
+		</Filter>
+		<File
+			RelativePath="..\..\..\..\Sources\Framework\Sources\OGLUI\UI.cpp"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

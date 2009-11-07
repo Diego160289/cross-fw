@@ -2,7 +2,7 @@
 #define __CONTROLCENTER_H__
 
 #include "../../Framework/Include/ServiceBase.h"
-
+#include "../../Framework/Include/OGLUI/UI.h"
 
 using IFaces::RetCode;
 using IFaces::retFail;
@@ -27,6 +27,7 @@ public:
   virtual void OnDone();
 
 private:
+  Common::SharedPtr<OGLUI::ClientContext> ClientContext;
 };
 
 #endif  // !__CONTROLCENTER_H__
