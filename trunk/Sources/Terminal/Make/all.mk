@@ -10,6 +10,7 @@ make_libs:
 
 make_dlls: 
 	make TARGETTYPE=Dll FWDIR=../Framework/ -C ./ -f ./Make/viewmanager.mk
+	make TARGETTYPE=Dll FWDIR=../Framework/ -C ./ -f ./Make/controlcenter.mk
 	make TARGETTYPE=Dll FWDIR=../Framework/ -C ./ -f ./Make/flashview.mk
 
 make_tools:

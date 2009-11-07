@@ -43,6 +43,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServiceManager", "ServiceMa
 		{902F4697-BDEA-4322-9412-8A5E53D2A9AB} = {902F4697-BDEA-4322-9412-8A5E53D2A9AB}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OGLUI", "OGLUI\OGLUI.vcproj", "{D9E65C8D-0113-4AFC-B5BD-082F8137415C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -85,6 +87,10 @@ Global
 		{6235D7BA-DD27-4A68-98EC-336773B613F8}.Debug|Win32.Build.0 = Debug|Win32
 		{6235D7BA-DD27-4A68-98EC-336773B613F8}.Release|Win32.ActiveCfg = Release|Win32
 		{6235D7BA-DD27-4A68-98EC-336773B613F8}.Release|Win32.Build.0 = Release|Win32
+		{D9E65C8D-0113-4AFC-B5BD-082F8137415C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D9E65C8D-0113-4AFC-B5BD-082F8137415C}.Debug|Win32.Build.0 = Debug|Win32
+		{D9E65C8D-0113-4AFC-B5BD-082F8137415C}.Release|Win32.ActiveCfg = Release|Win32
+		{D9E65C8D-0113-4AFC-B5BD-082F8137415C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
