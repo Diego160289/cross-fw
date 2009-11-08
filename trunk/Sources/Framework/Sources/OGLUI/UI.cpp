@@ -15,4 +15,8 @@ namespace OGLUI
     delete Impl;
   }
 
+  void ClientContext::Draw()
+  {
+    Impl->Draw();
+  }
 }

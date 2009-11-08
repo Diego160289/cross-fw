@@ -43,8 +43,8 @@ bool IControlCenterImpl::OnInit()
     {
       return false;
     }
-    ClientContext = new OGLUI::ClientContext(HWnd,
-      OGLUI::Rect(X, Y, Width, Height));
+    /*ClientContext = new OGLUI::ClientContext(HWnd,
+      OGLUI::Rect(X, Y, Width, Height));*/
   }
   catch (std::exception &)
   {
@@ -66,5 +66,14 @@ long IControlCenterImpl::OnMessage(const IFaces::WindowMessage &msg)
 {
   if (msg.Msg == WM_DESTROY)
     GetServiceManager()->PostStopToServiceManager();
+  if (msg.Msg == WM_CREATE)
+  {
+    ClientContext = new OGLUI::ClientContext(msg.Wnd,
+      OGLUI::Rect(0, 0, 10, 10));
+    ClientContext->Draw();
+    return 1;
+  }
+  if (ClientContext.Get())
+    ClientContext->Draw();
   return 0;
 }

@@ -18,6 +18,7 @@ namespace OGLUI
   public:
     ClientContext(System::WindowHandle wnd, const Rect &startRect);
     ~ClientContext();
+    void Draw();
   private:
     class ClientContextImpl;
     ClientContextImpl *Impl;
