@@ -1,1 +1,0 @@
-copy terminal.swf "D:\Projects\China processing\Terminal\VCPP\Terminal\FlashData" /y
