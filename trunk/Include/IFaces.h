@@ -178,51 +178,6 @@ namespace IFaces
     virtual RetCode Run(const char *startServiceId) = 0;
   };
 
-  struct IInputStream
-    : public IBase
-  {
-    DECLARE_UUID(2b9ae082-b59a-4d6a-a229-5e41d472c92d)
-  };
-
-  struct IOutputStream
-    : public IBase
-  {
-    DECLARE_UUID(db609d41-e4bd-42fb-9d3a-fd0d91cac762)
-  };
-
-  struct ISerialization
-    : public IBase
-  {
-    DECLARE_UUID(d96e9ec2-8ab8-409c-a8cc-0a8785cc76ef)
-    virtual RetCode Load(IInputStream *stream) = 0;
-    virtual RetCode Save(IOutputStream *stream) = 0;
-    virtual const char* GetStreamName() const = 0;
-  };
-
-  struct IProperties
-    : public IBase
-  {
-    DECLARE_UUID(1b209ba5-2071-465a-adda-ea6b4721c4be)
-    virtual RetCode AddProperty(INamedVariable *prop) = 0;
-    virtual RetCode RemoveProperty(const char *propName) = 0;
-    virtual RetCode GetValue(const char *propName, IVariant **value) const = 0;
-    virtual RetCode SetValue(const char *propName, IVariant *value) = 0;
-    virtual RetCode EnumProperties(IEnum **props) const = 0;
-  };
-
-  struct IPersistsProperties
-    : public IProperties
-    , public ISerialization
-  {
-    DECLARE_UUID(9f8dc2a8-c0ec-4753-934c-536e493ef6ff)
-  };
-
-  struct ILogObject
-    : public IBase
-  {
-    DECLARE_UUID(29578a3f-8f5e-4613-b3a9-37d05caf2c0a)
-  };
-
   struct IEnvironment
     : public IBase
   {
@@ -230,14 +185,6 @@ namespace IFaces
     virtual RetCode EnumEnvironmentIFacesId(IEnum **ifaceIds) const = 0;
     virtual RetCode GetInterface(const char *ifaceId, IBase **iface) const = 0;
     virtual RetCode SetInterface(const char *ifaceId, IBase *iface) = 0;
-  };
-
-  struct IConfig
-    : public IBase
-  {
-    DECLARE_UUID(a06ead08-0c89-4aed-aafd-885786434ae9)
-    virtual RetCode GetValue(const char *name, IVariant **value) const = 0;
-    virtual RetCode EnumValues(IEnum **values) const = 0;
   };
 
   struct IRawDataBuffer
