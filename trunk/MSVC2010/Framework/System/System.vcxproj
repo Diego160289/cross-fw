@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Sources\System\Dir.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\DllHolder.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\File.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\ManualEvent.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\Mutex.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\PulsedLoop.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\SystemUtils.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\Thread.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\ThreadLoop.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\Timer.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\Win\DirImpl.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\Win\DllHolderImpl.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\Win\FileImpl.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\Win\ManualEventImpl.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\Win\MutexImpl.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\Win\SystemUtilsImpl.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\Win\ThreadImpl.cpp" />
+    <ClCompile Include="..\..\..\Sources\System\Win\TimerImpl.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Sources\System\Win\DirImpl.h" />
+    <ClInclude Include="..\..\..\Sources\System\Win\DllHolderImpl.h" />
+    <ClInclude Include="..\..\..\Sources\System\Win\FileImpl.h" />
+    <ClInclude Include="..\..\..\Sources\System\Win\ManualEventImpl.h" />
+    <ClInclude Include="..\..\..\Sources\System\Win\MutexImpl.h" />
+    <ClInclude Include="..\..\..\Sources\System\Win\SystemUtilsImpl.h" />
+    <ClInclude Include="..\..\..\Sources\System\Win\ThreadImpl.h" />
+    <ClInclude Include="..\..\..\Sources\System\Win\TimerImpl.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0C23EC15-A5EC-4F2C-986A-0389F5E1B5B7}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>System</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Sources\System\Win;$(SolutionDir)..\..\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Sources\System\Win;$(SolutionDir)..\..\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
