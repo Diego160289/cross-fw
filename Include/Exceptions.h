@@ -16,10 +16,17 @@
 		: public base_class_ \
 	{ \
 	public: \
-		prefix_class_name_##Exception(const std::string &msg) \
+		prefix_class_name_##Exception(const std::string &msg, unsigned long code = 0) \
 			: base_class_(msg) \
+      , Code(code) \
 		{ \
 		} \
+    virtual unsigned long GetCode() const \
+    { \
+      return Code; \
+    } \
+  private: \
+    unsigned long Code; \
 	};
 
 #define DECLARE_RUNTIME_EXCEPTION(prefix_class_name_) \
