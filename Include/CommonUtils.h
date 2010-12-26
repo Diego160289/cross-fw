@@ -40,6 +40,26 @@ namespace Common
   }
 
   template <typename T>
+  T FromString(const std::string &s)
+  {
+    std::stringstream Io;
+    Io << s;
+    T Val = T();
+    Io >> Val;
+    return Val;
+  }
+
+  template <typename T>
+  T FromString(const std::wstring &s)
+  {
+    WStringStream Io;
+    Io << s;
+    T Val = T();
+    Io >> Val;
+    return Val;
+  }
+
+  template <typename T>
   unsigned SizeOfArray(T &t)
   {
     return sizeof(t) / sizeof(t[0]);

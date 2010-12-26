@@ -405,15 +405,5 @@ namespace Common
       return RetPool;
     }
 
-
-    ClassFactory::ClassFactory(IClassFactoryPtr factory)
-      : Factory(factory)
-    {
-    }
-
-    ClassFactory::IClassFactoryPtr ClassFactory::GetIClassFactoryPtr() const
-    {
-      return Factory;
-    }
   }
 }
