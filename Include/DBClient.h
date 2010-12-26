@@ -73,10 +73,9 @@ namespace IFaces
       DECLARE_UUID(56d74f23-2285-477a-91e0-b2a907b818c6)
       virtual RetCode Prepare(const char *str) = 0;
       virtual RetCode ExecuteDirect(const char *str) = 0;
-      virtual RetCode Execute(const char *str) = 0;
+      virtual RetCode Execute() = 0;
       virtual RetCode Fetch() = 0;
-      virtual RetCode GetParameter(IParameter **prm) = 0;
-      virtual RetCode GetParameter(IParameter **prm) const = 0;
+      virtual RetCode GetParameter(unsigned index, IParameter **prm) = 0;
       virtual RetCode GetField(unsigned index, IField **fld) const = 0;
       virtual RetCode GetFieldsCount(unsigned *count) const = 0;
     };
@@ -85,7 +84,8 @@ namespace IFaces
       : public IBase
     {
       DECLARE_UUID({7999427-4881-47bb-af5c-f098d6ac26f1)
-      virtual RetCode Connect(const char *connectionString) = 0;
+      virtual RetCode Connect(const char *connectionString, const char *userName, const char *password) = 0;
+      virtual RetCode Disconnect() = 0;
       virtual RetCode CreateTransaction(ITransaction **transaction) = 0;
       virtual RetCode CreateStatement(IStatement **statement) = 0;
     };

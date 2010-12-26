@@ -10,6 +10,7 @@
 
 #include "IFacesTools.h"
 #include "DBClient.h"
+#include "DBWrap.h"
 
 
 class IFieldImpl
@@ -21,6 +22,8 @@ class IFieldImpl
 public:
   DECLARE_UUID(e609001b-57b9-482c-aabb-0eb8dd3ef1f9)
 
+  IFieldImpl();
+
   // IField
   virtual IFaces::RetCode GetField(long *value) const;
   virtual IFaces::RetCode GetField(unsigned long *value) const;
@@ -31,7 +34,15 @@ public:
   virtual IFaces::RetCode GetField(IFaces::DBIFaces::Time *value) const;
   virtual IFaces::RetCode GetField(bool *value) const;
 
+  bool FinalizeCreate();
+  void BeforeDestroy();
+
+  void Init(Common::SharedPtr<DB::Connection> connection, Common::SharedPtr<DB::Statement> statement, unsigned index);
+
 private:
+  Common::SharedPtr<DB::Connection> Connection;
+  Common::SharedPtr<DB::Statement> Statement;
+  DB::FieldPtr Field;
 };
 
 #endif  // !__DBFIELD_H__

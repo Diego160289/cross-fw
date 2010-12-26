@@ -10,6 +10,7 @@
 
 #include "IFacesTools.h"
 #include "DBClient.h"
+#include "DBWrap.h"
 
 
 class IParameterImpl
@@ -20,6 +21,8 @@ class IParameterImpl
 {
 public:
   DECLARE_UUID(02cfe939-7fb3-499a-9241-04f2f5a54c16)
+
+  IParameterImpl();
 
   // IParameter
   virtual void SetParam(long value);
@@ -32,7 +35,15 @@ public:
   virtual void SetParam(const IFaces::DBIFaces::Time &value);
   virtual void SetParam(bool value);
 
+  bool FinalizeCreate();
+  void BeforeDestroy();
+
+  void Init(Common::SharedPtr<DB::Connection> connection, Common::SharedPtr<DB::Statement> statement, unsigned index);
+
 private:
+  Common::SharedPtr<DB::Connection> Connection;
+  Common::SharedPtr<DB::Statement> Statement;
+  unsigned Index;
 };
 
 #endif  // !__DBPARAMETER_H__
