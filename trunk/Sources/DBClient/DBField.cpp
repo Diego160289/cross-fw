@@ -8,6 +8,23 @@
 #include "DBField.h"
 
 
+IFieldImpl::IFieldImpl()
+{
+}
+
+bool IFieldImpl::FinalizeCreate()
+{
+  return true;
+}
+
+void IFieldImpl::BeforeDestroy()
+{
+  Common::ISyncObject Locker(GetSynObj());
+  Field.Release();
+  Statement.Release();
+  Connection.Release();
+}
+
 IFaces::RetCode IFieldImpl::GetField(long *value) const
 {
   return IFaces::retNotImpl;
@@ -48,4 +65,14 @@ IFaces::RetCode IFieldImpl::GetField(bool *value) const
   
 {
   return IFaces::retNotImpl;
+}
+
+void IFieldImpl::Init(Common::SharedPtr<DB::Connection> connection,
+                      Common::SharedPtr<DB::Statement> statement,
+                      unsigned index)
+{
+  Common::ISyncObject Locker(GetSynObj());
+  Field = statement->GetField(index);
+  Statement = statement;
+  Connection = connection;
 }

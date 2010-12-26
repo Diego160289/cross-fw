@@ -6,44 +6,150 @@
 
 
 #include "DBStatement.h"
+#include "DBParameter.h"
+#include "DBField.h"
 
+
+bool IStatementImpl::FinalizeCreate()
+{
+  return true;
+}
+
+void IStatementImpl::BeforeDestroy()
+{
+  Common::ISyncObject Locker(GetSynObj());
+  Statement.Release();
+  Connection.Release();
+}
 
 IFaces::RetCode IStatementImpl::Prepare(const char *str)
 {
-  return IFaces::retNotImpl;
+  if (!str)
+    return IFaces::retBadParam;
+  Common::ISyncObject Locker(GetSynObj());
+  if (!Statement.Get())
+    return IFaces::retFail;
+  try
+  {
+    Statement->Prepare(str);
+  }
+  catch (std::exception &)
+  {
+    return IFaces::retFail;
+  }
+  return IFaces::retOk;
 }
 
 IFaces::RetCode IStatementImpl::ExecuteDirect(const char *str)
 {
-  return IFaces::retNotImpl;
+  if (!str)
+    return IFaces::retBadParam;
+  Common::ISyncObject Locker(GetSynObj());
+  if (!Statement.Get())
+    return IFaces::retFail;
+  try
+  {
+    Statement->ExecuteDirect(str);
+  }
+  catch (std::exception &)
+  {
+    return IFaces::retFail;
+  }
+  return IFaces::retOk;
 }
 
-IFaces::RetCode IStatementImpl::Execute(const char *str)
+IFaces::RetCode IStatementImpl::Execute()
 {
-  return IFaces::retNotImpl;
+  Common::ISyncObject Locker(GetSynObj());
+  if (!Statement.Get())
+    return IFaces::retFail;
+  try
+  {
+    Statement->Execute();
+  }
+  catch (std::exception &)
+  {
+    return IFaces::retFail;
+  }
+  return IFaces::retOk;
 }
 
 IFaces::RetCode IStatementImpl::Fetch()
 {
-  return IFaces::retNotImpl;
+  Common::ISyncObject Locker(GetSynObj());
+  if (!Statement.Get())
+    return IFaces::retFail;
+  try
+  {
+    if (!Statement->Fetch())
+      return IFaces::retFalse;
+  }
+  catch (std::exception &)
+  {
+    return IFaces::retFail;
+  }
+  return IFaces::retOk;
 }
 
-IFaces::RetCode IStatementImpl::GetParameter(IFaces::DBIFaces::IParameter **prm)
+IFaces::RetCode IStatementImpl::GetParameter(unsigned index, IFaces::DBIFaces::IParameter **prm)
 {
-  return IFaces::retNotImpl;
-}
-
-IFaces::RetCode IStatementImpl::GetParameter(IFaces::DBIFaces::IParameter **prm) const
-{
-  return IFaces::retNotImpl;
+  if (!prm || *prm)
+    return IFaces::retBadParam;
+  Common::ISyncObject Locker(GetSynObj());
+  if (!Statement.Get())
+    return IFaces::retFail;
+  try
+  {
+    Common::RefObjPtr<IParameterImpl> NewPrm = Common::IBaseImpl<IParameterImpl>::CreateWithSyn(GetSynObj());
+    NewPrm->Init(Connection, Statement, index);
+    return NewPrm.QueryInterface(prm);
+  }
+  catch (std::exception &)
+  {
+  }
+  return IFaces::retFail;
 }
 
 IFaces::RetCode IStatementImpl::GetField(unsigned index, IFaces::DBIFaces::IField **fld) const
 {
-  return IFaces::retNotImpl;
+  if (!fld || *fld)
+    return IFaces::retBadParam;
+  Common::ISyncObject Locker(GetSynObj());
+  if (!Statement.Get())
+    return IFaces::retFail;
+  try
+  {
+    Common::RefObjPtr<IFieldImpl> NewFld = Common::IBaseImpl<IFieldImpl>::CreateWithSyn(GetSynObj());
+    NewFld->Init(Connection, Statement, index);
+    return NewFld.QueryInterface(fld);
+  }
+  catch (std::exception &)
+  {
+  }
+  return IFaces::retFail;
 }
 
 IFaces::RetCode IStatementImpl::GetFieldsCount(unsigned *count) const
 {
-  return IFaces::retNotImpl;
+  if (!count)
+    return IFaces::retBadParam;
+  Common::ISyncObject Locker(GetSynObj());
+  if (!Statement.Get())
+    return IFaces::retFail;
+  try
+  {
+    *count = Statement->GetFieldsCount();
+  }
+  catch (std::exception &)
+  {
+    return IFaces::retFail;
+  }
+  return IFaces::retOk;
+}
+
+void IStatementImpl::Init(Common::SharedPtr<DB::Connection> connection)
+{
+  Common::ISyncObject Locker(GetSynObj());
+  Statement.Reset(new DB::Statement(*connection.Get()));
+  Connection = connection;
 }
