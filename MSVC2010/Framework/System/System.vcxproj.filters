@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Win">
+      <UniqueIdentifier>{e0de8221-9435-4e6a-9b18-dd8ea3bc1a87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Win\Header Files">
+      <UniqueIdentifier>{d92409c2-fbf4-48c0-ad6f-16f3c67f9ce5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Win\Source Files">
+      <UniqueIdentifier>{336dd732-8c9d-4e04-bb17-e28357ed0924}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Sources\System\Dir.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\DllHolder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\File.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\ManualEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\Mutex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\PulsedLoop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\SystemUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\Thread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\ThreadLoop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\Timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\Win\DirImpl.cpp">
+      <Filter>Win\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\Win\DllHolderImpl.cpp">
+      <Filter>Win\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\Win\FileImpl.cpp">
+      <Filter>Win\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\Win\ManualEventImpl.cpp">
+      <Filter>Win\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\Win\MutexImpl.cpp">
+      <Filter>Win\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\Win\SystemUtilsImpl.cpp">
+      <Filter>Win\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\Win\ThreadImpl.cpp">
+      <Filter>Win\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Sources\System\Win\TimerImpl.cpp">
+      <Filter>Win\Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Sources\System\Win\DirImpl.h">
+      <Filter>Win\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Sources\System\Win\DllHolderImpl.h">
+      <Filter>Win\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Sources\System\Win\FileImpl.h">
+      <Filter>Win\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Sources\System\Win\ManualEventImpl.h">
+      <Filter>Win\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Sources\System\Win\MutexImpl.h">
+      <Filter>Win\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Sources\System\Win\SystemUtilsImpl.h">
+      <Filter>Win\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Sources\System\Win\ThreadImpl.h">
+      <Filter>Win\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Sources\System\Win\TimerImpl.h">
+      <Filter>Win\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

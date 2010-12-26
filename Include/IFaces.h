@@ -196,13 +196,6 @@ namespace IFaces
     virtual unsigned long GetSize() const = 0;
   };
 
-  struct IDataCallback
-    : public IBase
-  {
-    DECLARE_UUID(c2be8da3-0406-421e-b737-dbe0311454d6)
-    virtual RetCode OnData(const void *data, unsigned long bytes) = 0;
-  };
-
   struct IStream
     : public IBase
   {
