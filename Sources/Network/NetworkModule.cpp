@@ -7,12 +7,14 @@
 
 #include "Module.h"
 #include "TCPClient.h"
+#include "TCPServer.h"
 #include "Mutex.h"
 
 
 typedef Common::TypeListAdapter
   <
-    ITCPClientImpl
+    ITCPClientImpl,
+    ITCPServerImpl
   >
   ExportedTypes;
 
