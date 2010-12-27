@@ -36,6 +36,9 @@
     <ClCompile Include="..\..\..\Sources\Network\Win\SocksImpl.cpp">
       <Filter>Win\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Sources\Network\TCPServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Sources\Network\TCPClient.h">
@@ -46,6 +49,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Sources\Network\Win\SocksImpl.h">
       <Filter>Win\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Sources\Network\TCPServer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
