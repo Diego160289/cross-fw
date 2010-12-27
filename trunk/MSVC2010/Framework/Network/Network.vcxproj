@@ -81,6 +81,7 @@
     <ClCompile Include="..\..\..\Sources\Network\NetworkModule.cpp" />
     <ClCompile Include="..\..\..\Sources\Network\Socks.cpp" />
     <ClCompile Include="..\..\..\Sources\Network\TCPClient.cpp" />
+    <ClCompile Include="..\..\..\Sources\Network\TCPServer.cpp" />
     <ClCompile Include="..\..\..\Sources\Network\Win\SocksImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +95,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\Sources\Network\Socks.h" />
     <ClInclude Include="..\..\..\Sources\Network\TCPClient.h" />
+    <ClInclude Include="..\..\..\Sources\Network\TCPServer.h" />
     <ClInclude Include="..\..\..\Sources\Network\Win\SocksImpl.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
