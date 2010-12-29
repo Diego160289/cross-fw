@@ -10,25 +10,83 @@
 
 namespace
 {
-  class ClientItem
-    : private Common::NoCopyable
-    , public Socks::ICtrlItem
+
+  class ICtrlItemImpl
+    : public Common::CoClassBase
+        <
+          TYPE_LIST_1(IFaces::Network::ICtrlItem)
+        >
   {
   public:
-    ClientItem(Socks::ICtrlItem &ctrl)
-      : Ctrl(ctrl)
+    DECLARE_UUID(eb463abc-d362-47b0-941d-a3470a75e1ea)
+
+    ICtrlItemImpl()
+      : Ctrl(0)
     {
     }
-    virtual void CloseMe()
+
+    //ICtrlItem
+    virtual IFaces::RetCode CloseMe()
     {
+      Common::ISyncObject Locker(GetSynObj());
+      if (!Ctrl)
+        return IFaces::retFail;
+      Ctrl->CloseMe();
+      return IFaces::retOk;
     }
-    virtual bool SendData(const void *data, unsigned bytes)
+    virtual IFaces::RetCode SendData(const void *data, unsigned bytes)
     {
-      return false;
+      if (!data || !bytes)
+        return IFaces::retBadParam;
+      Common::ISyncObject Locker(GetSynObj());
+      if (!Ctrl)
+        return IFaces::retFail;
+      try
+      {
+        Ctrl->SendData(data, bytes);
+      }
+      catch (std::exception &)
+      {
+        return IFaces::retFail;
+      }
+      return IFaces::retOk;
+    }
+
+    void SetCtrl(Socks::ICtrlItem *ctrl)
+    {
+      Common::ISyncObject Locker(GetSynObj());
+      Ctrl = ctrl;
     }
 
   private:
-    Socks::ICtrlItem &Ctrl;
+    Socks::ICtrlItem *Ctrl;
+  };
+
+  class IClientImpl
+    : private Common::NoCopyable
+    , public Socks::IClient
+  {
+  public:
+    IClientImpl(Socks::ICtrlItem &ctrl,
+                Common::RefObjPtr<ICtrlItemImpl> ctrlItem,
+                Common::RefObjPtr<IFaces::Network::IClient> client)
+      : CtrlItem(ctrlItem)
+      , Client(client)
+    {
+      CtrlItem->SetCtrl(&ctrl);
+    }
+    ~IClientImpl()
+    {
+      CtrlItem->SetCtrl(0);
+    }
+    virtual bool OnData(const void *data, unsigned bytes)
+    {
+      return Client->OnData(data, bytes) == IFaces::retOk;
+    }
+
+  private:
+    Common::RefObjPtr<ICtrlItemImpl> CtrlItem;
+    Common::RefObjPtr<IFaces::Network::IClient> Client;
   };
 
   class ClientFactory
@@ -36,17 +94,23 @@ namespace
     , public Socks::IClientFactory
   {
   public:
-    ClientFactory(IFaces::Network::IClientFactory *factory)
-      : Factory(factory)
+    ClientFactory(Common::ISynObj &synObj, IFaces::Network::IClientFactory *factory)
+      : SynObj(synObj)
+      , Factory(factory)
     {
     }
     virtual Socks::IClientPtr CreateClient(Socks::ICtrlItem &ctrl)
     {
-      //Factory->CreateClient();
-      return Socks::IClientPtr(0);
+      Common::RefObjPtr<ICtrlItemImpl> CtrlItem = Common::IBaseImpl<ICtrlItemImpl>::CreateWithSyn(SynObj);
+      Common::RefObjPtr<IFaces::Network::IClient> Client;
+      if (Factory->CreateClient(CtrlItem.Get(), Client.GetPPtr()) != IFaces::retOk)
+        return Socks::IClientPtr(0);
+      Socks::IClientPtr Item(new IClientImpl(ctrl, CtrlItem, Client));
+      return Item;
     }
 
   private:
+    Common::ISynObj &SynObj;
     Common::RefObjPtr<IFaces::Network::IClientFactory> Factory;
   };
 }
@@ -65,7 +129,7 @@ IFaces::RetCode ITCPServerImpl::Start(const char *host,
   try
   {
     Server.Reset(new Socks::TCPServer(host, port, threadCount, maxConnectCount,
-      Socks::IClientFactoryPtr(new ClientFactory(factory))));
+      Socks::IClientFactoryPtr(new ClientFactory(GetSynObj(), factory))));
   }
   catch (std::exception &)
   {
@@ -77,5 +141,8 @@ IFaces::RetCode ITCPServerImpl::Start(const char *host,
 IFaces::RetCode ITCPServerImpl::Stop()
 {
   Common::ISyncObject Locker(GetSynObj());
-  return IFaces::retNotImpl;
+  if (!Server.Get())
+    return IFaces::retFail;
+  Server.Release();
+  return IFaces::retOk;
 }
