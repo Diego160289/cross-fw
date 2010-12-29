@@ -32,8 +32,8 @@ namespace IFaces
       : public IBase
     {
       DECLARE_UUID(cddbcbd3-2b29-486b-b3ca-ff35c1d4094b)
-      virtual void CloseMe() = 0;
-      virtual bool SendData(const void *data, unsigned bytes) = 0;
+      virtual RetCode CloseMe() = 0;
+      virtual RetCode SendData(const void *data, unsigned bytes) = 0;
     };
 
     struct IClient
