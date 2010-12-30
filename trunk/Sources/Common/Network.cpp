@@ -31,6 +31,29 @@ namespace Common
       {
       }
 
+      DefRecvStrategy::~DefRecvStrategy()
+      {
+      }
+
+      bool DefRecvStrategy::AssignData(const void *data, unsigned bytes, Common::ISynObj &synObj)
+      {
+        try
+        {
+          Common::RefObjPtr<IFaces::IVariant> Var = IFacesImpl::CreateVariant(synObj);
+          IFacesImpl::IVariantHelper(Var).SetBinaryData(data, bytes);
+          return OnData(Var);
+        }
+        catch (std::exception &)
+        {
+        }
+        return false;
+      }
+
+      bool DefRecvStrategy::OnData(IVariantPtr val)
+      {
+        return false;
+      }
+
     }
   }
 }
