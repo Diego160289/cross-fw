@@ -184,6 +184,13 @@ namespace Common
           : public IClientImpl<TRecvStrategy>
         {
         public:
+          ServerImpl()
+            : Owner(0)
+          {
+          }
+          virtual ~ServerImpl()
+          {
+          }
           void Init(ITCPServerPtr srv,
                     const std::string &host, unsigned short port,
                     unsigned threadCount, unsigned maxConnectCount,
