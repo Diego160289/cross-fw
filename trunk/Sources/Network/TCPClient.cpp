@@ -18,7 +18,7 @@ IFaces::RetCode ITCPClientImpl::Connect(const char *host, unsigned short port)
   {
     if (Client.Get())
       return IFaces::retFalse;
-    Common::SharedPtr<Socks::TCPClient> NewClient;
+    Common::SharedPtr<Socks::TCPClient> NewClient(new Socks::TCPClient);
     NewClient->Connect(host, port);
     Client = NewClient;
   }
