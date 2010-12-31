@@ -13,6 +13,8 @@
 #include "Exceptions.h"
 #include "IFacesTools.h"
 #include "IVariantImpl.h"
+#include "Typedefs.h"
+#include "Pointers.h"
 
 
 namespace Common
@@ -22,9 +24,13 @@ namespace Common
     namespace Network
     {
 
+      typedef Common::RefObjPtr<IFaces::IVariant> IVariantPtr;
+
       typedef Common::RefObjPtr<IFaces::Network::ITCPServer> ITCPServerPtr;
       typedef Common::RefObjPtr<IFaces::Network::IClientFactory> IClientFactoryPtr;
       typedef Common::RefObjPtr<IFaces::Network::ICtrlItem> ICtrlItemPtr;
+      
+      typedef Common::RefObjPtr<IFaces::Network::ITCPClient> ITCPClientPtr;
 
       DECLARE_RUNTIME_EXCEPTION(TCPServer)
 
@@ -36,7 +42,7 @@ namespace Common
         virtual ~TCPServer();
 
       private:
-        ITCPServerPtr Server;
+        ITCPServerPtr Srv;
       };
 
       template <typename T>
@@ -65,9 +71,15 @@ namespace Common
         }
       };
 
+      class DefSendStrategy
+      {
+      public:
+        virtual Common::CharVectorPtr PrepareData(const void *data, unsigned bytes);
+      };
+
       DECLARE_RUNTIME_EXCEPTION(CtrlItem)
 
-      template <typename TSendStrategy>
+      template <typename TSendStrategy = SendStrategy>
       class CtrlItem
         : public TSendStrategy
       {
@@ -88,6 +100,9 @@ namespace Common
         }
         void SendData(const void *data, unsigned bytes)
         {
+          Common::CharVectorPtr Buf = this->PrepareData(data, bytes);
+          if (Ctrl->SendData(Buf.get() ? &Buf->front() : 0, Buf.get() ? static_cast<unsigned>(Buf->size()) : 0) != IFaces::retOk)
+            throw CtrlItemException("Error send data");
         }
 
       private:
@@ -97,7 +112,6 @@ namespace Common
       class DefRecvStrategy
       {
       public:
-        typedef Common::RefObjPtr<IFaces::IVariant> IVariantPtr;
         virtual ~DefRecvStrategy();
         bool AssignData(const void *data, unsigned bytes, Common::ISynObj &synObj);
         virtual bool OnData(IVariantPtr val);
@@ -132,9 +146,90 @@ namespace Common
           Common::ISyncObject Locker(GetSynObj());
           Ctrl = ctrl;
         }
+        ICtrlItemPtr GetCtrl() const
+        {
+          return Ctrl;
+        }
 
       private:
         ICtrlItemPtr Ctrl;
+      };
+
+      template
+      <
+        typename TRecvStrategy = DefRecvStrategy,
+        typename TSendStrategy = DefSendStrategy
+      >
+      class Server
+        : private Common::NoCopyable
+      {
+      public:
+        Server(ITCPServerPtr srv, Common::ISynObj &synObj,
+              const std::string &host, unsigned short port,
+              unsigned threadCount, unsigned maxConnectCount)
+        {
+          Common::RefObjPtr<ServerImpl> NewSrv = Common::IBaseImpl<ServerImpl>::CreateWithSyn(synObj);
+          NewSrv->Init(srv, host, port, threadCount, maxConnectCount, this);
+          Srv = NewSrv;
+        }
+        virtual ~Server()
+        {
+        }
+        virtual bool OnData(const IFacesImpl::IVariantHelper &data, CtrlItem<TSendStrategy> ctrl)
+        {
+          return false;
+        }
+      private:
+        class ServerImpl
+          : public IClientImpl<TRecvStrategy>
+        {
+        public:
+          void Init(ITCPServerPtr srv,
+                    const std::string &host, unsigned short port,
+                    unsigned threadCount, unsigned maxConnectCount,
+                    Server<TRecvStrategy, TSendStrategy> *owner)
+          {
+            Owner = owner;
+            Common::RefObjPtr<IClientFactoryType> NewFactory =
+              Common::IBaseImpl<IClientFactoryType>::CreateWithSyn(GetSynObj());
+            Common::SharedPtr<TCPServer> NewSrv(new TCPServer(srv, host, port, threadCount, maxConnectCount, NewFactory));
+            Srv = NewSrv;
+            Factory = NewFactory;
+          }
+          virtual bool OnData(IVariantPtr val)
+          {
+            try
+            {
+              return Owner->OnData(val, GetCtrl());
+            }
+            catch (std::exception &)
+            {
+            }
+            return false;
+          }
+        private:
+          typedef IClientFactoryImpl<ServerImpl> IClientFactoryType;
+          Server<TRecvStrategy, TSendStrategy> *Owner;
+          Common::RefObjPtr<IClientFactoryType> Factory;
+          Common::SharedPtr<TCPServer> Srv;
+        };
+        Common::RefObjPtr<ServerImpl> Srv;
+      };
+
+      DECLARE_RUNTIME_EXCEPTION(TCPClient)
+
+      class TCPClient
+      {
+      public:
+        TCPClient(ITCPClientPtr client);
+        void Connect(const std::string &host, unsigned short port);
+        void Disconnect();
+        bool IsConnected() const;
+        void SendData(const void *data, unsigned bytes);
+        Common::RefObjPtr<IFaces::IRawDataBuffer> Recv(unsigned long timeout);
+
+      private:
+        ITCPClientPtr Client;
       };
     }
   }
