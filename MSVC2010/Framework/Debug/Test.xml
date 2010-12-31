@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Registry Version="1.0">
+    <Keys>
+        <Key_ComponentClassIDs>
+            <Key_cf7456c3-70c7-4a97-b8e4-f910cd2f823b>
+                <![CDATA[DgAAADU2MzFlYzI3LWUxYTAtNDMwYi1hNzIzLTRiZjc1NzVmMDZiNQDN/f39/d3dbXHT0ovVAwrIeg0AAAAAAAAAAAAAAAAAagAAAAEAAACj3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3dTnpJekxUUmlaamMxTnpWbU1EWmlOUUROL2YzOS9kM2RiWEhUMG92VkF3ckk=]]>
+</Key_cf7456c3-70c7-4a97-b8e4-f910cd2f823b>
+            <Key_0eedde75-ce15-4eba-9026-3d5f94488c26>
+                <![CDATA[DgAAADI4ZDI0YTU3LTk1MzItNDFhNy1iM2ZkLTY3NjY4YmNjYTc3NADN/f39/d3d3d3d3cQAeQDFYLo53C8ACBCBeQCgmXkAAAAAAAAAAABMAAAAAQAAAJEAAAD9/f39RPUvAAUAAAAQAAAAAAAAAGCAeQAEAAAAAAAAAAAAAADAmXkA0IN5AEFEVTJNekZsWXpJANwAAADrAAAAzc3NzQAAAAA=]]>
+</Key_0eedde75-ce15-4eba-9026-3d5f94488c26>
+            <Key_74a12748-ee4a-4828-a502-6d2c05df637d>
+                <![CDATA[DgAAAGU1NjQ1YzM3LTdkYWQtNDM0ZS1iYzA4LWUxNTZmOTQ2ZDk0MwDN/f39/d3d3d3d3cQAUQD+9lpsTMAAEDCPUQD4iFEAAAAAAAAAAABMAAAAAQAAAKEAAAD9/f39RPUfAQgAAAAQAAAAAAAAADihUQAEAAAAAAAAAAAAAAAYiVEAiKRRAEFESTRaREkwWVRVANwAAADrAAAAzc3NzQAAAAA=]]>
+</Key_74a12748-ee4a-4828-a502-6d2c05df637d>
+            <Key_ce5210ce-1cdc-4c1f-a493-3b4cd1063fbf>
+                <![CDATA[DgAAADVkOWUwOWE2LTMyODUtNGYwMy1hOTlkLWFhMGY4YTcwMGY3YgDN/f39/d3d3d3d3fZ6AAAgjb1J1HoADFDrPQBYzT0AAAAAAAAAAAAwAAAAAQAAAHwBAAD9/f39RGdBQUFDNEEvZjM5L2QzZDNRQUFBTTh3NzBJQUFBQ00Azc3Nzc3Nzc3Nzc3Nzc3N/f39/d3d3d0/jb1W1HoACjDsPQA=]]>
+</Key_ce5210ce-1cdc-4c1f-a493-3b4cd1063fbf>
+            <Key_2ce86774-4ad9-4db6-ad48-ab65213c6d32>
+                <![CDATA[DgAAAFRlc3RTZXJ2aWNlAM3Nzf39/f3dq9i2Y81JAADQnGcAxABnAKnav2rHSQAIiOlYALC3ZwAMAAAAwNDg8A==]]>
+</Key_2ce86774-4ad9-4db6-ad48-ab65213c6d32>
+            <Key_TestService>
+                <![CDATA[DgAAAFRlc3RTZXJ2aWNlAM3Nzf39/f3dHQKTxwkrAADAuWgA4AkPAN3d3d3d3d3d3d3d3d3dAAAnAwAA/f39/Q==]]>
+</Key_TestService>
+            <Key_be565c33-f38b-47e5-8833-889b57fcd29e>
+                <![CDATA[DgAAADFmNjg3Y2UwLTM3ZTgtNDUyNC04ZTU3LWI2OTA4YTdkZTFkMwDN/f39/QAMA8PfMCViAAz4km0AyLVtAAAAAAAAAAAAIAAAAAEAAABQAwAA/f39/c3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N/f39/d3d3d0Ww94kJGIAAMCPbQCo/20A3d3d3d3d3d3d3d3d3d3d3d3d3d0=]]>
+</Key_be565c33-f38b-47e5-8833-889b57fcd29e>
+            <Key_17fde71c-1e91-4984-8cb9-2bd2f4ec8ac6>
+                <![CDATA[DgAAADFmNjg3Y2UwLTM3ZTgtNDUyNC04ZTU3LWI2OTA4YTdkZTFkMwDN/f39/QAMA8PfMCViAAxQwW0AULdtAAAAAAAAAAAAIAAAAAEAAADsAwAA/f39/c3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3N/f39/d3d3d0Ow948JGIAAKh2bQBgGW0A3d3d3d3d3d0EAAAENmIAANAVbQA=]]>
+</Key_17fde71c-1e91-4984-8cb9-2bd2f4ec8ac6>
+        </Key_ComponentClassIDs>
+        <Key_ComponentInformation>
+            <Key_5631ec27-e1a0-430b-a723-4bf7575f06b5>
+                <Key_Type>
+                    <![CDATA[DgAAAEluUHJvYwDNzf39/f3d3d0AAAAAgHPaNIjVAAiI6DoAmJwNAAsAAAA=]]>
+</Key_Type>
+                <Key_ModuleName>
+                    <![CDATA[DgAAAFJlZ2lzdHJ5LmRsbADNzf39/f3dknLTLojVAwC4/g0AMH8NAN3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0=]]>
+</Key_ModuleName>
+                <Key_Location>
+                    <![CDATA[DgAAAC4A/f39/d3d3d3d3S5SxzDd3QCA]]>
+</Key_Location>
+                <Key_Description>
+                    <![CDATA[DgAAAFJlZ2lzdHJ5AP39/f3d3d0AAAAAgHPaNIjVAAiI6DoAmJwNAAsAAADA0ODwR0vHMA==]]>
+</Key_Description>
+                <Key_ClassIDs>
+                    <Key_ClassId0>
+                        <![CDATA[DgAAAGNmNzQ1NmMzLTcwYzctNGE5Ny1iOGU0LWY5MTBjZDJmODIzYgDN/f39/d3dhHLTOIvVAACgwg0A4J0NAN3d3d3d3d3d3d3d3d3d3d2SctIvhNUADSDBDQDw9joAAAAAAAAAAABfAAAAAQAAAEoDAAD9/f39Q29tcG9uZW50SW5mb3JtYXRpb24vNTYzMWVjMjctZTFhMC00MzBiLWE3MjM=]]>
+</Key_ClassId0>
+                </Key_ClassIDs>
+            </Key_5631ec27-e1a0-430b-a723-4bf7575f06b5>
+            <Key_28d24a57-9532-41a7-b3fd-67668bcca774>
+                <Key_Type>
+                    <![CDATA[DgAAAEluUHJvYwDNzf39/f3d3d3d3d3d2WC7JNgvAADAfHkAAAAAAAAAAAA=]]>
+</Key_Type>
+                <Key_ModuleName>
+                    <![CDATA[DgAAAENsYXNzRmFjdG9yeS5kbGwAzc3Nzc3Nzf39/f12amhSAAAAgC8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA]]>
+</Key_ModuleName>
+                <Key_Location>
+                    <![CDATA[DgAAAC4A/f39/d3d3QAAAEUJalIAAACA]]>
+</Key_Location>
+                <Key_Description>
+                    <![CDATA[DgAAAENsYXNzRmFjdG9yeQDNzf39/f3dzGC7MdgvAAAYfnkAYBl5AN3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d0=]]>
+</Key_Description>
+                <Key_ClassIDs>
+                    <Key_ClassId0>
+                        <![CDATA[DgAAADBlZWRkZTc1LWNlMTUtNGViYS05MDI2LTNkNWY5NDQ4OGMyNgDN/f39/d3dZm9oUt3dAIAuAN3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3VNvaFLd3QCAOQDd3d3d3d3d3d3d3d3d3d3d3d0=]]>
+</Key_ClassId0>
+                </Key_ClassIDs>
+            </Key_28d24a57-9532-41a7-b3fd-67668bcca774>
+            <Key_e5645c37-7dad-434e-bc08-e156f946d943>
+                <Key_Type>
+                    <![CDATA[DgAAAEluUHJvYwDNzf39/f3d3d3d3d3d9PZbZ0jAAACA6FEAMKRRAN3d3d0=]]>
+</Key_Type>
+                <Key_ModuleName>
+                    <![CDATA[DgAAAFNlcnZpY2VNYW5hZ2VyLmRsbADNzc3Nzf39/f3bN+JCAAAAgC8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=]]>
+</Key_ModuleName>
+                <Key_Location>
+                    <![CDATA[DgAAAC4A/f39/d3d3QAAAM8w70IAAACM]]>
+</Key_Location>
+                <Key_Description>
+                    <![CDATA[DgAAAFNlcnZpY2VNYW5hZ2VyAP39/f3d6PZbe0jAAADooFEAYBlRAN3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d/PZabg==]]>
+</Key_Description>
+                <Key_ClassIDs>
+                    <Key_ClassId0>
+                        <![CDATA[DgAAADc0YTEyNzQ4LWVlNGEtNDgyOC1hNTAyLTZkMmMwNWRmNjM3ZADN/f39/d3dZEjiQt3dAIAYAN3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3WtI4kLd3QCAIwDd3d3d3d3d3d3d3d3d3d3d3d0=]]>
+</Key_ClassId0>
+                </Key_ClassIDs>
+            </Key_e5645c37-7dad-434e-bc08-e156f946d943>
+            <Key_5d9e09a6-3285-4f03-a99d-aa0f8a700f7b>
+                <Key_Type>
+                    <![CDATA[DgAAAEluUHJvYwDNzf39/f3d3d3d3d3dKI28QNB6AAAYmj0AMJc9AN3d3d0=]]>
+</Key_Type>
+                <Key_ModuleName>
+                    <![CDATA[DgAAAERCQ2xpZW50LmRsbADNzf39/f3dKo28QtB6AACwdj0AYBk9AN3d3d3d3d3dAwAAA9N6AACg8D0AMJc9AN3d3d0=]]>
+</Key_ModuleName>
+                <Key_Location>
+                    <![CDATA[DgAAAC4A/f39/d3d3QAAAF1RakMAAACM]]>
+</Key_Location>
+                <Key_Description>
+                    <![CDATA[DgAAAERCQ2xpZW50AP39/f2aPQAwlz0AAAAAAAAAAAAojb1B0XoAAwAAAAAAAAAAOAA9AA==]]>
+</Key_Description>
+                <Key_ClassIDs>
+                    <Key_ClassId0>
+                        <![CDATA[DgAAAGNlNTIxMGNlLTFjZGMtNGMxZi1hNDkzLTNiNGNkMTA2M2ZiZgDN/f39/d3dzuxlQ93dAIAuAN3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3fvsZUPd3QCAOQDd3d3d3d3d3d3d3d3d3d3d3d0=]]>
+</Key_ClassId0>
+                </Key_ClassIDs>
+            </Key_5d9e09a6-3285-4f03-a99d-aa0f8a700f7b>
+            <Key_TestService>
+                <Key_Type>
+                    <![CDATA[DgAAAEluUHJvYwDNzf39/f3d3d3d3d3drQKTdwkrAADQoWgAxABoAKMCkng=]]>
+</Key_Type>
+                <Key_ModuleName>
+                    <![CDATA[DgAAAFRlc3RTZXJ2aWNlLmRsbADNzc3Nzc3Nzf39/f33w6p3AAAAgC8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=]]>
+</Key_ModuleName>
+                <Key_Location>
+                    <![CDATA[DgAAAC4A/f39/d3d3d3d3fcPpnfd3QCA]]>
+</Key_Location>
+                <Key_Description>
+                    <![CDATA[DgAAAFRlc3RTZXJ2aWNlAM3Nzf39/f3dogKTeAkrAACwjmgA4AkPAN3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3Q==]]>
+</Key_Description>
+                <Key_ClassIDs>
+                    <Key_ClassId0>
+                        <![CDATA[DgAAAFRlc3RTZXJ2aWNlAM3Nzf39/f0ArAKTdgkrAAAgCg8A0KFoAN3d3d0AAAAArwOafQIrAAho6A4AYO4OAA==]]>
+</Key_ClassId0>
+                </Key_ClassIDs>
+            </Key_TestService>
+            <Key_1f687ce0-37e8-4524-8e57-b6908a7de1d3>
+                <Key_Type>
+                    <![CDATA[DgAAAEluUHJvYwDNzf39/f0AAAAAAAAADcPfPiZiAAMAAAAAAAAAADgAbQA=]]>
+</Key_Type>
+                <Key_ModuleName>
+                    <![CDATA[DgAAAE5ldHdvcmsuZGxsAM3Nzf39/f3dYMPeUiZiAAC4j20AuKRtAN3d3d3d3d3d3d3d3d3dAACqBQAA/f39/Q==]]>
+</Key_ModuleName>
+                <Key_Location>
+                    <![CDATA[DgAAAC4A/f39/d3d3d3d3e2t9V7d3QCM]]>
+</Key_Location>
+                <Key_Description>
+                    <![CDATA[DgAAAE5ldHdvcmsAzf39/f0AAAAAAAAADcPfPiZiAAMAAAAAAAAAADgAbQA4AG0A]]>
+</Key_Description>
+                <Key_ClassIDs>
+                    <Key_ClassId0>
+                        <![CDATA[DgAAAGJlNTY1YzMzLWYzOGItNDdlNS04ODMzLTg4OWI1N2ZjZDI5ZQDN/f39/d3dmfLyXt3dAIAYAN3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3aLy8l7d3QCAIwDd3d3d3d3d3d3d3d3d3d3d3d0=]]>
+</Key_ClassId0>
+                    <Key_ClassId1>
+                        <![CDATA[DgAAADE3ZmRlNzFjLTFlOTEtNDk4NC04Y2I5LTJiZDJmNGVjOGFjNgDN/f39/d3dt/LyXt3dAIAuAN3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3bjy8l7d3QCAOQDd3d3d3d3d3d3d3d3d3d3d3d0=]]>
+</Key_ClassId1>
+                </Key_ClassIDs>
+            </Key_1f687ce0-37e8-4524-8e57-b6908a7de1d3>
+        </Key_ComponentInformation>
+    </Keys>
+    <Hash>
+        <![CDATA[354718a15a089da8699abe940956d48c]]>
+</Hash>
+</Registry>
