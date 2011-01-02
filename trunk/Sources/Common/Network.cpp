@@ -7,6 +7,10 @@
 
 #include "Network.h"
 
+#include <iterator>
+#include <algorithm>
+#include <functional>
+
 
 namespace Common
 {
@@ -31,6 +35,10 @@ namespace Common
       {
       }
 
+      DefSendStrategy::~DefSendStrategy()
+      {
+      }
+
       Common::CharVectorPtr DefSendStrategy::PrepareData(const void *data, unsigned bytes)
       {
         Common::CharVectorPtr Buf(new Common::CharVector(bytes, 0));
@@ -46,16 +54,9 @@ namespace Common
 
       bool DefRecvStrategy::AssignData(const void *data, unsigned bytes, Common::ISynObj &synObj)
       {
-        try
-        {
-          Common::RefObjPtr<IFaces::IVariant> Var = IFacesImpl::CreateVariant(synObj);
-          IFacesImpl::IVariantHelper(Var).SetBinaryData(data, bytes);
-          return OnData(Var);
-        }
-        catch (std::exception &)
-        {
-        }
-        return false;
+        Common::RefObjPtr<IFaces::IVariant> Var = IFacesImpl::CreateVariant(synObj);
+        IFacesImpl::IVariantHelper(Var).SetBinaryData(data, bytes);
+        return OnData(Var);
       }
 
       bool DefRecvStrategy::OnData(IVariantPtr val)
@@ -104,6 +105,46 @@ namespace Common
         return Buffer;
       }
 
+      StrRecvStrategy::~StrRecvStrategy()
+      {
+      }
+
+      bool StrRecvStrategy::AssignData(const void *data, unsigned bytes, Common::ISynObj &synObj)
+      {
+        if (!data || !bytes)
+          return false;
+        const char *Data = reinterpret_cast<const char *>(data);
+        std::copy(&Data[0], &Data[bytes], std::back_inserter(Buffer));
+        for ( ; ; )
+        {
+          Common::CharVector::iterator Iter = std::find_if(Buffer.begin(), Buffer.end(),
+            std::bind2nd(std::equal_to<char>(), static_cast<char>(0)));
+          if (Iter == Buffer.end())
+            return true;
+          ++Iter;
+          Common::RefObjPtr<IFaces::IVariant> Var = IFacesImpl::CreateVariant(synObj);
+          (IFacesImpl::IVariantHelper(Var)) =
+            (const char *)std::string(&Buffer[0], std::distance(Buffer.begin(), Iter)).c_str();
+          bool Res = OnData(Var);
+          Buffer.erase(Buffer.begin(), Iter);
+          if (!Res)
+            return false;
+        }
+        return true;
+      }
+
+      bool StrRecvStrategy::OnData(IVariantPtr val)
+      {
+        return false;
+      }
+
+      Common::CharVectorPtr StrSendStrategy::PrepareData(const void *data, unsigned bytes)
+      {
+        const char *Data = reinterpret_cast<const char *>(data);
+        if (Data[bytes])
+          throw StrSendStrategyException("Bad data");
+        return DefSendStrategy::PrepareData(Data, bytes);
+      }
     }
   }
 }
