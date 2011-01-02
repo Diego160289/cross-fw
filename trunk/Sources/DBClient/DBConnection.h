@@ -8,6 +8,7 @@
 #ifndef __DBCONNECTION_H__
 #define __DBCONNECTION_H__
 
+#include "ComponentUUIDs.h"
 #include "IFacesTools.h"
 #include "DBClient.h"
 #include "DBWrap.h"
@@ -20,7 +21,7 @@ class IConnectionImpl
       >
 {
 public:
-  DECLARE_UUID(ce5210ce-1cdc-4c1f-a493-3b4cd1063fbf)
+  DECLARE_STR_UUID(UUID_DB_ICONNECTIONIMPL)
 
   // IConnection
   virtual IFaces::RetCode Connect(const char *connectionString, const char *userName, const char *password);

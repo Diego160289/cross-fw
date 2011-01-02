@@ -9,6 +9,7 @@
 #define __TCPSERVER_H__
 
 
+#include "ComponentUUIDs.h"
 #include "IFacesTools.h"
 #include "NetworkIFaces.h"
 #include "Socks.h"
@@ -22,7 +23,7 @@ class ITCPServerImpl
       >
 {
 public:
-  DECLARE_UUID(17fde71c-1e91-4984-8cb9-2bd2f4ec8ac6)
+  DECLARE_STR_UUID(UUID_ITCPSERVERIMPL)
 
   // ITCPServer
   virtual IFaces::RetCode Start(const char *host, unsigned short port,
