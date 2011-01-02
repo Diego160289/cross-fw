@@ -74,6 +74,9 @@ namespace Common
       class DefSendStrategy
       {
       public:
+        virtual ~DefSendStrategy();
+
+      protected:
         virtual Common::CharVectorPtr PrepareData(const void *data, unsigned bytes);
       };
 
@@ -113,6 +116,8 @@ namespace Common
       {
       public:
         virtual ~DefRecvStrategy();
+
+      protected:
         bool AssignData(const void *data, unsigned bytes, Common::ISynObj &synObj);
         virtual bool OnData(IVariantPtr val);
       };
@@ -168,8 +173,7 @@ namespace Common
               const std::string &host, unsigned short port,
               unsigned threadCount, unsigned maxConnectCount)
         {
-          Common::RefObjPtr<ServerImpl> NewSrv = Common::IBaseImpl<ServerImpl>::CreateWithSyn(synObj);
-          NewSrv->Init(srv, host, port, threadCount, maxConnectCount, this);
+          Common::SharedPtr<ServerImpl> NewSrv(new ServerImpl(srv, synObj, host, port, threadCount, maxConnectCount, this));
           Srv = NewSrv;
         }
         virtual ~Server()
@@ -180,28 +184,17 @@ namespace Common
           return false;
         }
       private:
-        class ServerImpl
+        class ClientImpl
           : public IClientImpl<TRecvStrategy>
         {
         public:
-          ServerImpl()
+          ClientImpl()
             : Owner(0)
           {
           }
-          virtual ~ServerImpl()
-          {
-          }
-          void Init(ITCPServerPtr srv,
-                    const std::string &host, unsigned short port,
-                    unsigned threadCount, unsigned maxConnectCount,
-                    Server<TRecvStrategy, TSendStrategy> *owner)
+          void SetOwner(Server<TRecvStrategy, TSendStrategy> *owner)
           {
             Owner = owner;
-            Common::RefObjPtr<IClientFactoryType> NewFactory =
-              Common::IBaseImpl<IClientFactoryType>::CreateWithSyn(GetSynObj());
-            Common::SharedPtr<TCPServer> NewSrv(new TCPServer(srv, host, port, threadCount, maxConnectCount, NewFactory));
-            Srv = NewSrv;
-            Factory = NewFactory;
           }
           virtual bool OnData(IVariantPtr val)
           {
@@ -215,12 +208,56 @@ namespace Common
             return false;
           }
         private:
-          typedef IClientFactoryImpl<ServerImpl> IClientFactoryType;
           Server<TRecvStrategy, TSendStrategy> *Owner;
-          Common::RefObjPtr<IClientFactoryType> Factory;
+        };
+        class ClassFactoryImpl
+          : public IClientFactoryImpl<ClientImpl>
+        {
+        public:
+          ClassFactoryImpl()
+            : Owner(0)
+          {
+          }
+          void SetOwner(Server<TRecvStrategy, TSendStrategy> *owner)
+          {
+            Owner = owner;
+          }
+          // IClientFactory
+          virtual IFaces::RetCode CreateClient(IFaces::Network::ICtrlItem *ctrl, IFaces::Network::IClient **client)
+          {
+            IFaces::RetCode Code = IClientFactoryImpl<ClientImpl>::CreateClient(ctrl, client);
+            if (Code != IFaces::retOk)
+              return Code;
+            static_cast<ClientImpl *>(*client)->SetOwner(Owner);
+            return Code;
+          }
+        private:
+          Server<TRecvStrategy, TSendStrategy> *Owner;
+        };
+        class ServerImpl
+          : private Common::NoCopyable
+        {
+        public:
+          ServerImpl(ITCPServerPtr srv, Common::ISynObj &synObj,
+                    const std::string &host, unsigned short port,
+                    unsigned threadCount, unsigned maxConnectCount,
+                    Server<TRecvStrategy, TSendStrategy> *owner)
+          {
+            Common::RefObjPtr<ClassFactoryImpl> NewFactory =
+              Common::IBaseImpl<ClassFactoryImpl>::CreateWithSyn(synObj);
+            Common::SharedPtr<TCPServer> NewSrv(new TCPServer(srv, host, port, threadCount, maxConnectCount, NewFactory));
+            NewFactory->SetOwner(owner);
+            Srv = NewSrv;
+            Factory = NewFactory;
+          }
+          virtual ~ServerImpl()
+          {
+          }
+        private:
+          Common::RefObjPtr<ClassFactoryImpl> Factory;
           Common::SharedPtr<TCPServer> Srv;
         };
-        Common::RefObjPtr<ServerImpl> Srv;
+        Common::SharedPtr<ServerImpl> Srv;
       };
 
       DECLARE_RUNTIME_EXCEPTION(TCPClient)
@@ -237,6 +274,28 @@ namespace Common
 
       private:
         ITCPClientPtr Client;
+      };
+
+      class StrRecvStrategy
+      {
+      public:
+        virtual ~StrRecvStrategy();
+
+      protected:
+        bool AssignData(const void *data, unsigned bytes, Common::ISynObj &synObj);
+        virtual bool OnData(IVariantPtr val);
+
+      private:
+        Common::CharVector Buffer;
+      };
+
+      DECLARE_RUNTIME_EXCEPTION(StrSendStrategy)
+
+      class StrSendStrategy
+        : public DefSendStrategy
+      {
+      protected:
+        virtual Common::CharVectorPtr PrepareData(const void *data, unsigned bytes);
       };
     }
   }

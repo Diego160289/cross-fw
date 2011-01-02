@@ -31,6 +31,7 @@
     <ClCompile Include="..\..\..\Sources\Common\IVarMapImpl.cpp" />
     <ClCompile Include="..\..\..\Sources\Common\ModuleCounter.cpp" />
     <ClCompile Include="..\..\..\Sources\Common\ModuleHolder.cpp" />
+    <ClCompile Include="..\..\..\Sources\Common\Network.cpp" />
     <ClCompile Include="..\..\..\Sources\Common\RegistryWrappers.cpp" />
     <ClCompile Include="..\..\..\Sources\Common\XmlTools.cpp" />
   </ItemGroup>
