@@ -9,6 +9,7 @@
 #define __TCPCLIWNT_H__
 
 
+#include "ComponentUUIDs.h"
 #include "IFacesTools.h"
 #include "NetworkIFaces.h"
 #include "Socks.h"
@@ -22,7 +23,7 @@ class ITCPClientImpl
       >
 {
 public:
-  DECLARE_UUID(be565c33-f38b-47e5-8833-889b57fcd29e)
+  DECLARE_STR_UUID(UUID_ITCPCLIENTIMPL)
 
   // ITCPClient
   virtual IFaces::RetCode Connect(const char *host, unsigned short port);
