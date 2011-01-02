@@ -82,7 +82,7 @@ namespace Common
 
       DECLARE_RUNTIME_EXCEPTION(CtrlItem)
 
-      template <typename TSendStrategy = SendStrategy>
+      template <typename TSendStrategy = DefSendStrategy>
       class CtrlItem
         : public TSendStrategy
       {
