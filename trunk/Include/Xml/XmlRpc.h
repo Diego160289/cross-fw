@@ -17,7 +17,7 @@
 #include "./rapidxml/rapidxml.hpp"
 
 #include "Exceptions.h"
-#include "SharedPtr.h"
+#include "Pointers.h"
 #include "NoCopyable.h"
 
 
