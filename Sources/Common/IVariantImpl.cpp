@@ -787,7 +787,7 @@ namespace IFacesImpl
     return Var->GetValueSize();
   }
 
-  IVariantHelper::IVariantPtr IVariantHelper::GetVariant()
+  IVariantHelper::IVariantPtr IVariantHelper::GetVariant() const
   {
     return Var;
   }

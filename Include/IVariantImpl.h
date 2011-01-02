@@ -115,9 +115,9 @@ namespace IFacesImpl
     bool IsEmpty() const;
     unsigned long GetDataSize() const;
 
-    IVariantPtr GetVariant();
+    IVariantPtr GetVariant() const;
   private:
-    IVariantPtr Var;
+    mutable IVariantPtr Var;
   };
 }
 
