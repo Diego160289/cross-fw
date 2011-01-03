@@ -65,7 +65,8 @@ namespace
       0,
       reinterpret_cast<SQLPOINTER *>(value),
       0,
-      flag
+      //reinterpret_cast for x64
+      reinterpret_cast<SQLLEN *>(flag)
       );
     if (Ret != SQL_SUCCESS)
       throw DB::ParameterException("Error set parameter", DB::Parameter::peErrorSetParameter);
@@ -82,7 +83,8 @@ namespace
       0,
       const_cast<SQLPOINTER *>(reinterpret_cast<const SQLPOINTER *>(value.c_str())),
       static_cast<SQLINTEGER>(value.size() + 1),
-      nullTermStringFlag);
+      //reinterpret_cast for x64
+      reinterpret_cast<SQLLEN *>(nullTermStringFlag));
     if (Ret != SQL_SUCCESS)
       throw DB::ParameterException("Error set parameter", DB::Parameter::peErrorSetParameter);
   }
@@ -412,7 +414,9 @@ namespace DB
       const unsigned BufSize = 256;
       char SmallBuff[BufSize] = { 0 };
       RETCODE Ret = SQLGetData(Stmt.GetHolder().GetHandle(), static_cast<SQLUSMALLINT>(Index), SQL_C_CHAR,
-        SmallBuff, BufSize, &Needed);
+        SmallBuff, BufSize,
+        //reinterpret_cast for x64
+        reinterpret_cast<SQLLEN *>(&Needed));
       if (TIODBC_SUCCESS_CODE(Ret))
         return std::string(SmallBuff);
 		  if (Needed > 0)
@@ -420,7 +424,9 @@ namespace DB
         SQLINTEGER Buff = Needed + 1;
         std::vector<char> Data(Buff, 0);
         Ret = SQLGetData(Stmt.GetHolder().GetHandle(), static_cast<SQLUSMALLINT>(Index), SQL_C_CHAR,
-          reinterpret_cast<SQLTCHAR *>(&Data.front()), Buff, &Needed);
+          reinterpret_cast<SQLTCHAR *>(&Data.front()), Buff,
+          //reinterpret_cast for x64
+          reinterpret_cast<SQLLEN *>(&Needed));
         if (TIODBC_SUCCESS_CODE(Ret))
           return std::string(&Data[0], Data.size());
         throw FieldException("Error get field", feErrorGetField);
@@ -437,7 +443,9 @@ namespace DB
       T Storage = T();
       SQLINTEGER Needed = 0;
 		  RETCODE Ret = SQLGetData(Stmt.GetHolder().GetHandle(), static_cast<SQLUSMALLINT>(Index),
-        type, &Storage, sizeof(Storage), &Needed);
+        type, &Storage, sizeof(Storage),
+        //reinterpret_cast for x64
+        reinterpret_cast<SQLLEN *>(&Needed));
 		  if (Ret != SQL_SUCCESS)
 			  throw FieldException("Error get field", feErrorGetField);
       if (Needed <= 0)
