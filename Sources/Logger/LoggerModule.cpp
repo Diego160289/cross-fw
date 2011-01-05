@@ -10,8 +10,10 @@
 #include "Mutex.h"
 
 
-DECLARE_MODULE_ENTRY_POINT(
-    "Logger",
-    59ee24fb-b997-4456-8bf5-952b3613bfab,
-    System::Mutex,
-    TYPE_LIST_1(ILoggerImpl))
+DECLARE_MODULE_ENTRY_POINT
+(
+  "Logger",
+  59ee24fb-b997-4456-8bf5-952b3613bfab,
+  System::Mutex,
+  TYPE_LIST_1(ILoggerImpl)
+)

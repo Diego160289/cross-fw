@@ -6,8 +6,12 @@
 
 
 #include "LoggerImpl.h"
-//#include "DBWrap.h"
 
+
+IFaces::RetCode ILoggerImpl::Write(IFaces::LoggerIFaces::LogLevel level, wchar_t *message)
+{
+  return IFaces::retNotImpl;
+}
 
 bool ILoggerImpl::FinalizeCreate()
 {
