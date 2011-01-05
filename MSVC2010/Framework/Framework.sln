@@ -23,6 +23,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DBClient", "DBClient\DBClie
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Network", "Network\Network.vcxproj", "{9F90BDE8-C22B-4488-843E-E61972F32141}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Logger", "Logger\Logger.vcxproj", "{66DBBC6F-7938-47C5-9C78-4752E48F87ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -119,6 +121,13 @@ Global
 		{9F90BDE8-C22B-4488-843E-E61972F32141}.Release|Win32.Build.0 = Release|Win32
 		{9F90BDE8-C22B-4488-843E-E61972F32141}.Release|x64.ActiveCfg = Release|x64
 		{9F90BDE8-C22B-4488-843E-E61972F32141}.Release|x64.Build.0 = Release|x64
+		{66DBBC6F-7938-47C5-9C78-4752E48F87ED}.Debug|Win32.ActiveCfg = Debug|x64
+		{66DBBC6F-7938-47C5-9C78-4752E48F87ED}.Debug|Win32.Build.0 = Debug|x64
+		{66DBBC6F-7938-47C5-9C78-4752E48F87ED}.Debug|x64.ActiveCfg = Debug|x64
+		{66DBBC6F-7938-47C5-9C78-4752E48F87ED}.Debug|x64.Build.0 = Debug|x64
+		{66DBBC6F-7938-47C5-9C78-4752E48F87ED}.Release|Win32.ActiveCfg = Release|Win32
+		{66DBBC6F-7938-47C5-9C78-4752E48F87ED}.Release|Win32.Build.0 = Release|Win32
+		{66DBBC6F-7938-47C5-9C78-4752E48F87ED}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
