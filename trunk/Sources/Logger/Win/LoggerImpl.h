@@ -11,7 +11,6 @@
 #include "ComponentUUIDs.h"
 #include "IFacesTools.h"
 #include "Logger.h"
-//#include "DBWrap.h"
 
 
 class ILoggerImpl
@@ -29,7 +28,7 @@ public:
   DECLARE_STR_UUID(UUID_LOGGERIMPL)
 
   // ILogger
-  
+  virtual IFaces::RetCode Write(IFaces::LoggerIFaces::LogLevel level, wchar_t *message);
 
   virtual bool FinalizeCreate();
   virtual void BeforeDestroy();
