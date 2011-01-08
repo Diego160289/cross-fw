@@ -6,14 +6,22 @@
 
 
 #include "Module.h"
-#include "LoggerImpl.h"
+#include "ILogImpl.h"
+#include "IStorageImpl.h"
 #include "Mutex.h"
 
+
+typedef Common::TypeListAdapter
+  <
+    ILogImpl,
+    IStorageImpl
+  >
+  ExportedTypes;
 
 DECLARE_MODULE_ENTRY_POINT
 (
   "Logger",
   59ee24fb-b997-4456-8bf5-952b3613bfab,
   System::Mutex,
-  TYPE_LIST_1(ILoggerImpl)
+  ExportedTypes
 )
