@@ -136,7 +136,7 @@ IFaces::RetCode IStreamImpl::Flush()
   while (!LogItems.empty())
   {
     const LogItemsQueue::value_type &LogItem = LogItems.front();
-    FileStream->Write(LogItem.c_str(), sizeof(LogItem[0]) * LogItem.size());
+    FileStream->Write(LogItem.c_str(), static_cast<unsigned long>(sizeof(LogItem[0]) * LogItem.size()));
     LogItems.pop();
   }
   return IFaces::retOk;

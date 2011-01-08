@@ -16,4 +16,4 @@
 #define UUID_ILOGIMPL "8411f131-f9c5-4534-9cd7-39dd47ed8712"
 #define UUID_ISTORAGEIMPL "33903e7e-2418-41e6-98bb-30bc2e3da63a"
 
-#endif    /!__COMPONENTUUIDS_H__
+#endif    //!__COMPONENTUUIDS_H__
