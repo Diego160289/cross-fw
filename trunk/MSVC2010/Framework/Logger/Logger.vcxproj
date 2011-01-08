@@ -82,6 +82,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LOGGER_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\Sources\Logger\Win;$(SolutionDir)..\..\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -140,11 +141,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Sources\Logger\ILogImpl.cpp" />
+    <ClCompile Include="..\..\..\Sources\Logger\IStorageImpl.cpp" />
+    <ClCompile Include="..\..\..\Sources\Logger\IStreamImpl.cpp" />
     <ClCompile Include="..\..\..\Sources\Logger\LoggerModule.cpp" />
-    <ClCompile Include="..\..\..\Sources\Logger\Win\LoggerImpl.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\Sources\Logger\Win\LoggerImpl.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">
@@ -153,6 +153,11 @@
     <ProjectReference Include="..\System\System.vcxproj">
       <Project>{0c23ec15-a5ec-4f2c-986a-0389f5e1b5b7}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Sources\Logger\ILogImpl.h" />
+    <ClInclude Include="..\..\..\Sources\Logger\IStorageImpl.h" />
+    <ClInclude Include="..\..\..\Sources\Logger\IStreamImpl.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
