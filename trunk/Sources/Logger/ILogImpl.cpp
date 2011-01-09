@@ -4,8 +4,13 @@
 // Copyright   : (c) Volodin Oleg (oleg.volodin@perspectsoft.com)
 //============================================================================
 
+#ifdef _MSC_VER
+  #pragma warning (disable : 4996)  //supress std::localtime safe warning.
+#endif
+
 #include "ILogImpl.h"
 #include "IStreamHelper.h"
+#include "IVariantImpl.h"
 
 #include <ctime>
 #include <iomanip>
@@ -13,8 +18,6 @@
 
 const IFaces::Log::Level ILogImpl::Nothing = static_cast<IFaces::Log::Level>(-1);
 const IFaces::Log::Level ILogImpl::All = IFaces::Log::MessageTypeMaxValue;
-const char *ILogImpl::NAME_PREFIX = "";
-const char *ILogImpl::NAME_POSTFIX = ".log";
 
 ILogImpl::ILogImpl()
   : Storage(0)
@@ -32,9 +35,7 @@ IFaces::RetCode ILogImpl::Write(IFaces::Log::MessageType type, char *message)
   if (!IsValidMessageType(type) || !message || !*message)
     return IFaces::retBadParam;
 
-  //TODO: check storage
-
-  if (Name.empty())
+  if (!IsValid())
     return IFaces::retFail;
 
   //Skip meesage if level is below.
@@ -99,7 +100,6 @@ IFaces::RetCode ILogImpl::Write(IFaces::Log::MessageType type, char *message)
   {
     return IFaces::retFail;
   }
-  //return Stream->Write(type, message);
 }
 
 IFaces::RetCode ILogImpl::Flush()
@@ -132,22 +132,31 @@ IFaces::RetCode ILogImpl::SetStorage(IFaces::IStorage *storage)
 
 //Change out stream name.
 //SetName() is possible to change name ever Storage was already set. As realtime redirect.
-IFaces::RetCode ILogImpl::SetName(const char *name)
+IFaces::RetCode ILogImpl::SetName(const char *name,
+                                  const char *namePrefix /*= ""*/,
+                                  const char *namePostfix /*= ".log"*/)
 {
   if (!name)
     return IFaces::retBadParam;
+
   Common::ISyncObject Locker(GetSynObj());
-  Name = name;
+  //If the name was alredy set then some data could wrote with it.
+  if (!Name.empty())
+    Flush();
+  Name = std::string(namePrefix) + std::string(name) + std::string(namePostfix);
+  
   return IFaces::retOk;
 }
 
-IFaces::RetCode ILogImpl::GetName(char *name, int length) const
+IFaces::RetCode ILogImpl::GetName(IFaces::IVariant **name) const
 {
-  if (!name || !*name || length < static_cast<int>(Name.size()))
+  if (!name)
     return IFaces::retBadParam;
   
-  //Name.copy(name, length);
-  return IFaces::retNotImpl;
+  Common::ISyncObject Locker(GetSynObj());
+  Common::RefObjPtr<IFaces::IVariant> Var = IFacesImpl::CreateVariant(GetSynObj());
+  (IFacesImpl::IVariantHelper(Var)) = Name.c_str();
+  return Var.QueryInterface(name);
 }
 
 IFaces::RetCode ILogImpl::SetFilterLevel(IFaces::Log::Level level)
@@ -167,29 +176,47 @@ IFaces::RetCode ILogImpl::GetFilterLevel(IFaces::Log::Level *level) const
 
 IFaces::RetCode ILogImpl::SetQueueLen(int length)
 {
-  return IFaces::retNotImpl;
+  QueueMaxLen = length;
+  return IFaces::retOk;
 }
 
 IFaces::RetCode ILogImpl::GetQueueLen(int *length) const
 {
-  return IFaces::retNotImpl;
+  if (!length)
+    return IFaces::retBadParam;
+  *length = static_cast<int>(QueueMaxLen);
+  return IFaces::retOk;
 }
 
-bool ILogImpl::IsValidMessageType(IFaces::Log::MessageType type)
+void ILogImpl::BeforeDestroy()
+{
+  if (IsValid())
+    Flush();
+}
+
+bool ILogImpl::IsValid() const
+{
+  return !Name.empty() && !!Storage.Get();
+}
+
+bool ILogImpl::IsValidMessageType(IFaces::Log::MessageType type) const
 {
   return type >= IFaces::Log::Error && type < IFaces::Log::MessageTypeMaxValue;
 }
 
-IFacesImpl::IStreamHelper::IStreamPtr ILogImpl::GetStream()
+IFacesImpl::IStreamHelper::IStreamPtr ILogImpl::GetStream() const
 {
   try
   {
     Common::ISyncObject Locker(GetSynObj());
+    if (!IsValid())
+      return IFacesImpl::IStreamHelper::IStreamPtr(0);
     IFacesImpl::IStreamHelper::IStreamPtr Stream;
     try
     {
       //First try to open.
       Stream = Storage->OpenStream(Name.c_str());
+      IFacesImpl::IStreamHelper(Stream).SeekToEnd();
     }
     catch (IFacesImpl::IStorageHelperException &)
     {
