@@ -155,7 +155,7 @@ namespace Socks
           return false;
         }
         const int BufSize = 4096;
-        std::vector<char> TmpBuf(4096, 0);
+				std::vector<char> TmpBuf(BufSize, 0);
         int RecvBytes = ::recv(Sock, &TmpBuf[0], static_cast<int>(TmpBuf.size()), 0);
         if (RecvBytes <= 0)
         {
@@ -427,7 +427,7 @@ namespace Socks
         throw TCPClientException("Error receive data");
       }
       const int BufSize = 4096;
-      std::vector<char> TmpBuf(4096, 0);
+			std::vector<char> TmpBuf(BufSize, 0);
       int RecvBytes = ::recv(Sock, &TmpBuf[0], static_cast<int>(TmpBuf.size()), 0);
       if (RecvBytes <= 0)
       {

@@ -150,7 +150,7 @@ IFaces::RetCode ILogImpl::SetName(const char *name,
 
 IFaces::RetCode ILogImpl::GetName(IFaces::IVariant **name) const
 {
-  if (!name)
+  if (!name || *name)
     return IFaces::retBadParam;
   
   Common::ISyncObject Locker(GetSynObj());
