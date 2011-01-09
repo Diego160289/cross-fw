@@ -29,27 +29,6 @@ namespace IFaces
     //Log detail level.
     typedef MessageType Level;
 
-    struct IStream
-      : public IBase
-    {
-      DECLARE_UUID(ba1628d2-44d2-4471-a8c9-1d4ef7ab249e)
-
-      //Required for use: SetName().
-      virtual RetCode SetName(const char *name) = 0;
-      virtual RetCode Create() = 0;
-      virtual RetCode Open() = 0;
-      virtual RetCode Write(MessageType type, char *message) = 0;
-      virtual RetCode Flush() = 0;
-    };
-
-    struct IStorage
-      : public IBase
-    {
-      DECLARE_UUID(6669b9e0-698f-466e-93dc-1cb6fa1ee2f4)
-
-      virtual RetCode GetStream(IStream **stream, const char *name, const char *namePrefix = "", const char *namePostfix = "") = 0;
-    };
-
     struct ICtrl
       : public IBase
     {

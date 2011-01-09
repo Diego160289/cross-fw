@@ -21,21 +21,9 @@
     <ClCompile Include="..\..\..\Sources\Logger\ILogImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Sources\Logger\IStorageImpl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Sources\Logger\IStreamImpl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Sources\Logger\ILogImpl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Sources\Logger\IStorageImpl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Sources\Logger\IStreamImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
