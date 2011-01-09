@@ -288,7 +288,7 @@ bool IServiceManagerImpl::BuildService(const ServicePair &service)
     Common::RefObjQIPtr<IFaces::IEnvironment> ServiceEnvironment(service.first);
     if (ServiceEnvironment.Get())
     {
-      int k = 0;
+      //Worked.
     }
     Common::RefObjPtr<IFaces::IVarMap> VarMap = IFacesImpl::CreateVarMap<System::Mutex>();
     IFacesImpl::IVarMapHelper Params(VarMap);
@@ -300,7 +300,7 @@ bool IServiceManagerImpl::BuildService(const ServicePair &service)
       return false;
     }
 
-    // TODO: ���������� ��� ����������� ��������� �������
+    // TODO: установить все зависимости окружения сервиса
   }
   catch (std::exception &)
   {
