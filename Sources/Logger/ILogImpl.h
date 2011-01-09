@@ -42,20 +42,18 @@ public:
 
   // ICtrl
   virtual IFaces::RetCode SetStorage(IFaces::IStorage *storage);
-  virtual IFaces::RetCode SetName(const char *name);
-  virtual IFaces::RetCode GetName(char *name, int length) const;
+  virtual IFaces::RetCode SetName(const char *name, const char *namePrefix = "", const char *namePostfix = ".log");
+  virtual IFaces::RetCode GetName(IFaces::IVariant **name) const;
   virtual IFaces::RetCode SetFilterLevel(IFaces::Log::Level level);
   virtual IFaces::RetCode GetFilterLevel(IFaces::Log::Level *level) const;
   virtual IFaces::RetCode SetQueueLen(int length);
   virtual IFaces::RetCode GetQueueLen(int *length) const;
-//  virtual IFaces::RetCode SetTimeFormat(const char *format);
-//  virtual IFaces::RetCode GetTimeFormat(char *format, int length) const;
+
+  virtual void BeforeDestroy();
 
 private:
   typedef std::queue<std::string> LogItemsQueue;
   static const LogItemsQueue::size_type DEFAULT_QUEUE_MAX_LEN = 3;
-  static const char *NAME_PREFIX;
-  static const char *NAME_POSTFIX;
 
   Common::SharedPtr<IFacesImpl::IStorageHelper> Storage;
   std::string Name;
@@ -63,8 +61,9 @@ private:
   LogItemsQueue LogItems;
   LogItemsQueue::size_type QueueMaxLen;
 
-  bool IsValidMessageType(IFaces::Log::MessageType type);
-  IFacesImpl::IStorageHelper::IStreamPtr GetStream();
+  bool IsValid() const;
+  bool IsValidMessageType(IFaces::Log::MessageType type) const;
+  IFacesImpl::IStorageHelper::IStreamPtr GetStream() const;
 };
 
 #endif  // !__LOGIMPL_H__

@@ -36,14 +36,12 @@ namespace IFaces
 
       //Required for use: SetStorage(), SetName().
       virtual RetCode SetStorage(IStorage *storage) = 0;
-      virtual RetCode SetName(const char *name) = 0;
-      virtual RetCode GetName(char *name, int length) const = 0;
+      virtual RetCode SetName(const char *name, const char *namePrefix = "", const char *namePostfix = "") = 0;
+      virtual RetCode GetName(IVariant **name) const = 0;
       virtual RetCode SetFilterLevel(Level level) = 0;
       virtual RetCode GetFilterLevel(Level *level) const = 0;
       virtual RetCode SetQueueLen(int length) = 0;
       virtual RetCode GetQueueLen(int *length) const = 0;
-//      virtual RetCode SetTimeFormat(const char *format) = 0;
-//      virtual RetCode GetTimeFormat(char *format, int length) = 0;
     };
 
     struct ILog
@@ -52,6 +50,7 @@ namespace IFaces
       DECLARE_UUID(2cbd0d25-a8a1-4006-9430-4ecc337789b0)
 
       virtual RetCode Write(MessageType type, char *message) = 0;
+      virtual RetCode Flush() = 0;
     };
 
   }
