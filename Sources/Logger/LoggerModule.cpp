@@ -7,14 +7,12 @@
 
 #include "Module.h"
 #include "ILogImpl.h"
-#include "IStorageImpl.h"
 #include "Mutex.h"
 
 
 typedef Common::TypeListAdapter
   <
-    ILogImpl,
-    IStorageImpl
+    ILogImpl
   >
   ExportedTypes;
 

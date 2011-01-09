@@ -142,8 +142,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Sources\Logger\ILogImpl.cpp" />
-    <ClCompile Include="..\..\..\Sources\Logger\IStorageImpl.cpp" />
-    <ClCompile Include="..\..\..\Sources\Logger\IStreamImpl.cpp" />
     <ClCompile Include="..\..\..\Sources\Logger\LoggerModule.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -156,8 +154,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Sources\Logger\ILogImpl.h" />
-    <ClInclude Include="..\..\..\Sources\Logger\IStorageImpl.h" />
-    <ClInclude Include="..\..\..\Sources\Logger\IStreamImpl.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
