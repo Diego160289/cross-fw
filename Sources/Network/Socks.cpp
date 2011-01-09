@@ -137,7 +137,7 @@ namespace Socks
         timeval TV = { 0 };
         TV.tv_sec = SelectTimeout / 1000;
         TV.tv_usec = SelectTimeout % 1000;
-        int Ret = ::select(Sock + 1, &RDSet, 0, &RDErr, &TV);
+        int Ret = ::select(static_cast<int>(Sock + 1), &RDSet, 0, &RDErr, &TV);
         if (Ret < 0)
         {
           OpenFlag = false;
@@ -259,7 +259,7 @@ namespace Socks
       timeval TV = { 0 };
       TV.tv_sec = WaitingTimeout / 1000;
       TV.tv_usec = WaitingTimeout % 1000;
-      int Ret = ::select(ListenerSocket + 1, &RDSet, 0, &RDErr, &TV);
+      int Ret = ::select(static_cast<int>(ListenerSocket + 1), &RDSet, 0, &RDErr, &TV);
       if (Ret <= 0)
         continue;
       if (FD_ISSET(ListenerSocket, &RDErr))
@@ -409,7 +409,7 @@ namespace Socks
       timeval TV = { 0 };
       TV.tv_sec = timeout / 1000;
       TV.tv_usec = timeout % 1000;
-      int Ret = ::select(Sock + 1, &RDSet, 0, &RDErr, &TV);
+      int Ret = ::select(static_cast<int>(Sock + 1), &RDSet, 0, &RDErr, &TV);
       if (Ret < 0)
       {
         Disconnect();

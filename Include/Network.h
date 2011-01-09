@@ -188,6 +188,10 @@ namespace Common
           : public IClientImpl<TRecvStrategy>
         {
         public:
+          // For correct (with standard) GetCtrl() invoke.
+          // "C++ Templates: The Complete Guide" By David Vandevoorde, Nicolai M. Josuttis. (solution on end of 9.4.2)
+          using IClientImpl<TRecvStrategy>::GetCtrl;
+
           ClientImpl()
             : Owner(0)
           {

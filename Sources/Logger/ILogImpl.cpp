@@ -1,5 +1,5 @@
 //============================================================================
-// Date        : 05.01.2010
+// Date        : 05.01.2011
 // Author      : Volodin Oleg
 // Copyright   : (c) Volodin Oleg (oleg.volodin@perspectsoft.com)
 //============================================================================
@@ -51,7 +51,6 @@ IFaces::RetCode ILogImpl::Write(IFaces::Log::MessageType type, char *message)
     std::time_t CurrentTime = std::time(0);
     if (CurrentTime > 0)
     {
-      //TODO: warning
       std::tm *CurrentTimeHelper = std::localtime(&CurrentTime);
       if (CurrentTimeHelper)
       {
@@ -83,7 +82,7 @@ IFaces::RetCode ILogImpl::Write(IFaces::Log::MessageType type, char *message)
     }
     LogItem << ") ";
     //Thread ID.
-    //TODO:
+    //TODO: put thread ID.
     LogItem << "0000: ";
     //Message.
     LogItem << message;

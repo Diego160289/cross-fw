@@ -230,7 +230,7 @@ namespace Common
 
       Field::operator IFaces::DBIFaces::DateTime () const
       {
-        IFaces::DBIFaces::DateTime Value = { 0 };
+        IFaces::DBIFaces::DateTime Value = { { 0 }, { 0 } };
         if (!Fld->GetField(&Value) != IFaces::retOk)
           throw FieldException("Error get field");
         return Value;
